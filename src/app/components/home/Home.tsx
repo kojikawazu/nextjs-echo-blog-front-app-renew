@@ -1,34 +1,37 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { PulseLoader } from 'react-spinners';
+// types
+import { Blog } from '@/app/types/blogs';
+// lib
+import { fetchBlogs } from '@/app/lib/api/blogs';
+// components
 import { BlogCard } from '@/app/components/blogs/parts/BlogCard';
 import { BlogFilter } from '@/app/components/blogs/parts/BlogFilter';
 import { Pagination } from '@/app/components/common/pages/Pagination';
-import { useBlogStore } from '@/app/stores/blogStores';
 
 const ITEMS_PER_PAGE = 10;
+
+interface HomeProps {
+    tag?: string;
+    category?: string;
+}
 
 /**
  * ホームページ
  * @returns JSX.Element
  */
-export default function Home() {
-    const { tag, category } = useParams();
-    const { filteredBlogs, currentPage, totalPages, fetchBlogs, setTag, setCategory } =
-        useBlogStore();
+const Home = ({ tag, category }: HomeProps) => {
+    const [currentPage, setCurrentPage] = useState(1);
 
-    useEffect(() => {
-        if (tag) {
-            setTag(tag as string);
-        } else if (category) {
-            setCategory(category as string);
-        }
-    }, [tag, category]);
-
-    useEffect(() => {
-        fetchBlogs(currentPage, ITEMS_PER_PAGE);
-    }, [currentPage]);
+    // ブログデータを取得
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ['blogs', { tag, category, currentPage }],
+        queryFn: () => fetchBlogs(currentPage, ITEMS_PER_PAGE, tag as string, category as string),
+        enabled: !!tag || !!category || currentPage > 0,
+    });
 
     return (
         <div>
@@ -38,19 +41,37 @@ export default function Home() {
 
             <BlogFilter />
 
-            <div className="space-y-6">
-                {filteredBlogs.map((blog) => (
-                    <BlogCard key={blog.id} blog={blog} />
-                ))}
-            </div>
+            {isLoading ? (
+                <div className="h-16 flex items-center justify-center">
+                    <PulseLoader color="#ffffff" size={10} />
+                </div>
+            ) : isError ? (
+                <div className="flex justify-center items-center h-screen">
+                    <p className="text-red-500 text-2xl">ブログの取得に失敗しました</p>
+                </div>
+            ) : (
+                <>
+                    <div className="space-y-6">
+                        {data?.blogs?.length ? (
+                            data.blogs.map((blog: Blog) => <BlogCard key={blog.id} blog={blog} />)
+                        ) : (
+                            <p className="text-gray-500 text-center">
+                                ブログが見つかりませんでした
+                            </p>
+                        )}
+                    </div>
 
-            <div className="mt-8">
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={(page) => fetchBlogs(page, ITEMS_PER_PAGE)}
-                />
-            </div>
+                    <div className="mt-8">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={data?.totalPages ?? 1}
+                            onPageChange={(page) => setCurrentPage(page)}
+                        />
+                    </div>
+                </>
+            )}
         </div>
     );
-}
+};
+
+export default Home;

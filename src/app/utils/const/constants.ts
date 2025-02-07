@@ -4,5 +4,8 @@ export const COMMON_CONSTANTS = {
         LOGIN: '/users/login',
         LOGOUT: '/users/logout',
         AUTH_CHECK: '/users/auth-check',
+
+        BLOGS: '/blogs',
+        BLOG_ID: '/blogs/:id',
     },
 };
