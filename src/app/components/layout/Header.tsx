@@ -3,14 +3,16 @@
 import React from 'react';
 import Link from 'next/link';
 import { BookOpen, Search, User } from 'lucide-react';
-import { useAuthStore } from '@/app/stores/authStores';
+// context
+import { useAuth } from '@/app/contexts/AuthContext';
 
 /**
  * ヘッダー
  * @returns JSX.Element
  */
 export function Header() {
-    const { user, signOut } = useAuthStore();
+    // context
+    const { user, signOut } = useAuth();
 
     return (
         <header className="bg-white border-b border-sky-100 sticky top-0 z-50">

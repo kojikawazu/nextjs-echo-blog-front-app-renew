@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 // provider
 import { QueryProvider } from './provider/QueryProvider';
+// context
+import { AuthProvider } from './contexts/AuthContext';
 // css
 import './globals.css';
 
@@ -22,7 +24,9 @@ export default function RootLayout({
     return (
         <html lang="ja">
             <body>
-                <QueryProvider>{children}</QueryProvider>
+                <QueryProvider>
+                    <AuthProvider>{children}</AuthProvider>
+                </QueryProvider>
             </body>
         </html>
     );

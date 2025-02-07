@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+// context
+import { useAuth } from '@/app/contexts/AuthContext';
 // schema
 import { loginSchema, LoginFormValues } from '@/app/schema/authSchema';
 
@@ -14,8 +14,8 @@ import { loginSchema, LoginFormValues } from '@/app/schema/authSchema';
  * @returns JSX.Element
  */
 export default function Login() {
-    // router
-    const router = useRouter();
+    // context
+    const { signIn, isLoading } = useAuth();
     // form
     const {
         register,
@@ -25,26 +25,13 @@ export default function Login() {
         resolver: zodResolver(loginSchema),
     });
 
-    const mutation = useMutation({
-        mutationFn: async (data: LoginFormValues) => {
-            console.log(data);
-            return true;
-        },
-        onSuccess: () => {
-            router.push('/');
-        },
-        onError: () => {
-            alert('メールアドレスまたはパスワードが正しくありません');
-        },
-    });
-
     return (
         <div className="max-w-md mx-auto">
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-sky-100">
                 <h1 className="text-2xl font-bold text-gray-900 mb-6">ログイン</h1>
 
                 <form
-                    onSubmit={handleSubmit((data) => mutation.mutate(data))}
+                    onSubmit={handleSubmit((data) => signIn(data.email, data.password))}
                     className="space-y-5"
                 >
                     <div>
@@ -86,9 +73,9 @@ export default function Login() {
                     <button
                         type="submit"
                         className="w-full py-3 px-6 bg-sky-500 text-white rounded-full hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 font-medium transition-colors"
-                        disabled={mutation.isPending}
+                        disabled={isLoading}
                     >
-                        {mutation.isPending ? 'ログイン中...' : 'ログイン'}
+                        {isLoading ? 'ログイン中...' : 'ログイン'}
                     </button>
                 </form>
 
