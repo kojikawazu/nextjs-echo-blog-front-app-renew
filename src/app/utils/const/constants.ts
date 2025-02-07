@@ -6,6 +6,6 @@ export const COMMON_CONSTANTS = {
         AUTH_CHECK: '/users/auth-check',
 
         BLOGS: '/blogs',
-        BLOG_ID: '/blogs/:id',
+        BLOG_BY_ID: '/blogs/detail/:id',
     },
 };

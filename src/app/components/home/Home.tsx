@@ -6,7 +6,7 @@ import { PulseLoader } from 'react-spinners';
 // types
 import { Blog } from '@/app/types/blogs';
 // lib
-import { fetchBlogs } from '@/app/lib/api/blogs';
+import { fetchBlogs } from '@/app/lib/api/fetchBlogs';
 // components
 import { BlogCard } from '@/app/components/blogs/parts/BlogCard';
 import { BlogFilter } from '@/app/components/blogs/parts/BlogFilter';
@@ -32,7 +32,13 @@ const Home = ({ tag, category }: HomeProps) => {
     // ブログデータを取得
     const { data, isLoading, isError } = useQuery({
         queryKey: ['blogs', { selectedTag, selectedCategory, sortBy, currentPage }],
-        queryFn: () => fetchBlogs(currentPage, ITEMS_PER_PAGE, selectedTag as string, selectedCategory as string),
+        queryFn: () =>
+            fetchBlogs(
+                currentPage,
+                ITEMS_PER_PAGE,
+                selectedTag as string,
+                selectedCategory as string,
+            ),
         enabled: currentPage > 0,
     });
 
