@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+// provider
+import { QueryProvider } from './provider/QueryProvider';
+// css
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -6,6 +9,11 @@ export const metadata: Metadata = {
     description: 'Echo Blog App',
 };
 
+/**
+ * RootLayout
+ * @param children
+ * @returns
+ */
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -13,7 +21,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ja">
-            <body>{children}</body>
+            <body>
+                <QueryProvider>{children}</QueryProvider>
+            </body>
         </html>
     );
 }
