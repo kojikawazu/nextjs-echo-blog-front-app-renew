@@ -29,7 +29,7 @@ export async function fetchBlogs(page: number, limit: number, tag?: string, cate
     }
 
     const data = await response.json();
-    const blogs = Array.isArray(data)
+    let blogs = Array.isArray(data)
         ? data.map((blog) => ({
               id: blog.id,
               user_id: blog.user_id,
@@ -49,14 +49,31 @@ export async function fetchBlogs(page: number, limit: number, tag?: string, cate
           }))
         : [];
 
-    // ページごとのデータを取得
+    // カテゴリーとタグの全ての値を取得
+    const allCategories = Array.from(new Set(blogs.map((blog) => blog.category)));
+    const allTags = Array.from(new Set(blogs.flatMap((blog) => blog.tags)));
+
+    // カテゴリでフィルタリング
+    if (category) {
+        blogs = blogs.filter((blog) => blog.category === category);
+    }
+
+    // タグでフィルタリング
+    if (tag) {
+        blogs = blogs.filter((blog) => blog.tags.includes(tag));
+    }
+
+    // ページごとのデータへフィルターをかける
     const startIndex = (page - 1) * limit;
     const paginatedBlogs = blogs.slice(startIndex, startIndex + limit);
 
+    // フィルター適用後のブログの総数
     const totalPages = Math.ceil(blogs.length / limit);
 
     return {
         blogs: paginatedBlogs,
         totalPages: totalPages || 1,
+        allCategories,
+        allTags,
     };
 }

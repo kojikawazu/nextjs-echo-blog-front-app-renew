@@ -25,12 +25,15 @@ interface HomeProps {
  */
 const Home = ({ tag, category }: HomeProps) => {
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(category ?? null);
+    const [selectedTag, setSelectedTag] = useState<string | null>(tag ?? null);
+    const [sortBy, setSortBy] = useState<string>('newest');
 
     // ブログデータを取得
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['blogs', { tag, category, currentPage }],
-        queryFn: () => fetchBlogs(currentPage, ITEMS_PER_PAGE, tag as string, category as string),
-        enabled: !!tag || !!category || currentPage > 0,
+        queryKey: ['blogs', { selectedTag, selectedCategory, sortBy, currentPage }],
+        queryFn: () => fetchBlogs(currentPage, ITEMS_PER_PAGE, selectedTag as string, selectedCategory as string),
+        enabled: currentPage > 0,
     });
 
     return (
@@ -39,7 +42,16 @@ const Home = ({ tag, category }: HomeProps) => {
                 {tag ? `#${tag}の記事` : category ? `${category}の記事` : '最新の記事'}
             </h1>
 
-            <BlogFilter />
+            <BlogFilter
+                allCategories={data?.allCategories ?? []}
+                allTags={data?.allTags ?? []}
+                selectedCategory={selectedCategory}
+                selectedTag={selectedTag}
+                sortBy={sortBy}
+                setCategory={setSelectedCategory}
+                setTag={setSelectedTag}
+                setSortBy={setSortBy}
+            />
 
             {isLoading ? (
                 <div className="h-16 flex items-center justify-center">

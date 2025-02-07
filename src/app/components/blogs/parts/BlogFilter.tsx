@@ -1,35 +1,45 @@
 import React from 'react';
 import { ArrowDownAZ, Flame } from 'lucide-react';
-import { useBlogStore } from '@/app/stores/blogStores';
+
+interface BlogFilterProps {
+    allCategories: string[];
+    allTags: string[];
+    selectedCategory: string | null;
+    selectedTag: string | null;
+    sortBy: string;
+    setCategory: (category: string | null) => void;
+    setTag: (tag: string | null) => void;
+    setSortBy: (sortBy: string) => void;
+}
 
 /**
  * ブログフィルター
+ * @param allCategories カテゴリーの全ての値
+ * @param allTags タグの全ての値
+ * @param selectedCategory 選択されたカテゴリー
+ * @param selectedTag 選択されたタグ
+ * @param sortBy ソート方法
+ * @param setCategory カテゴリーの選択
+ * @param setTag タグの選択
+ * @param setSortBy ソート方法の選択
  * @returns JSX.Element
  */
-export function BlogFilter() {
-    const {
-        searchQuery,
-        selectedCategory,
-        selectedTag,
-        sortBy,
-        setSearchQuery,
-        setCategory,
-        setTag,
-        setSortBy,
-        blogs,
-    } = useBlogStore();
-
-    const categories = Array.from(new Set(blogs.map((blog) => blog.category)));
-    const tags = Array.from(new Set(blogs.flatMap((blog) => blog.tags)));
-
+export function BlogFilter({
+    allCategories,
+    allTags,
+    selectedCategory,
+    selectedTag,
+    sortBy,
+    setCategory,
+    setTag,
+    setSortBy,
+}: BlogFilterProps) {
     return (
         <div className="bg-white p-6 rounded-lg shadow-sm border border-sky-100">
             <div className="space-y-4">
                 <input
                     type="text"
                     placeholder="記事を検索..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full px-4 py-2 bg-sky-50 border border-sky-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"
                 />
 
@@ -40,7 +50,7 @@ export function BlogFilter() {
                         className="px-4 py-2 bg-sky-50 border border-sky-200 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"
                     >
                         <option value="">すべてのカテゴリー</option>
-                        {categories.map((category) => (
+                        {allCategories.map((category) => (
                             <option key={category} value={category}>
                                 {category}
                             </option>
@@ -53,7 +63,7 @@ export function BlogFilter() {
                         className="px-4 py-2 bg-sky-50 border border-sky-200 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"
                     >
                         <option value="">すべてのタグ</option>
-                        {tags.map((tag) => (
+                        {allTags.map((tag) => (
                             <option key={tag} value={tag}>
                                 {tag}
                             </option>
