@@ -78,14 +78,13 @@ export function BlogPost({ id }: BlogPostProps) {
 
                             <div className="flex flex-wrap gap-2 mb-6">
                                 {blog.tags.map((tag: string) => (
-                                    <Link
+                                    <div
                                         key={tag}
-                                        href={`/tag/${tag}`}
                                         className="flex items-center space-x-2 px-4 py-2 bg-sky-50 text-sky-700 rounded-full text-sm font-medium hover:bg-sky-100 transition-colors"
                                     >
                                         <Tag className="h-4 w-4" />
                                         <span>{tag}</span>
-                                    </Link>
+                                    </div>
                                 ))}
                             </div>
 

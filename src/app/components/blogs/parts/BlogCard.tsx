@@ -65,13 +65,12 @@ export function BlogCard({ blog }: BlogCardProps) {
 
                     <div className="flex flex-wrap gap-2">
                         {blog.tags.map((tag) => (
-                            <Link
+                            <div
                                 key={tag}
-                                href={`/tag/${tag}`}
                                 className="px-3 py-1 bg-gray-50 text-gray-600 rounded text-sm hover:bg-sky-50 hover:text-sky-600 transition-colors"
                             >
                                 {tag}
-                            </Link>
+                            </div>
                         ))}
                     </div>
                 </div>
