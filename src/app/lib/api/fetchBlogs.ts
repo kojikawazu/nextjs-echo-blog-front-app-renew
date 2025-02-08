@@ -9,14 +9,25 @@ import { Blog } from '@/app/types/blogs';
  * @param limit ブログの表示数
  * @param tag タグ
  * @param category カテゴリ
+ * @param sortBy ソート方法
+ * @param searchQuery 検索クエリ
  * @returns ブログデータ
  */
-export async function fetchBlogs(page: number, limit: number, tag?: string, category?: string) {
+export async function fetchBlogs(
+    page: number,
+    limit: number,
+    tag?: string,
+    category?: string,
+    sortBy: 'newest' | 'popular' = 'newest',
+    searchQuery?: string,
+) {
     const queryParams = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
         ...(tag && { tag }),
         ...(category && { category }),
+        ...(sortBy && { sortBy }),
+        ...(searchQuery && { search: encodeURIComponent(searchQuery) }),
     });
 
     const response = await fetch(COMMON_CONSTANTS.API_URL + COMMON_CONSTANTS.URL.BLOGS, {
@@ -61,6 +72,23 @@ export async function fetchBlogs(page: number, limit: number, tag?: string, cate
     // タグでフィルタリング
     if (tag) {
         blogs = blogs.filter((blog) => blog.tags.includes(tag));
+    }
+
+    if (searchQuery) {
+        const lowerQuery = searchQuery.toLowerCase();
+        blogs = blogs.filter(
+            (blog) =>
+                blog.title.toLowerCase().includes(lowerQuery) ||
+                blog.description.toLowerCase().includes(lowerQuery) ||
+                blog.tags.some((tag: string) => tag.toLowerCase().includes(lowerQuery))
+        );
+    }
+
+    // ソート処理
+    if (sortBy === 'newest') {
+        blogs.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    } else if (sortBy === 'popular') {
+        blogs.sort((a, b) => b.likes - a.likes);
     }
 
     // ページごとのデータへフィルターをかける

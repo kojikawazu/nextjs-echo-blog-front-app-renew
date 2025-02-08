@@ -7,6 +7,8 @@ import { PulseLoader } from 'react-spinners';
 import { Blog } from '@/app/types/blogs';
 // lib
 import { fetchBlogs } from '@/app/lib/api/fetchBlogs';
+// hooks
+import { useDebounce } from '@/app/hooks/useDebounce';
 // components
 import { BlogCard } from '@/app/components/blogs/parts/BlogCard';
 import { BlogFilter } from '@/app/components/blogs/parts/BlogFilter';
@@ -24,20 +26,35 @@ interface HomeProps {
  * @returns JSX.Element
  */
 const Home = ({ tag, category }: HomeProps) => {
+    // states
+    // ページ
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(category ?? null);
-    const [selectedTag, setSelectedTag] = useState<string | null>(tag ?? null);
+    // カテゴリー
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(
+        category ? decodeURIComponent(category) : null
+    );
+    // タグ
+    const [selectedTag, setSelectedTag] = useState<string | null>(
+        tag ? decodeURIComponent(tag) : null
+    );
+    // ソート方法
     const [sortBy, setSortBy] = useState<string>('newest');
+    // 検索クエリ
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    // デバウンス
+    const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
     // ブログデータを取得
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['blogs', { selectedTag, selectedCategory, sortBy, currentPage }],
+        queryKey: ['blogs', { selectedTag, selectedCategory, sortBy, currentPage, debouncedSearchQuery }],
         queryFn: () =>
             fetchBlogs(
                 currentPage,
                 ITEMS_PER_PAGE,
                 selectedTag as string,
                 selectedCategory as string,
+                sortBy as 'newest' | 'popular',
+                debouncedSearchQuery as string,
             ),
         enabled: currentPage > 0,
     });
@@ -54,9 +71,11 @@ const Home = ({ tag, category }: HomeProps) => {
                 selectedCategory={selectedCategory}
                 selectedTag={selectedTag}
                 sortBy={sortBy}
+                searchQuery={searchQuery}
                 setCategory={setSelectedCategory}
                 setTag={setSelectedTag}
                 setSortBy={setSortBy}
+                setSearchQuery={setSearchQuery}
             />
 
             {isLoading ? (
