@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PulseLoader } from 'react-spinners';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -14,6 +14,8 @@ import { deleteBlogById } from '@/app/lib/api/deleteBlogById';
 import { useAuth } from '@/app/contexts/AuthContext';
 // schema
 import { blogEditSchema, type BlogEditFormValues } from '@/app/schema/blogSchema';
+// components
+import { ConfirmModal } from '@/app/components/common/modal/ConfirmModal';
 
 interface EditPostProps {
     id: string;
@@ -29,6 +31,8 @@ export default function EditPost({ id }: EditPostProps) {
     const router = useRouter();
     // contexts
     const { user, isLoading: isUserLoading } = useAuth();
+    // states
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
     // ブログデータを取得
     const {
@@ -85,13 +89,6 @@ export default function EditPost({ id }: EditPostProps) {
         },
     });
 
-    // 削除処理
-    const handleDelete = () => {
-        if (window.confirm('本当にこの記事を削除しますか？')) {
-            deleteMutation.mutate();
-        }
-    };
-
     // 削除用のミューテーション
     const deleteMutation = useMutation({
         mutationFn: () => deleteBlogById(id),
@@ -106,7 +103,7 @@ export default function EditPost({ id }: EditPostProps) {
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-900">記事の編集</h1>
                     <button
-                        onClick={handleDelete}
+                        onClick={() => setIsConfirmModalOpen(true)}
                         className="px-4 py-2 text-red-600 hover:text-red-800 focus:outline-none"
                     >
                         削除
@@ -230,6 +227,19 @@ export default function EditPost({ id }: EditPostProps) {
                     </form>
                 )}
             </div>
+
+            <ConfirmModal
+                isOpen={isConfirmModalOpen}
+                title="記事の削除"
+                message="本当にこの記事を削除しますか？"
+                confirmText="削除"
+                cancelText="キャンセル"
+                onConfirm={() => {
+                    deleteMutation.mutate();
+                    setIsConfirmModalOpen(false);
+                }}
+                onCancel={() => setIsConfirmModalOpen(false)}
+            />
         </div>
     );
 }

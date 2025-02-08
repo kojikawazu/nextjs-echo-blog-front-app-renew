@@ -7,6 +7,7 @@ export const COMMON_CONSTANTS = {
 
         BLOGS: '/blogs',
         BLOG_BY_ID: '/blogs/detail/:id',
+        BLOG_CREATE: '/blogs/create',
         BLOG_UPDATE_BY_ID: '/blogs/update/:id',
         BLOG_DELETE_BY_ID: '/blogs/delete/:id',
     },

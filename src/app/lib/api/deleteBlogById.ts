@@ -19,5 +19,12 @@ export async function deleteBlogById(blogId: string) {
         throw new Error('ブログの削除に失敗しました');
     }
 
+    if (response.status === 204) {
+        return {
+            success: true,
+            message: 'ブログの削除に成功しました',
+        };
+    }
+
     return response.json();
 }

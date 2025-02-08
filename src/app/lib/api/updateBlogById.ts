@@ -1,6 +1,6 @@
 // constants
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
-// types
+// schema
 import { BlogEditFormValues } from '@/app/schema/blogSchema';
 
 /**

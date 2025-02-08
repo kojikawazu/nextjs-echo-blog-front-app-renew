@@ -1,0 +1,51 @@
+'use client';
+
+import React from 'react';
+
+interface ConfirmModalProps {
+    isOpen: boolean;
+    title?: string;
+    message?: string;
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm: () => void;
+    onCancel: () => void;
+}
+
+/**
+ * 確認モーダル
+ */
+export function ConfirmModal({
+    isOpen,
+    title = '確認',
+    message = '本当にこの操作を実行しますか？',
+    confirmText = 'はい',
+    cancelText = 'キャンセル',
+    onConfirm,
+    onCancel,
+}: ConfirmModalProps) {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">{title}</h2>
+                <p className="text-gray-700 mb-6">{message}</p>
+                <div className="flex justify-end space-x-4">
+                    <button
+                        onClick={onCancel}
+                        className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md"
+                    >
+                        {cancelText}
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                    >
+                        {confirmText}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
