@@ -1,0 +1,48 @@
+name: Deploy to Cloud Run
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Authenticate with Google Cloud
+              uses: google-github-actions/auth@v1
+              with:
+                  credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+            - name: Authenticate Docker with GCR
+              run: |
+                  gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev
+
+            - name: Create file
+              run: |
+                  echo ALLOWED_ORIGIN=${{ secrets.ALLOWED_ORIGIN }} > .env
+                  echo BACKEND_API_URL=${{ secrets.BACKEND_API_URL }} >> .env
+   
+
+            - name: Setup Google Cloud SDK
+              uses: google-github-actions/setup-gcloud@v1
+              with:
+                  project_id: ${{ secrets.GCP_PROJECT_ID }}
+                  service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+            - name: Build and push Docker image
+              run: |
+                  docker build -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPO_NAME }}/${{ secrets.APP_NAME }} .
+                  docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPO_NAME }}/${{ secrets.APP_NAME }}
+
+            - name: Deploy to Cloud Run
+              run: |
+                  gcloud run deploy ${{ secrets.GCP_CLOUD_RUN_SERVICE_NAME }} \
+                    --image ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPO_NAME }}/${{ secrets.APP_NAME }} \
+                    --region ${{ secrets.GCP_REGION }} \
+                    --platform managed \
+                    --allow-unauthenticated
