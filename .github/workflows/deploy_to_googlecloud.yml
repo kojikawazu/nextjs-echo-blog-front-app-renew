@@ -24,8 +24,8 @@ jobs:
 
             - name: Create file
               run: |
-                  echo ALLOWED_ORIGIN=${{ secrets.ALLOWED_ORIGIN }} > .env
-                  echo BACKEND_API_URL=${{ secrets.BACKEND_API_URL }} >> .env
+                  echo NEXT_PUBLIC_VISIT_ID_KEY=${{ secrets.NEXT_PUBLIC_VISIT_ID_KEY }} > .env
+                  echo NEXT_PUBLIC_BACKEND_API_URL=${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }} >> .env
    
 
             - name: Setup Google Cloud SDK
