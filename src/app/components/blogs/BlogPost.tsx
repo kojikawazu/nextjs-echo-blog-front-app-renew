@@ -42,16 +42,16 @@ export function BlogPost({ id }: BlogPostProps) {
         <article className="bg-white rounded-2xl shadow-sm border border-sky-100">
             <div className="p-8">
                 {isLoading ? (
-                    <div className="h-16 flex items-center justify-center">
-                        <PulseLoader color="#ffffff" size={10} />
+                    <div className="h-16 flex items-center justify-center h-screen">
+                        <PulseLoader color="#dddddd" size={10} />
                     </div>
                 ) : isError ? (
                     <div className="flex justify-center items-center h-screen">
-                        <p className="text-red-500 text-2xl">ブログの取得に失敗しました</p>
+                        <p className="text-gray-500 text-2xl">ブログの取得に失敗しました</p>
                     </div>
                 ) : !blog ? (
                     <div className="flex justify-center items-center h-screen">
-                        <p className="text-red-500 text-2xl">ブログが見つかりません</p>
+                        <p className="text-gray-500 text-2xl">ブログが見つかりません</p>
                     </div>
                 ) : (
                     <>

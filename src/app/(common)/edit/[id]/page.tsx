@@ -6,5 +6,5 @@ import EditPost from '@/app/components/blogs/EditPost';
  * @returns JSX.Element
  */
 export default function EditPostPage({ params }: { params: { id: string } }) {
-    return <EditPost />;
+    return <EditPost id={params.id} />;
 }

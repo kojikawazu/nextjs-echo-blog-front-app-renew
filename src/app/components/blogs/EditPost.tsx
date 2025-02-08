@@ -1,69 +1,104 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { useAuthStore } from '@/app/stores/authStores';
-import { useBlogStore } from '@/app/stores/blogStores';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { PulseLoader } from 'react-spinners';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+// lib
+import { fetchBlogById } from '@/app/lib/api/fetchBlogById';
+import { updateBlogById } from '@/app/lib/api/updateBlogById';
+import { deleteBlogById } from '@/app/lib/api/deleteBlogById';
+// contexts
+import { useAuth } from '@/app/contexts/AuthContext';
+// schema
+import { blogEditSchema, type BlogEditFormValues } from '@/app/schema/blogSchema';
+
+interface EditPostProps {
+    id: string;
+}
 
 /**
  * 記事編集フォーム
+ * @param props プロパティ
  * @returns JSX.Element
  */
-export default function EditPost() {
+export default function EditPost({ id }: EditPostProps) {
+    // router
     const router = useRouter();
-    const { id } = useParams<{ id: string }>();
-    const { user } = useAuthStore();
-    const { blogs, updateBlog, deleteBlog } = useBlogStore();
+    // contexts
+    const { user, isLoading: isUserLoading } = useAuth();
 
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [category, setCategory] = useState('');
-    const [tags, setTags] = useState('');
-    const [githubUrl, setGithubUrl] = useState('');
+    // ブログデータを取得
+    const {
+        data: blog,
+        isLoading,
+        isError,
+    } = useQuery({
+        queryKey: ['blog', id],
+        queryFn: () => fetchBlogById(id),
+        enabled: !!id,
+    });
 
     useEffect(() => {
-        const blog = blogs.find((b) => b.id === id);
-        if (!blog) {
-            router.push('/');
+        if (isUserLoading || isLoading) {
             return;
         }
-
-        if (!user || user.id !== blog.user_id) {
+        // エラーハンドリング
+        if (!isLoading && (isError || !blog)) {
+            router.push('/');
+        }
+        if (user === null) {
             router.push('/login');
-            return;
         }
+        if (user && blog && user?.id !== blog?.user_id) {
+            router.push('/login');
+        }
+    }, [isUserLoading, isError, blog, user, router]);
 
-        setTitle(blog.title);
-        setDescription(blog.description);
-        setCategory(blog.category);
-        setTags(blog.tags.join(', '));
-        setGithubUrl(blog.github_url || '');
-    }, [id, blogs, user]);
+    // フォームの値
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<BlogEditFormValues>({
+        resolver: zodResolver(blogEditSchema),
+    });
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!id) return;
-
-        updateBlog(id, {
-            title,
-            description,
-            category,
-            tags: tags.split(',').map((tag) => tag.trim()),
-            github_url: githubUrl || undefined,
+    // 更新処理
+    const onSubmit = (data: BlogEditFormValues) => {
+        updateMutation.mutate({
+            title: data.title,
+            description: data.description,
+            category: data.category,
+            tags: data.tags,
+            github_url: data.github_url,
         });
-
-        router.push(`/blog/${id}`);
     };
 
-    const handleDelete = () => {
-        if (!id) return;
+    // 更新用のミューテーション
+    const updateMutation = useMutation({
+        mutationFn: (updatedData: BlogEditFormValues) => updateBlogById(id, updatedData),
+        onSuccess: () => {
+            router.push(`/blog/${id}`);
+        },
+    });
 
+    // 削除処理
+    const handleDelete = () => {
         if (window.confirm('本当にこの記事を削除しますか？')) {
-            deleteBlog(id);
-            router.push('/');
+            deleteMutation.mutate();
         }
     };
+
+    // 削除用のミューテーション
+    const deleteMutation = useMutation({
+        mutationFn: () => deleteBlogById(id),
+        onSuccess: () => {
+            router.push('/');
+        },
+    });
 
     return (
         <div className="max-w-2xl mx-auto">
@@ -78,98 +113,122 @@ export default function EditPost() {
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label
-                            htmlFor="title"
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                            タイトル
-                        </label>
-                        <input
-                            type="text"
-                            id="title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            required
-                        />
+                {isUserLoading || isLoading ? (
+                    <div className="h-16 flex items-center justify-center h-screen">
+                        <PulseLoader color="#dddddd" size={10} />
                     </div>
+                ) : (
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <div>
+                            <label
+                                htmlFor="title"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                            >
+                                タイトル
+                            </label>
+                            <input
+                                type="text"
+                                id="title"
+                                {...register('title')}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                required
+                                defaultValue={blog?.title}
+                            />
+                            {errors.title && (
+                                <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+                            )}
+                        </div>
+                        <div>
+                            <label
+                                htmlFor="github_url"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                            >
+                                GitHub URL
+                            </label>
+                            <input
+                                type="text"
+                                id="github_url"
+                                {...register('github_url')}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                defaultValue={blog?.github_url}
+                            />
+                            {errors.github_url && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.github_url.message}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <label
+                                htmlFor="category"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                            >
+                                カテゴリ
+                            </label>
+                            <input
+                                type="text"
+                                id="category"
+                                {...register('category')}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                defaultValue={blog?.category}
+                            />
+                            {errors.category && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.category.message}
+                                </p>
+                            )}
+                        </div>
 
-                    <div>
-                        <label
-                            htmlFor="description"
-                            className="block text-sm font-medium text-gray-700 mb-1"
+                        <div>
+                            <label
+                                htmlFor="tags"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                            >
+                                タグ
+                            </label>
+                            <input
+                                type="text"
+                                id="tags"
+                                {...register('tags')}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                defaultValue={blog?.tags.join(', ')}
+                            />
+                            {errors.tags && (
+                                <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label
+                                htmlFor="description"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                            >
+                                内容
+                            </label>
+                            <textarea
+                                id="description"
+                                {...register('description')}
+                                rows={10}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                required
+                                defaultValue={blog?.description}
+                            />
+                            {errors.description && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.description.message}
+                                </p>
+                            )}
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                            disabled={updateMutation.isPending}
                         >
-                            本文
-                        </label>
-                        <textarea
-                            id="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            rows={10}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="category"
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                            カテゴリー
-                        </label>
-                        <input
-                            type="text"
-                            id="category"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="tags"
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                            タグ（カンマ区切り）
-                        </label>
-                        <input
-                            type="text"
-                            id="tags"
-                            value={tags}
-                            onChange={(e) => setTags(e.target.value)}
-                            placeholder="React, TypeScript, Web Development"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="githubUrl"
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                            GitHub URL（オプション）
-                        </label>
-                        <input
-                            type="url"
-                            id="githubUrl"
-                            value={githubUrl}
-                            onChange={(e) => setGithubUrl(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        更新
-                    </button>
-                </form>
+                            {updateMutation.isPending ? '更新中...' : '更新'}
+                        </button>
+                    </form>
+                )}
             </div>
         </div>
     );
