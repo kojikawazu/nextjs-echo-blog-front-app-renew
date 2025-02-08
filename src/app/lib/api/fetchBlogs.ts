@@ -80,7 +80,7 @@ export async function fetchBlogs(
             (blog) =>
                 blog.title.toLowerCase().includes(lowerQuery) ||
                 blog.description.toLowerCase().includes(lowerQuery) ||
-                blog.tags.some((tag: string) => tag.toLowerCase().includes(lowerQuery))
+                blog.tags.some((tag: string) => tag.toLowerCase().includes(lowerQuery)),
         );
     }
 

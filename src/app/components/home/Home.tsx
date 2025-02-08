@@ -31,11 +31,11 @@ const Home = ({ tag, category }: HomeProps) => {
     const [currentPage, setCurrentPage] = useState(1);
     // カテゴリー
     const [selectedCategory, setSelectedCategory] = useState<string | null>(
-        category ? decodeURIComponent(category) : null
+        category ? decodeURIComponent(category) : null,
     );
     // タグ
     const [selectedTag, setSelectedTag] = useState<string | null>(
-        tag ? decodeURIComponent(tag) : null
+        tag ? decodeURIComponent(tag) : null,
     );
     // ソート方法
     const [sortBy, setSortBy] = useState<string>('newest');
@@ -46,7 +46,10 @@ const Home = ({ tag, category }: HomeProps) => {
 
     // ブログデータを取得
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['blogs', { selectedTag, selectedCategory, sortBy, currentPage, debouncedSearchQuery }],
+        queryKey: [
+            'blogs',
+            { selectedTag, selectedCategory, sortBy, currentPage, debouncedSearchQuery },
+        ],
         queryFn: () =>
             fetchBlogs(
                 currentPage,
