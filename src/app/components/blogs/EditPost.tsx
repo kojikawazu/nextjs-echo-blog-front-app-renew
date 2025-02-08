@@ -96,14 +96,15 @@ export default function EditPost({ id }: EditPostProps) {
 
     // 更新処理
     const onSubmit = () => {
-        if (formValues) updateMutation.mutate(formValues);
-        updateMutation.mutate({
-            title: formValues?.title,
-            description: formValues?.description,
-            category: formValues?.category,
-            tags: formValues?.tags,
-            github_url: formValues?.github_url,
-        });
+        if (formValues) {
+            updateMutation.mutate({
+                title: formValues?.title,
+                description: formValues?.description,
+                category: formValues?.category,
+                tags: formValues?.tags,
+                github_url: formValues?.github_url,
+            });
+        }
         setIsConfirmUpdateModalOpen(false);
     };
 

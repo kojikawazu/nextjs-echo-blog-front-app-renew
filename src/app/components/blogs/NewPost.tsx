@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,6 +12,8 @@ import { useAuth } from '@/app/contexts/AuthContext';
 import { blogCreateSchema, BlogCreateFormValues } from '@/app/schema/blogSchema';
 // api
 import { createBlog } from '@/app/lib/api/createBlog';
+// components
+import { ConfirmModal } from '@/app/components/common/modal/ConfirmModal';
 
 /**
  * 新規記事作成フォーム
@@ -22,6 +24,9 @@ export default function NewPost() {
     const router = useRouter();
     // contexts
     const { user, isLoading: isUserLoading } = useAuth();
+    // states
+    const [formValues, setFormValues] = useState<BlogCreateFormValues | null>(null);
+    const [isConfirmCreateModalOpen, setIsConfirmCreateModalOpen] = useState(false);
 
     useEffect(() => {
         if (isUserLoading) {
@@ -42,17 +47,6 @@ export default function NewPost() {
         resolver: zodResolver(blogCreateSchema),
     });
 
-    // 作成処理
-    const onSubmit = (data: BlogCreateFormValues) => {
-        createMutation.mutate({
-            title: data.title,
-            description: data.description,
-            category: data.category,
-            tags: data.tags,
-            github_url: data.github_url,
-        });
-    };
-
     // 作成用のミューテーション
     const createMutation = useMutation({
         mutationFn: (createdData: BlogCreateFormValues) => createBlog(createdData),
@@ -60,6 +54,26 @@ export default function NewPost() {
             router.push('/');
         },
     });
+
+    // 作成確認モーダルの表示
+    const handleConfirmCreate = (data: BlogCreateFormValues) => {
+        setFormValues(data);
+        setIsConfirmCreateModalOpen(true);
+    };
+
+    // 作成処理
+    const onSubmit = () => {
+        if (formValues) {
+            createMutation.mutate({
+                title: formValues?.title,
+                description: formValues?.description,
+                category: formValues?.category,
+                tags: formValues?.tags,
+                github_url: formValues?.github_url,
+            });
+        }
+        setIsConfirmCreateModalOpen(false);
+    };
 
     return (
         <div className="max-w-2xl mx-auto">
@@ -73,7 +87,7 @@ export default function NewPost() {
                         <PulseLoader color="#dddddd" size={10} />
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={handleSubmit(handleConfirmCreate)} className="space-y-6">
                         <div>
                             <label
                                 htmlFor="title"
@@ -183,6 +197,17 @@ export default function NewPost() {
                     </form>
                 )}
             </div>
+
+            <ConfirmModal
+                isOpen={isConfirmCreateModalOpen}
+                title="記事の作成"
+                message="本当にこの記事を作成しますか？"
+                confirmText="作成"
+                cancelText="キャンセル"
+                onConfirm={onSubmit}
+                onCancel={() => setIsConfirmCreateModalOpen(false)}
+                btnClassName="bg-indigo-600 hover:bg-indigo-700"
+            />
         </div>
     );
 }
