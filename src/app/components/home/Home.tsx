@@ -1,14 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PulseLoader } from 'react-spinners';
 // types
 import { Blog } from '@/app/types/blogs';
 // lib
 import { fetchBlogs } from '@/app/lib/api/fetchBlogs';
+// contexts
+import { useGlobalData } from '@/app/contexts/GlobalContext';
 // hooks
 import { useDebounce } from '@/app/hooks/useDebounce';
+import { useLikeBlog } from '@/app/hooks/useLikeBlog';
 // components
 import { BlogCard } from '@/app/components/blogs/parts/BlogCard';
 import { BlogFilter } from '@/app/components/blogs/parts/BlogFilter';
@@ -26,6 +29,8 @@ interface HomeProps {
  * @returns JSX.Element
  */
 const Home = ({ tag = '', category = '' }: HomeProps) => {
+    // contexts
+    const { setGlobalData } = useGlobalData();
     // states
     // ページ
     const [currentPage, setCurrentPage] = useState(1);
@@ -43,6 +48,8 @@ const Home = ({ tag = '', category = '' }: HomeProps) => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     // デバウンス
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
+    // いいねhooks
+    const { hasLiked, likeBlog, unlikeBlog } = useLikeBlog();
 
     // ブログデータを取得
     const { data, isLoading, isError } = useQuery({
@@ -61,6 +68,17 @@ const Home = ({ tag = '', category = '' }: HomeProps) => {
             ),
         enabled: currentPage > 0,
     });
+
+    useEffect(() => {
+        if (data) {
+            const popularPosts = [...data.blogs]
+                .sort((a, b) => b.likes - a.likes)
+                .slice(0, 5)
+                .map(({ id, title, likes }) => ({ id, title, likes }));
+
+            setGlobalData(data.allCategories, data.allTags, popularPosts);
+        }
+    }, [data]);
 
     return (
         <div>
@@ -82,8 +100,8 @@ const Home = ({ tag = '', category = '' }: HomeProps) => {
             />
 
             {isLoading ? (
-                <div className="h-16 flex items-center justify-center">
-                    <PulseLoader color="#ffffff" size={10} />
+                <div className="h-16 flex items-center justify-center h-screen">
+                    <PulseLoader color="#dddddd" size={10} />
                 </div>
             ) : isError ? (
                 <div className="flex justify-center items-center h-screen">
@@ -93,7 +111,15 @@ const Home = ({ tag = '', category = '' }: HomeProps) => {
                 <>
                     <div className="space-y-6">
                         {data?.blogs?.length ? (
-                            data.blogs.map((blog: Blog) => <BlogCard key={blog.id} blog={blog} />)
+                            data.blogs.map((blog: Blog) => (
+                                <BlogCard
+                                    key={blog.id}
+                                    blog={blog}
+                                    hasLiked={hasLiked}
+                                    likeBlog={likeBlog}
+                                    unlikeBlog={unlikeBlog}
+                                />
+                            ))
                         ) : (
                             <p className="text-gray-500 text-center">
                                 ブログが見つかりませんでした

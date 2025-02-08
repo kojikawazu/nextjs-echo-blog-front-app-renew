@@ -1,30 +1,44 @@
 import React from 'react';
 import Link from 'next/link';
 import { Calendar, ThumbsUp, MessageCircle } from 'lucide-react';
+// types
 import type { Blog } from '@/app/types/blogs';
+// stores
 import { useCommentStore } from '@/app/stores/commentStores';
-import { useBlogStore } from '@/app/stores/blogStores';
 
 interface BlogCardProps {
     blog: Blog;
+    hasLiked: (blogId: string) => boolean;
+    likeBlog: (blogId: string) => void;
+    unlikeBlog: (blogId: string) => void;
 }
 
 /**
  * ブログカード
  * @param blog ブログ
+ * @param hasLiked いいね済みか
+ * @param likeBlog いいね登録
+ * @param unlikeBlog いいね取り消し
  * @returns JSX.Element
  */
-export function BlogCard({ blog }: BlogCardProps) {
+export function BlogCard({ blog, hasLiked, likeBlog, unlikeBlog }: BlogCardProps) {
     const { comments } = useCommentStore();
-    const { likeBlog, unlikeBlog, hasLiked } = useBlogStore();
     const commentCount = comments.filter((c) => c.blog_id === blog.id).length;
+    // いいね済みか判定
     const isLiked = hasLiked(blog.id);
 
+    /**
+     * いいね操作時の処理
+     */
     const handleLike = () => {
-        if (isLiked) {
-            unlikeBlog(blog.id);
-        } else {
-            likeBlog(blog.id, blog.user_id);
+        try {
+            if (isLiked) {
+                unlikeBlog(blog.id);
+            } else {
+                likeBlog(blog.id);
+            }
+        } catch (error) {
+            console.error(error);
         }
     };
 

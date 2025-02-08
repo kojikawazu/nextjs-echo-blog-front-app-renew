@@ -3,18 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { Tag, Bookmark, Hash } from 'lucide-react';
-import { useBlogStore } from '@/app/stores/blogStores';
-
+// contexts
+import { useGlobalData } from '@/app/contexts/GlobalContext';
 /**
  * サイドバー
  * @returns JSX.Element
  */
 export function Sidebar() {
-    const { blogs } = useBlogStore();
-
-    const categories = Array.from(new Set(blogs.map((blog) => blog.category)));
-    const tags = Array.from(new Set(blogs.flatMap((blog) => blog.tags)));
-    const popularPosts = [...blogs].sort((a, b) => b.likes - a.likes).slice(0, 5);
+    // contexts
+    const { categories, tags, popularPosts } = useGlobalData();
 
     return (
         <aside className="w-full md:w-72 space-y-6">

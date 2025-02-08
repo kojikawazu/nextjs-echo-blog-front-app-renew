@@ -1,7 +1,5 @@
 // constants
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
-// types
-import { Blog } from '@/app/types/blogs';
 
 /**
  * ブログを取得
@@ -21,6 +19,7 @@ export async function fetchBlogs(
     sortBy: 'newest' | 'popular' = 'newest',
     searchQuery?: string,
 ) {
+    // クエリパラメータ
     const queryParams = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
@@ -30,6 +29,7 @@ export async function fetchBlogs(
         ...(searchQuery && { search: encodeURIComponent(searchQuery) }),
     });
 
+    // ブログデータを取得
     const response = await fetch(COMMON_CONSTANTS.API_URL + COMMON_CONSTANTS.URL.BLOGS, {
         method: 'GET',
         credentials: 'include',
