@@ -7,9 +7,11 @@ interface BlogFilterProps {
     selectedCategory: string | null;
     selectedTag: string | null;
     sortBy: string;
+    searchQuery: string;
     setCategory: (category: string | null) => void;
     setTag: (tag: string | null) => void;
     setSortBy: (sortBy: string) => void;
+    setSearchQuery: (searchQuery: string) => void;
 }
 
 /**
@@ -19,9 +21,11 @@ interface BlogFilterProps {
  * @param selectedCategory 選択されたカテゴリー
  * @param selectedTag 選択されたタグ
  * @param sortBy ソート方法
+ * @param searchQuery 検索クエリ
  * @param setCategory カテゴリーの選択
  * @param setTag タグの選択
  * @param setSortBy ソート方法の選択
+ * @param setSearchQuery 検索クエリの選択
  * @returns JSX.Element
  */
 export function BlogFilter({
@@ -30,9 +34,11 @@ export function BlogFilter({
     selectedCategory,
     selectedTag,
     sortBy,
+    searchQuery,
     setCategory,
     setTag,
     setSortBy,
+    setSearchQuery,
 }: BlogFilterProps) {
     return (
         <div className="bg-white p-6 rounded-lg shadow-sm border border-sky-100">
@@ -40,6 +46,8 @@ export function BlogFilter({
                 <input
                     type="text"
                     placeholder="記事を検索..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full px-4 py-2 bg-sky-50 border border-sky-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"
                 />
 

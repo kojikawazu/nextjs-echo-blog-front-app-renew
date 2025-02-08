@@ -3,6 +3,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 // constants
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // types
@@ -70,19 +71,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
 
             if (!response.ok) {
-                throw new Error('ログインに失敗しました');
+                throw new Error(COMMON_CONSTANTS.AUTH.TOAST_LOGIN_ERROR);
             }
 
             return response.json();
         },
         onSuccess: async () => {
+            toast.success(COMMON_CONSTANTS.AUTH.TOAST_LOGIN_SUCCESS);
             // 認証状態を再取得
             await refetch();
             // ホーム画面へ移動
-            router.push('/');
+            router.push(COMMON_CONSTANTS.LINK.HOME);
         },
         onError: () => {
-            alert('メールアドレスまたはパスワードが正しくありません');
+            toast.error(COMMON_CONSTANTS.AUTH.TOAST_LOGIN_ERROR);
         },
     });
 
@@ -97,16 +99,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
 
             if (!response.ok) {
-                throw new Error('ログアウトに失敗しました');
+                throw new Error(COMMON_CONSTANTS.AUTH.TOAST_LOGOUT_ERROR);
             }
 
             return response.json();
         },
         onSuccess: async () => {
+            toast.success(COMMON_CONSTANTS.AUTH.TOAST_LOGOUT_SUCCESS);
             // 認証状態を再取得
             await refetch();
             // ログイン画面へ移動
-            router.push('/login');
+            router.push(COMMON_CONSTANTS.LINK.LOGIN);
         },
     });
 

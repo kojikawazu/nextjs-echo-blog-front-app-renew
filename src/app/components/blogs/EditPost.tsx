@@ -1,11 +1,14 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PulseLoader } from 'react-spinners';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import toast from 'react-hot-toast';
+// constants
+import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // lib
 import { fetchBlogById } from '@/app/lib/api/fetchBlogById';
 import { updateBlogById } from '@/app/lib/api/updateBlogById';
@@ -14,6 +17,8 @@ import { deleteBlogById } from '@/app/lib/api/deleteBlogById';
 import { useAuth } from '@/app/contexts/AuthContext';
 // schema
 import { blogEditSchema, type BlogEditFormValues } from '@/app/schema/blogSchema';
+// components
+import { ConfirmModal } from '@/app/components/common/modal/ConfirmModal';
 
 interface EditPostProps {
     id: string;
@@ -29,6 +34,10 @@ export default function EditPost({ id }: EditPostProps) {
     const router = useRouter();
     // contexts
     const { user, isLoading: isUserLoading } = useAuth();
+    // states
+    const [formValues, setFormValues] = useState<BlogEditFormValues | null>(null);
+    const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
+    const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
 
     // ブログデータを取得
     const {
@@ -47,13 +56,13 @@ export default function EditPost({ id }: EditPostProps) {
         }
         // エラーハンドリング
         if (!isLoading && (isError || !blog)) {
-            router.push('/');
+            router.push(COMMON_CONSTANTS.LINK.HOME);
         }
         if (user === null) {
-            router.push('/login');
+            router.push(COMMON_CONSTANTS.LINK.LOGIN);
         }
         if (user && blog && user?.id !== blog?.user_id) {
-            router.push('/login');
+            router.push(COMMON_CONSTANTS.LINK.LOGIN);
         }
     }, [isUserLoading, isError, blog, user, router]);
 
@@ -66,39 +75,49 @@ export default function EditPost({ id }: EditPostProps) {
         resolver: zodResolver(blogEditSchema),
     });
 
-    // 更新処理
-    const onSubmit = (data: BlogEditFormValues) => {
-        updateMutation.mutate({
-            title: data.title,
-            description: data.description,
-            category: data.category,
-            tags: data.tags,
-            github_url: data.github_url,
-        });
-    };
-
     // 更新用のミューテーション
     const updateMutation = useMutation({
         mutationFn: (updatedData: BlogEditFormValues) => updateBlogById(id, updatedData),
         onSuccess: () => {
-            router.push(`/blog/${id}`);
+            toast.success(COMMON_CONSTANTS.BLOG_UPDATE.TOAST_UPDATE_BLOG_SUCCESS);
+            router.push(COMMON_CONSTANTS.LINK.BLOG_BY_ID.replace(':id', id));
+        },
+        onError: () => {
+            toast.error(COMMON_CONSTANTS.BLOG_UPDATE.TOAST_UPDATE_BLOG_ERROR);
         },
     });
-
-    // 削除処理
-    const handleDelete = () => {
-        if (window.confirm('本当にこの記事を削除しますか？')) {
-            deleteMutation.mutate();
-        }
-    };
 
     // 削除用のミューテーション
     const deleteMutation = useMutation({
         mutationFn: () => deleteBlogById(id),
         onSuccess: () => {
-            router.push('/');
+            toast.success(COMMON_CONSTANTS.BLOG_DELETE.TOAST_DELETE_BLOG_SUCCESS);
+            router.push(COMMON_CONSTANTS.LINK.HOME);
+        },
+        onError: () => {
+            toast.error(COMMON_CONSTANTS.BLOG_DELETE.TOAST_DELETE_BLOG_ERROR);
         },
     });
+
+    // 更新確認モーダルの表示
+    const handleConfirmUpdate = (data: BlogEditFormValues) => {
+        setFormValues(data);
+        setIsConfirmUpdateModalOpen(true);
+    };
+
+    // 更新処理
+    const onSubmit = () => {
+        if (formValues) {
+            updateMutation.mutate({
+                title: formValues?.title,
+                description: formValues?.description,
+                category: formValues?.category,
+                tags: formValues?.tags,
+                github_url: formValues?.github_url,
+            });
+        }
+        setIsConfirmUpdateModalOpen(false);
+    };
 
     return (
         <div className="max-w-2xl mx-auto">
@@ -106,7 +125,7 @@ export default function EditPost({ id }: EditPostProps) {
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-900">記事の編集</h1>
                     <button
-                        onClick={handleDelete}
+                        onClick={() => setIsConfirmDeleteModalOpen(true)}
                         className="px-4 py-2 text-red-600 hover:text-red-800 focus:outline-none"
                     >
                         削除
@@ -118,7 +137,7 @@ export default function EditPost({ id }: EditPostProps) {
                         <PulseLoader color="#dddddd" size={10} />
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={handleSubmit(handleConfirmUpdate)} className="space-y-6">
                         <div>
                             <label
                                 htmlFor="title"
@@ -230,6 +249,31 @@ export default function EditPost({ id }: EditPostProps) {
                     </form>
                 )}
             </div>
+
+            <ConfirmModal
+                isOpen={isConfirmUpdateModalOpen}
+                title="記事の更新"
+                message="本当にこの記事を更新しますか？"
+                confirmText="更新"
+                cancelText="キャンセル"
+                onConfirm={onSubmit}
+                onCancel={() => setIsConfirmUpdateModalOpen(false)}
+                btnClassName="bg-indigo-600 hover:bg-indigo-700"
+            />
+
+            <ConfirmModal
+                isOpen={isConfirmDeleteModalOpen}
+                title="記事の削除"
+                message="本当にこの記事を削除しますか？"
+                confirmText="削除"
+                cancelText="キャンセル"
+                onConfirm={() => {
+                    deleteMutation.mutate();
+                    setIsConfirmDeleteModalOpen(false);
+                }}
+                onCancel={() => setIsConfirmDeleteModalOpen(false)}
+                btnClassName="bg-red-600 hover:bg-red-700"
+            />
         </div>
     );
 }

@@ -6,5 +6,5 @@ import Home from '@/app/components/home/Home';
  * @returns JSX.Element
  */
 export default function TagPage({ params }: { params: { tag: string } }) {
-    return <Home />;
+    return <Home tag={params.tag} />;
 }

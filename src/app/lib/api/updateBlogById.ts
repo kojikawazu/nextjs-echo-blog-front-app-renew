@@ -1,6 +1,6 @@
 // constants
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
-// types
+// schema
 import { BlogEditFormValues } from '@/app/schema/blogSchema';
 
 /**
@@ -27,7 +27,7 @@ export async function updateBlogById(blogId: string, updatedData: BlogEditFormVa
     );
 
     if (!response.ok) {
-        throw new Error('ブログの更新に失敗しました');
+        throw new Error(COMMON_CONSTANTS.BLOG_UPDATE.TOAST_UPDATE_BLOG_ERROR);
     }
 
     return response.json();

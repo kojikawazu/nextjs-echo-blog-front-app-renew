@@ -6,5 +6,5 @@ import Home from '@/app/components/home/Home';
  * @returns JSX.Element
  */
 export default function CategoryPage({ params }: { params: { category: string } }) {
-    return <Home />;
+    return <Home category={params.category} />;
 }
