@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import ReactModal from 'react-modal';
 
 interface ConfirmModalProps {
     isOpen: boolean;
@@ -37,7 +38,12 @@ export function ConfirmModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+        <ReactModal
+            isOpen={isOpen}
+            onRequestClose={onCancel}
+            className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50"
+            ariaHideApp={false}
+        >
             <div className="bg-white p-6 rounded-lg shadow-lg w-96">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">{title}</h2>
                 <p className="text-gray-700 mb-6">{message}</p>
@@ -56,6 +62,6 @@ export function ConfirmModal({
                     </button>
                 </div>
             </div>
-        </div>
+        </ReactModal>
     );
 }
