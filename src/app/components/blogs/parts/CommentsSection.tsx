@@ -79,11 +79,7 @@ export function CommentsSection({ blogId }: CommentSectionProps) {
                 </button>
             </form>
 
-            <CommentsListComp
-                comments={comments}
-                isLoading={isLoading}
-                isError={isError}
-            />
+            <CommentsListComp comments={comments} isLoading={isLoading} isError={isError} />
         </div>
     );
 }
