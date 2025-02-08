@@ -44,3 +44,8 @@ variable "backend_api_url" {
 variable "visit_id_key" {
   type = string
 }
+
+variable "domain_name" {
+  type = string
+}
+
