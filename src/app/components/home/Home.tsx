@@ -25,7 +25,7 @@ interface HomeProps {
  * ホームページ
  * @returns JSX.Element
  */
-const Home = ({ tag, category }: HomeProps) => {
+const Home = ({ tag = '', category = '' }: HomeProps) => {
     // states
     // ページ
     const [currentPage, setCurrentPage] = useState(1);
