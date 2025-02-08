@@ -32,7 +32,9 @@ export default function EditPost({ id }: EditPostProps) {
     // contexts
     const { user, isLoading: isUserLoading } = useAuth();
     // states
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [formValues, setFormValues] = useState<BlogEditFormValues | null>(null);
+    const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
+    const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
 
     // ブログデータを取得
     const {
@@ -70,17 +72,6 @@ export default function EditPost({ id }: EditPostProps) {
         resolver: zodResolver(blogEditSchema),
     });
 
-    // 更新処理
-    const onSubmit = (data: BlogEditFormValues) => {
-        updateMutation.mutate({
-            title: data.title,
-            description: data.description,
-            category: data.category,
-            tags: data.tags,
-            github_url: data.github_url,
-        });
-    };
-
     // 更新用のミューテーション
     const updateMutation = useMutation({
         mutationFn: (updatedData: BlogEditFormValues) => updateBlogById(id, updatedData),
@@ -97,13 +88,32 @@ export default function EditPost({ id }: EditPostProps) {
         },
     });
 
+    // 更新確認モーダルの表示
+    const handleConfirmUpdate = (data: BlogEditFormValues) => {
+        setFormValues(data);
+        setIsConfirmUpdateModalOpen(true);
+    };
+
+    // 更新処理
+    const onSubmit = () => {
+        if (formValues) updateMutation.mutate(formValues);
+        updateMutation.mutate({
+            title: formValues?.title,
+            description: formValues?.description,
+            category: formValues?.category,
+            tags: formValues?.tags,
+            github_url: formValues?.github_url,
+        });
+        setIsConfirmUpdateModalOpen(false);
+    };
+
     return (
         <div className="max-w-2xl mx-auto">
             <div className="bg-white p-8 rounded-lg shadow-md">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-900">記事の編集</h1>
                     <button
-                        onClick={() => setIsConfirmModalOpen(true)}
+                        onClick={() => setIsConfirmDeleteModalOpen(true)}
                         className="px-4 py-2 text-red-600 hover:text-red-800 focus:outline-none"
                     >
                         削除
@@ -115,7 +125,7 @@ export default function EditPost({ id }: EditPostProps) {
                         <PulseLoader color="#dddddd" size={10} />
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={handleSubmit(handleConfirmUpdate)} className="space-y-6">
                         <div>
                             <label
                                 htmlFor="title"
@@ -229,16 +239,28 @@ export default function EditPost({ id }: EditPostProps) {
             </div>
 
             <ConfirmModal
-                isOpen={isConfirmModalOpen}
+                isOpen={isConfirmUpdateModalOpen}
+                title="記事の更新"
+                message="本当にこの記事を更新しますか？"
+                confirmText="更新"
+                cancelText="キャンセル"
+                onConfirm={onSubmit}
+                onCancel={() => setIsConfirmUpdateModalOpen(false)}
+                btnClassName="bg-indigo-600 hover:bg-indigo-700"
+            />
+
+            <ConfirmModal
+                isOpen={isConfirmDeleteModalOpen}
                 title="記事の削除"
                 message="本当にこの記事を削除しますか？"
                 confirmText="削除"
                 cancelText="キャンセル"
                 onConfirm={() => {
                     deleteMutation.mutate();
-                    setIsConfirmModalOpen(false);
+                    setIsConfirmDeleteModalOpen(false);
                 }}
-                onCancel={() => setIsConfirmModalOpen(false)}
+                onCancel={() => setIsConfirmDeleteModalOpen(false)}
+                btnClassName="bg-red-600 hover:bg-red-700"
             />
         </div>
     );

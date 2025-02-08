@@ -10,10 +10,19 @@ interface ConfirmModalProps {
     cancelText?: string;
     onConfirm: () => void;
     onCancel: () => void;
+    btnClassName?: string;
 }
 
 /**
  * 確認モーダル
+ * @param isOpen モーダルの表示状態
+ * @param title モーダルのタイトル
+ * @param message モーダルのメッセージ
+ * @param confirmText 確認ボタンのテキスト
+ * @param cancelText キャンセルボタンのテキスト
+ * @param onConfirm 確認ボタンのクリック時の処理
+ * @param onCancel キャンセルボタンのクリック時の処理
+ * @param btnClassName ボタンのクラス名
  */
 export function ConfirmModal({
     isOpen,
@@ -23,6 +32,7 @@ export function ConfirmModal({
     cancelText = 'キャンセル',
     onConfirm,
     onCancel,
+    btnClassName,
 }: ConfirmModalProps) {
     if (!isOpen) return null;
 
@@ -40,7 +50,7 @@ export function ConfirmModal({
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                        className={`px-4 py-2 text-white rounded-md ${btnClassName}`}
                     >
                         {confirmText}
                     </button>
