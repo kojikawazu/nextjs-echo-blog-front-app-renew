@@ -6,7 +6,5 @@ import { BlogPost } from '@/app/components/blogs/BlogPost';
  * @returns JSX.Element
  */
 export default function BlogPage({ params }: { params: { id: string } }) {
-    return (
-        <BlogPost id={params.id} />
-    );
+    return <BlogPost id={params.id} />;
 }

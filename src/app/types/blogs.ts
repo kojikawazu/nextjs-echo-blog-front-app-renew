@@ -9,21 +9,21 @@ export interface Blog {
     likes: number;
     created_at: string;
     updated_at: string;
-  }
-  
-  export interface Comment {
+}
+
+export interface Comment {
     id: string;
     blog_id: string;
     guest_user: string;
     comment: string;
     parent_id?: string;
     created_at: string;
-  }
-   
-  export interface BlogLike {
+}
+
+export interface BlogLike {
     id: string;
     blog_id: string;
     visit_id: string;
     created_at: string;
     updated_at: string;
-  }
+}
