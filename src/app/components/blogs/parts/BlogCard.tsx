@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { Calendar, ThumbsUp, MessageCircle } from 'lucide-react';
+// constants
+import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // types
 import type { Blog } from '@/app/types/blogs';
 // stores
@@ -58,7 +60,7 @@ export function BlogCard({ blog, hasLiked, likeBlog, unlikeBlog }: BlogCardProps
                     )}
                 </div>
 
-                <Link href={`/blog/${blog.id}`}>
+                <Link href={COMMON_CONSTANTS.LINK.BLOG_BY_ID.replace(':id', blog.id)}>
                     <h2 className="text-xl font-bold text-gray-900 mb-3 hover:text-sky-500 transition-colors">
                         {blog.title}
                     </h2>

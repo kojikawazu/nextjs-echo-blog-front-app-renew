@@ -16,7 +16,7 @@ export async function fetchBlogById(blogId: string) {
     );
 
     if (!response.ok) {
-        throw new Error('ブログの取得に失敗しました');
+        throw new Error(COMMON_CONSTANTS.BLOG_FETCH.TOAST_FETCH_BLOG_ERROR);
     }
 
     const data = await response.json();

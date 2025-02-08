@@ -23,7 +23,7 @@ export async function createBlog(createdData: BlogCreateFormValues) {
     });
 
     if (!response.ok) {
-        throw new Error('ブログの作成に失敗しました');
+        throw new Error(COMMON_CONSTANTS.BLOG_CREATE.TOAST_CREATE_BLOG_ERROR);
     }
 
     return response.json();

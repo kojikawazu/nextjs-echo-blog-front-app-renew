@@ -16,13 +16,13 @@ export async function deleteBlogById(blogId: string) {
     );
 
     if (!response.ok) {
-        throw new Error('ブログの削除に失敗しました');
+        throw new Error(COMMON_CONSTANTS.BLOG_DELETE.TOAST_DELETE_BLOG_ERROR);
     }
 
     if (response.status === 204) {
         return {
             success: true,
-            message: 'ブログの削除に成功しました',
+            message: COMMON_CONSTANTS.BLOG_DELETE.TOAST_DELETE_BLOG_SUCCESS,
         };
     }
 

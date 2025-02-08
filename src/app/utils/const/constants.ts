@@ -17,8 +17,43 @@ export const COMMON_CONSTANTS = {
         BLOG_LIKE_DELETE: '/blog-likes/delete/:blogId',
         BLOG_LIKE_IS_LIKED: '/blog-likes/is-liked/:blogId',
     },
-    BLOG_PORT: {
+    LINK: {
+        HOME: '/',
+        LOGIN: '/login',
+        BLOG_BY_ID: '/blog/:id',
+        EDIT: '/edit/:id',
+    },
+    AUTH: {
+        TOAST_LOGIN_SUCCESS: 'ログインしました',
+        TOAST_LOGIN_ERROR: 'メールアドレスまたはパスワードが正しくありません',
+        TOAST_LOGOUT_SUCCESS: 'ログアウトしました',
+        TOAST_LOGOUT_ERROR: 'ログアウトに失敗しました',
+    },
+    BLOG_FETCH: {
         TOAST_FETCH_BLOG_ERROR: 'ブログの取得に失敗しました',
         TOAST_FETCH_BLOG_NOT_FOUND: 'ブログが見つかりません',
-    }
+    },
+    BLOG_LIST: {
+        POPULAR: 'popular',
+        NEWEST: 'newest',
+    },
+    BLOG_CREATE: {
+        TOAST_CREATE_BLOG_SUCCESS: 'ブログを作成しました',
+        TOAST_CREATE_BLOG_ERROR: 'ブログの作成に失敗しました',
+    },
+    BLOG_UPDATE: {
+        TOAST_UPDATE_BLOG_SUCCESS: 'ブログを更新しました',
+        TOAST_UPDATE_BLOG_ERROR: 'ブログの更新に失敗しました',
+    },
+    BLOG_DELETE: {
+        TOAST_DELETE_BLOG_SUCCESS: 'ブログを削除しました',
+        TOAST_DELETE_BLOG_ERROR: 'ブログの削除に失敗しました',
+    },
+    BLOG_LIKE: {
+        TOAST_GENERATE_VISIT_ID_ERROR: '訪問者IDの生成に失敗しました',
+        TOAST_LIKE_BLOG_SUCCESS: 'ブログをいいねしました',
+        TOAST_LIKE_BLOG_ERROR: 'ブログのいいねに失敗しました',
+        TOAST_UNLIKE_BLOG_SUCCESS: 'ブログのいいねを取り消しました',
+        TOAST_UNLIKE_BLOG_ERROR: 'ブログのいいねの取り消しに失敗しました',
+    },
 };

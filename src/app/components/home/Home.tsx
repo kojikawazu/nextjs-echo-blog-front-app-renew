@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PulseLoader } from 'react-spinners';
+// constants
+import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // types
 import { Blog } from '@/app/types/blogs';
 // lib
@@ -43,7 +45,7 @@ const Home = ({ tag = '', category = '' }: HomeProps) => {
         tag ? decodeURIComponent(tag) : null,
     );
     // ソート方法
-    const [sortBy, setSortBy] = useState<string>('newest');
+    const [sortBy, setSortBy] = useState<string>(COMMON_CONSTANTS.BLOG_LIST.NEWEST);
     // 検索クエリ
     const [searchQuery, setSearchQuery] = useState<string>('');
     // デバウンス
@@ -105,7 +107,9 @@ const Home = ({ tag = '', category = '' }: HomeProps) => {
                 </div>
             ) : isError ? (
                 <div className="flex justify-center items-center h-screen">
-                    <p className="text-red-500 text-2xl">ブログの取得に失敗しました</p>
+                    <p className="text-red-500 text-2xl">
+                        {COMMON_CONSTANTS.BLOG_FETCH.TOAST_FETCH_BLOG_ERROR}
+                    </p>
                 </div>
             ) : (
                 <>
@@ -122,7 +126,7 @@ const Home = ({ tag = '', category = '' }: HomeProps) => {
                             ))
                         ) : (
                             <p className="text-gray-500 text-center">
-                                ブログが見つかりませんでした
+                                {COMMON_CONSTANTS.BLOG_FETCH.TOAST_FETCH_BLOG_NOT_FOUND}
                             </p>
                         )}
                     </div>

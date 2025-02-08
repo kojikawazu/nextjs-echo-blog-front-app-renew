@@ -13,7 +13,7 @@ export async function generateVisitId(): Promise<string> {
     );
 
     if (!response.ok) {
-        throw new Error('訪問者IDの生成に失敗しました');
+        throw new Error(COMMON_CONSTANTS.BLOG_LIKE.TOAST_GENERATE_VISIT_ID_ERROR);
     }
 
     const data = await response.json();

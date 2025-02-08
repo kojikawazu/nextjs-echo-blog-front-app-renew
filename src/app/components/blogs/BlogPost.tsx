@@ -29,7 +29,8 @@ interface BlogPostProps {
 export function BlogPost({ id }: BlogPostProps) {
     // contexts
     const { user } = useAuth();
-    // query
+
+    // ブログデータの取得
     const {
         data: blog,
         isLoading,
@@ -49,11 +50,15 @@ export function BlogPost({ id }: BlogPostProps) {
                     </div>
                 ) : isError ? (
                     <div className="flex justify-center items-center h-screen">
-                        <p className="text-gray-500 text-2xl">{COMMON_CONSTANTS.BLOG_PORT.TOAST_FETCH_BLOG_ERROR}</p>
+                        <p className="text-gray-500 text-2xl">
+                            {COMMON_CONSTANTS.BLOG_FETCH.TOAST_FETCH_BLOG_ERROR}
+                        </p>
                     </div>
                 ) : !blog ? (
                     <div className="flex justify-center items-center h-screen">
-                        <p className="text-gray-500 text-2xl">{COMMON_CONSTANTS.BLOG_PORT.TOAST_FETCH_BLOG_NOT_FOUND}</p>
+                        <p className="text-gray-500 text-2xl">
+                            {COMMON_CONSTANTS.BLOG_FETCH.TOAST_FETCH_BLOG_NOT_FOUND}
+                        </p>
                     </div>
                 ) : (
                     <>
@@ -68,7 +73,7 @@ export function BlogPost({ id }: BlogPostProps) {
 
                                 {user && user.id === blog.user_id && (
                                     <Link
-                                        href={`/edit/${blog.id}`}
+                                        href={COMMON_CONSTANTS.LINK.EDIT.replace(':id', blog.id)}
                                         className="px-6 py-2 bg-sky-50 text-sky-700 rounded-full hover:bg-sky-100 transition-colors font-medium"
                                     >
                                         編集

@@ -18,7 +18,7 @@ export async function likeBlogById(blogId: string) {
     );
 
     if (!response.ok) {
-        throw new Error('いいねに失敗しました');
+        throw new Error(COMMON_CONSTANTS.BLOG_LIKE.TOAST_LIKE_BLOG_ERROR);
     }
 
     return blogId;

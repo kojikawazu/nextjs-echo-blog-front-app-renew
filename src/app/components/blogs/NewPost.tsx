@@ -7,6 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { PulseLoader } from 'react-spinners';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+// constants
+import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // contexts
 import { useAuth } from '@/app/contexts/AuthContext';
 // schema
@@ -35,7 +37,7 @@ export default function NewPost() {
         }
         // エラーハンドリング
         if (user === null) {
-            router.push('/');
+            router.push(COMMON_CONSTANTS.LINK.HOME);
         }
     }, [isUserLoading, user, router]);
 
@@ -52,11 +54,11 @@ export default function NewPost() {
     const createMutation = useMutation({
         mutationFn: (createdData: BlogCreateFormValues) => createBlog(createdData),
         onSuccess: () => {
-            toast.success('ブログを作成しました');
-            router.push('/');
+            toast.success(COMMON_CONSTANTS.BLOG_CREATE.TOAST_CREATE_BLOG_SUCCESS);
+            router.push(COMMON_CONSTANTS.LINK.HOME);
         },
         onError: () => {
-            toast.error('ブログの作成に失敗しました');
+            toast.error(COMMON_CONSTANTS.BLOG_CREATE.TOAST_CREATE_BLOG_ERROR);
         },
     });
 

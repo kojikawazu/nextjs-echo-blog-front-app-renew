@@ -18,7 +18,7 @@ export async function unlikeBlogById(blogId: string) {
     );
 
     if (!response.ok) {
-        throw new Error('いいねの取り消しに失敗しました');
+        throw new Error(COMMON_CONSTANTS.BLOG_LIKE.TOAST_UNLIKE_BLOG_ERROR);
     }
 
     return blogId;

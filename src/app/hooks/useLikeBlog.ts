@@ -15,7 +15,7 @@ const VISIT_ID_KEY = process.env.NEXT_PUBLIC_VISIT_ID_KEY as string;
  */
 export function useLikeBlog() {
     const queryClient = useQueryClient();
-    const [visitId, setVisitId] = useState<string | null>(null);
+    const [, setVisitId] = useState<string | null>(null);
 
     // 訪問者IDを取得
     useEffect(() => {

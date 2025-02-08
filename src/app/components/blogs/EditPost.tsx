@@ -7,6 +7,8 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
+// constants
+import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // lib
 import { fetchBlogById } from '@/app/lib/api/fetchBlogById';
 import { updateBlogById } from '@/app/lib/api/updateBlogById';
@@ -54,13 +56,13 @@ export default function EditPost({ id }: EditPostProps) {
         }
         // エラーハンドリング
         if (!isLoading && (isError || !blog)) {
-            router.push('/');
+            router.push(COMMON_CONSTANTS.LINK.HOME);
         }
         if (user === null) {
-            router.push('/login');
+            router.push(COMMON_CONSTANTS.LINK.LOGIN);
         }
         if (user && blog && user?.id !== blog?.user_id) {
-            router.push('/login');
+            router.push(COMMON_CONSTANTS.LINK.LOGIN);
         }
     }, [isUserLoading, isError, blog, user, router]);
 
@@ -77,11 +79,11 @@ export default function EditPost({ id }: EditPostProps) {
     const updateMutation = useMutation({
         mutationFn: (updatedData: BlogEditFormValues) => updateBlogById(id, updatedData),
         onSuccess: () => {
-            toast.success('ブログを更新しました');
-            router.push(`/blog/${id}`);
+            toast.success(COMMON_CONSTANTS.BLOG_UPDATE.TOAST_UPDATE_BLOG_SUCCESS);
+            router.push(COMMON_CONSTANTS.LINK.BLOG_BY_ID.replace(':id', id));
         },
         onError: () => {
-            toast.error('ブログの更新に失敗しました');
+            toast.error(COMMON_CONSTANTS.BLOG_UPDATE.TOAST_UPDATE_BLOG_ERROR);
         },
     });
 
@@ -89,11 +91,11 @@ export default function EditPost({ id }: EditPostProps) {
     const deleteMutation = useMutation({
         mutationFn: () => deleteBlogById(id),
         onSuccess: () => {
-            toast.success('ブログを削除しました');
-            router.push('/');
+            toast.success(COMMON_CONSTANTS.BLOG_DELETE.TOAST_DELETE_BLOG_SUCCESS);
+            router.push(COMMON_CONSTANTS.LINK.HOME);
         },
         onError: () => {
-            toast.error('ブログの削除に失敗しました');
+            toast.error(COMMON_CONSTANTS.BLOG_DELETE.TOAST_DELETE_BLOG_ERROR);
         },
     });
 

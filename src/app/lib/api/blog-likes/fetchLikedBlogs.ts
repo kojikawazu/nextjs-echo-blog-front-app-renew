@@ -14,7 +14,7 @@ export async function fetchLikedBlogs(): Promise<string[]> {
     );
 
     if (!response.ok) {
-        throw new Error('いいね済みのブログの取得に失敗しました');
+        throw new Error(COMMON_CONSTANTS.BLOG_LIKE.TOAST_LIKE_BLOG_ERROR);
     }
 
     const data = await response.json();
