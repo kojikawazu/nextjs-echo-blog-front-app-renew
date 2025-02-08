@@ -15,7 +15,7 @@ import { useAuth } from '@/app/contexts/AuthContext';
 // lib
 import { fetchBlogById } from '@/app/lib/api/fetchBlogById';
 // components
-import { CommentSection } from '@/app/components/blogs/parts/CommentSection';
+import { CommentsSection } from '@/app/components/blogs/parts/CommentsSection';
 
 interface BlogPostProps {
     id: string;
@@ -28,7 +28,7 @@ interface BlogPostProps {
  */
 export function BlogPost({ id }: BlogPostProps) {
     // contexts
-    const { user } = useAuth();
+    const { user, isLoading: isAuthLoading } = useAuth();
 
     // ブログデータの取得
     const {
@@ -44,7 +44,7 @@ export function BlogPost({ id }: BlogPostProps) {
     return (
         <article className="bg-white rounded-2xl shadow-sm border border-sky-100">
             <div className="p-8">
-                {isLoading ? (
+                {isLoading || isAuthLoading ? (
                     <div className="h-16 flex items-center justify-center h-screen">
                         <PulseLoader color="#dddddd" size={10} />
                     </div>
@@ -112,7 +112,7 @@ export function BlogPost({ id }: BlogPostProps) {
                         </div>
 
                         <div className="mt-12 pt-12 border-t border-sky-100">
-                            <CommentSection blogId={blog.id} />
+                            <CommentsSection blogId={blog.id} />
                         </div>
                     </>
                 )}

@@ -16,6 +16,9 @@ export const COMMON_CONSTANTS = {
         BLOG_LIKE_CREATE: '/blog-likes/create/:blogId',
         BLOG_LIKE_DELETE: '/blog-likes/delete/:blogId',
         BLOG_LIKE_IS_LIKED: '/blog-likes/is-liked/:blogId',
+
+        COMMENTS_BLOG: '/comments/blog/:blogId',
+        COMMENTS_CREATE: '/comments/create',
     },
     LINK: {
         HOME: '/',
@@ -62,5 +65,10 @@ export const COMMON_CONSTANTS = {
         TOAST_LIKE_BLOG_ERROR: 'ブログのいいねに失敗しました',
         TOAST_UNLIKE_BLOG_SUCCESS: 'ブログのいいねを取り消しました',
         TOAST_UNLIKE_BLOG_ERROR: 'ブログのいいねの取り消しに失敗しました',
+    },
+    BLOG_COMMENTS: {
+        TOAST_FETCH_COMMENTS_ERROR: 'コメントの取得に失敗しました',
+        TOAST_CREATE_COMMENT_SUCCESS: 'コメントを作成しました',
+        TOAST_CREATE_COMMENT_ERROR: 'コメントの作成に失敗しました',
     },
 };
