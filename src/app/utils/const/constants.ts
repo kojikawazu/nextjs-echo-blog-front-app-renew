@@ -22,12 +22,19 @@ export const COMMON_CONSTANTS = {
         LOGIN: '/login',
         BLOG_BY_ID: '/blog/:id',
         EDIT: '/edit/:id',
+        TAG: '/tag/:tag',
+        CATEGORY: '/category/:category',
     },
     AUTH: {
         TOAST_LOGIN_SUCCESS: 'ログインしました',
         TOAST_LOGIN_ERROR: 'メールアドレスまたはパスワードが正しくありません',
         TOAST_LOGOUT_SUCCESS: 'ログアウトしました',
         TOAST_LOGOUT_ERROR: 'ログアウトに失敗しました',
+    },
+    SIDE_BAR: {
+        CATEGORY_TITLE: 'カテゴリー',
+        POPULAR_TITLE: '人気記事',
+        TAG_TITLE: 'タグ',
     },
     BLOG_FETCH: {
         TOAST_FETCH_BLOG_ERROR: 'ブログの取得に失敗しました',

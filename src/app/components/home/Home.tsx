@@ -85,7 +85,11 @@ const Home = ({ tag = '', category = '' }: HomeProps) => {
     return (
         <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-8">
-                {tag ? `#${tag}の記事` : category ? `${category}の記事` : '最新の記事'}
+                {selectedTag
+                    ? `#${selectedTag}の記事`
+                    : selectedCategory
+                      ? `${selectedCategory}の記事`
+                      : '最新の記事'}
             </h1>
 
             <BlogFilter
