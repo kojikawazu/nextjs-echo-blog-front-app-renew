@@ -17,4 +17,8 @@ export const COMMON_CONSTANTS = {
         BLOG_LIKE_DELETE: '/blog-likes/delete/:blogId',
         BLOG_LIKE_IS_LIKED: '/blog-likes/is-liked/:blogId',
     },
+    BLOG_PORT: {
+        TOAST_FETCH_BLOG_ERROR: 'ブログの取得に失敗しました',
+        TOAST_FETCH_BLOG_NOT_FOUND: 'ブログが見つかりません',
+    }
 };

@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import ReactMarkdown from 'react-markdown';
 import { PulseLoader } from 'react-spinners';
+// constants
+import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // contexts
 import { useAuth } from '@/app/contexts/AuthContext';
 // lib
@@ -27,7 +29,7 @@ interface BlogPostProps {
 export function BlogPost({ id }: BlogPostProps) {
     // contexts
     const { user } = useAuth();
-
+    // query
     const {
         data: blog,
         isLoading,
@@ -47,11 +49,11 @@ export function BlogPost({ id }: BlogPostProps) {
                     </div>
                 ) : isError ? (
                     <div className="flex justify-center items-center h-screen">
-                        <p className="text-gray-500 text-2xl">ブログの取得に失敗しました</p>
+                        <p className="text-gray-500 text-2xl">{COMMON_CONSTANTS.BLOG_PORT.TOAST_FETCH_BLOG_ERROR}</p>
                     </div>
                 ) : !blog ? (
                     <div className="flex justify-center items-center h-screen">
-                        <p className="text-gray-500 text-2xl">ブログが見つかりません</p>
+                        <p className="text-gray-500 text-2xl">{COMMON_CONSTANTS.BLOG_PORT.TOAST_FETCH_BLOG_NOT_FOUND}</p>
                     </div>
                 ) : (
                     <>
