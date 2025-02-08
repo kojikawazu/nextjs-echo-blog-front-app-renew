@@ -3,6 +3,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 // constants
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // types
@@ -76,13 +77,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return response.json();
         },
         onSuccess: async () => {
+            toast.success('ログインしました');
             // 認証状態を再取得
             await refetch();
             // ホーム画面へ移動
             router.push('/');
         },
         onError: () => {
-            alert('メールアドレスまたはパスワードが正しくありません');
+            toast.error('メールアドレスまたはパスワードが正しくありません');
         },
     });
 
@@ -103,6 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return response.json();
         },
         onSuccess: async () => {
+            toast.success('ログアウトしました');
             // 認証状態を再取得
             await refetch();
             // ログイン画面へ移動
