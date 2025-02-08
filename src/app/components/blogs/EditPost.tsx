@@ -6,6 +6,7 @@ import { PulseLoader } from 'react-spinners';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import toast from 'react-hot-toast';
 // lib
 import { fetchBlogById } from '@/app/lib/api/fetchBlogById';
 import { updateBlogById } from '@/app/lib/api/updateBlogById';
@@ -76,7 +77,11 @@ export default function EditPost({ id }: EditPostProps) {
     const updateMutation = useMutation({
         mutationFn: (updatedData: BlogEditFormValues) => updateBlogById(id, updatedData),
         onSuccess: () => {
+            toast.success('ブログを更新しました');
             router.push(`/blog/${id}`);
+        },
+        onError: () => {
+            toast.error('ブログの更新に失敗しました');
         },
     });
 
@@ -84,7 +89,11 @@ export default function EditPost({ id }: EditPostProps) {
     const deleteMutation = useMutation({
         mutationFn: () => deleteBlogById(id),
         onSuccess: () => {
+            toast.success('ブログを削除しました');
             router.push('/');
+        },
+        onError: () => {
+            toast.error('ブログの削除に失敗しました');
         },
     });
 

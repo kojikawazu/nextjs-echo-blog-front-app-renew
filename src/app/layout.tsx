@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 // provider
 import { QueryProvider } from './provider/QueryProvider';
+import { ToastProvider } from './provider/ToastProvider';
 // context
 import { AuthProvider } from './contexts/AuthContext';
 // css
@@ -25,7 +26,10 @@ export default function RootLayout({
         <html lang="ja">
             <body>
                 <QueryProvider>
-                    <AuthProvider>{children}</AuthProvider>
+                    <AuthProvider>
+                        <ToastProvider />
+                        {children}
+                    </AuthProvider>
                 </QueryProvider>
             </body>
         </html>

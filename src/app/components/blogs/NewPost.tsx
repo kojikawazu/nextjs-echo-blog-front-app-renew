@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PulseLoader } from 'react-spinners';
 import { useMutation } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 // contexts
 import { useAuth } from '@/app/contexts/AuthContext';
 // schema
@@ -51,7 +52,11 @@ export default function NewPost() {
     const createMutation = useMutation({
         mutationFn: (createdData: BlogCreateFormValues) => createBlog(createdData),
         onSuccess: () => {
+            toast.success('ブログを作成しました');
             router.push('/');
+        },
+        onError: () => {
+            toast.error('ブログの作成に失敗しました');
         },
     });
 
