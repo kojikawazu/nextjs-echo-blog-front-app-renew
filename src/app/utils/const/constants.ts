@@ -7,6 +7,9 @@ export const COMMON_CONSTANTS = {
 
         BLOGS: '/blogs',
         BLOG_BY_ID: '/blogs/detail/:id',
+        BLOG_CATEGORIES: '/blogs/categories',
+        BLOG_TAGS: '/blogs/tags',
+        BLOG_POPULAR: '/blogs/popular/:count',
         BLOG_CREATE: '/blogs/create',
         BLOG_UPDATE_BY_ID: '/blogs/update/:id',
         BLOG_DELETE_BY_ID: '/blogs/delete/:id',
@@ -70,5 +73,9 @@ export const COMMON_CONSTANTS = {
         TOAST_FETCH_COMMENTS_ERROR: 'コメントの取得に失敗しました',
         TOAST_CREATE_COMMENT_SUCCESS: 'コメントを作成しました',
         TOAST_CREATE_COMMENT_ERROR: 'コメントの作成に失敗しました',
+    },
+    GLOBAL_CONTEXT: {
+        BLOG_POPULAR_COUNT: 5,
+        FETCH_GLOBAL_DATA_ERROR: 'グローバルデータの取得に失敗しました',
     },
 };
