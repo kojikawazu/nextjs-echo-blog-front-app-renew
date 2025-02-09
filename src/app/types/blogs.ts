@@ -7,6 +7,7 @@ export interface Blog {
     tags: string[];
     description: string;
     likes: number;
+    comment_cnt: number;
     created_at: string;
     updated_at: string;
 }

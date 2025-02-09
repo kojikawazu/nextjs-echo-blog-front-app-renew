@@ -55,6 +55,7 @@ export async function fetchBlogs(
                         : [],
               description: blog.description,
               likes: blog.likes ?? 0,
+              comment_cnt: blog.comment_cnt ?? 0,
               created_at: new Date(blog.created_at).toLocaleDateString('ja-JP'),
               updated_at: new Date(blog.updated_at).toLocaleDateString('ja-JP'),
           }))
