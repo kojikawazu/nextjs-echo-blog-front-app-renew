@@ -5,8 +5,6 @@ import { Calendar, ThumbsUp, MessageCircle } from 'lucide-react';
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // types
 import type { Blog } from '@/app/types/blogs';
-// stores
-import { useCommentStore } from '@/app/stores/commentStores';
 
 interface BlogCardProps {
     blog: Blog;
@@ -24,8 +22,6 @@ interface BlogCardProps {
  * @returns JSX.Element
  */
 export function BlogCard({ blog, hasLiked, likeBlog, unlikeBlog }: BlogCardProps) {
-    const { comments } = useCommentStore();
-    const commentCount = comments.filter((c) => c.blog_id === blog.id).length;
     // いいね済みか判定
     const isLiked = hasLiked(blog.id);
 
@@ -81,7 +77,7 @@ export function BlogCard({ blog, hasLiked, likeBlog, unlikeBlog }: BlogCardProps
                         </button>
                         <div className="flex items-center space-x-1 text-sm text-gray-500">
                             <MessageCircle className="h-4 w-4" />
-                            <span>{commentCount}</span>
+                            <span>{blog.comment_cnt}</span>
                         </div>
                     </div>
 

@@ -34,6 +34,7 @@ export async function fetchBlogById(blogId: string) {
                   : [],
         description: data.description,
         likes: data.likes ?? 0,
+        comment_cnt: data.comment_cnt ?? 0,
         created_at: new Date(data.created_at).toLocaleDateString('ja-JP'),
         updated_at: new Date(data.updated_at).toLocaleDateString('ja-JP'),
     };
