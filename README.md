@@ -50,4 +50,4 @@ Zennの記事やQiitaの記事も溜まっており、GitHubに管理してい�
 
 アーカイブ用リポジトリは以下になります。
 
-[Web側リポジトリ](https://github.com/kojikawazu/nextjs-echo-front-blog-app)
+[Web側リポジトリ](https://github.com/kojikawazu/archive-nextjs-echo-front-blog-app)
