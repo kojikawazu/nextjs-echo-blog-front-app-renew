@@ -1,21 +1,26 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar, Tag } from 'lucide-react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import ReactMarkdown from 'react-markdown';
 import { PulseLoader } from 'react-spinners';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import rehypeHighlight from 'rehype-highlight';
 // constants
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // contexts
 import { useAuth } from '@/app/contexts/AuthContext';
 // lib
 import { fetchBlogById } from '@/app/lib/api/fetchBlogById';
+import { fetchMarkdown } from '@/app/lib/api/github/fetchGitHub';
 // components
 import { CommentsSection } from '@/app/components/blogs/parts/CommentsSection';
+// css
+import 'highlight.js/styles/atom-one-dark.css';
+import '@/app/styles/markdown.css';
 
 interface BlogPostProps {
     id: string;
@@ -29,6 +34,8 @@ interface BlogPostProps {
 export function BlogPost({ id }: BlogPostProps) {
     // contexts
     const { user, isLoading: isAuthLoading } = useAuth();
+    // states
+    const [markdownData, setMarkdownData] = useState<string | null>(null);
 
     // ブログデータの取得
     const {
@@ -40,6 +47,17 @@ export function BlogPost({ id }: BlogPostProps) {
         queryFn: () => fetchBlogById(id),
         enabled: !!id,
     });
+
+    // GitHubのURLからMarkdownデータを取得
+    useEffect(() => {
+        const fetchMarkdownData = async () => {
+            if (blog && blog.github_url) {
+                const markdownData = await fetchMarkdown(blog.github_url);
+                setMarkdownData(markdownData);
+            }
+        };
+        fetchMarkdownData();
+    }, [blog]);
 
     return (
         <article className="bg-white rounded-2xl shadow-sm border border-sky-100">
@@ -94,22 +112,16 @@ export function BlogPost({ id }: BlogPostProps) {
                                     </div>
                                 ))}
                             </div>
-
-                            {blog.github_url && (
-                                <a
-                                    href={blog.github_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-gray-300 hover:text-primary transition-colors"
-                                >
-                                    <FontAwesomeIcon icon={faGithub} size="lg" />
-                                </a>
-                            )}
                         </header>
 
-                        <div className="prose prose-sky max-w-none">
-                            <ReactMarkdown>{blog.description}</ReactMarkdown>
-                        </div>
+                        <div className="">{blog.description}</div>
+                        <ReactMarkdown
+                            className="prose prose-sky max-w-none markdown-content"
+                            remarkPlugins={[remarkGfm, remarkBreaks]}
+                            rehypePlugins={[rehypeHighlight]}
+                        >
+                            {markdownData}
+                        </ReactMarkdown>
 
                         <div className="mt-12 pt-12 border-t border-sky-100">
                             <CommentsSection blogId={blog.id} />

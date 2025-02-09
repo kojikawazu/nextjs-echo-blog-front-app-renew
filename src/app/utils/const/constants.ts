@@ -78,4 +78,9 @@ export const COMMON_CONSTANTS = {
         BLOG_POPULAR_COUNT: 5,
         FETCH_GLOBAL_DATA_ERROR: 'グローバルデータの取得に失敗しました',
     },
+    GITHUB: {
+        ERROR_MESSAGE: {
+            API_ROUTER_ERROR: 'GitHub APIの取得に失敗しました',
+        },
+    },
 };

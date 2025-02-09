@@ -8,6 +8,9 @@ npm i --save-dev prettier eslint-config-prettier
 npm i zod react-hook-form @hookform/resolvers @tanstack/react-query
 npm i react-hot-toast
 npm i --save-dev react-modal @types/react-modal
+npm i gray-matter 
+npm i remark-gfm remark-breaks rehype-raw rehype-highlight
+npm i highlight.js
 ```
 
 
