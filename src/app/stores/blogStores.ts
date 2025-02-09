@@ -36,6 +36,7 @@ const initialBlogs: Blog[] = [
         description:
             '# 2024年のウェブ開発トレンド\n\n## はじめに\n最新のウェブ開発トレンドと、開発者が知っておくべき重要な技術について解説します。\n\n## 主要なトレンド\n1. AIと機械学習の統合\n2. WebAssemblyの普及\n3. Edge Computingの台頭\n\n## まとめ\n2024年は技術の革新が加速する年となりそうです。',
         likes: 42,
+        comment_cnt: 10,
         created_at: '2024-01-15T10:00:00Z',
         updated_at: '2024-01-15T10:00:00Z',
     },
@@ -49,6 +50,7 @@ const initialBlogs: Blog[] = [
         description:
             '# Reactの新機能とベストプラクティス\n\n## 概要\nReact 19の新機能と、モダンなReactアプリケーション開発におけるベストプラクティスを紹介します。\n\n## 主要な変更点\n- 新しいフック\n- パフォーマンスの改善\n- エラーハンドリング',
         likes: 35,
+        comment_cnt: 5,
         created_at: '2024-01-14T15:30:00Z',
         updated_at: '2024-01-14T15:30:00Z',
     },
@@ -62,6 +64,7 @@ const initialBlogs: Blog[] = [
         description:
             '# TypeScriptで型安全なアプリケーション開発\n\n## はじめに\n型安全性を確保しながら、保守性の高いアプリケーションを開発する方法を解説します。\n\n## ポイント\n1. 厳格な型チェック\n2. ジェネリクスの活用\n3. 型推論の活用',
         likes: 28,
+        comment_cnt: 3,
         created_at: '2024-01-13T09:15:00Z',
         updated_at: '2024-01-13T09:15:00Z',
     },
@@ -75,6 +78,7 @@ const initialBlogs: Blog[] = [
         description:
             '# Next.js 14の新機能総まとめ\n\n## 主要な新機能\n- Server Actionsの改善\n- Turbopackの安定版\n- 部分的プリレンダリング\n\n## パフォーマンスの改善\nNext.js 14では様々な面でパフォーマンスが向上しています。',
         likes: 31,
+        comment_cnt: 2,
         created_at: '2024-01-12T14:20:00Z',
         updated_at: '2024-01-12T14:20:00Z',
     },
@@ -88,6 +92,7 @@ const initialBlogs: Blog[] = [
         description:
             '# マイクロフロントエンドアーキテクチャ入門\n\n## 概要\nマイクロフロントエンドの基本概念と実装方法について解説します。\n\n## 実装方法\n1. Module Federationの活用\n2. Web Componentsの利用\n3. ルーティングの設計',
         likes: 25,
+        comment_cnt: 1,
         created_at: '2024-01-11T11:45:00Z',
         updated_at: '2024-01-11T11:45:00Z',
     },
@@ -101,6 +106,7 @@ const initialBlogs: Blog[] = [
         description:
             '# Rustで始める WebAssembly開発\n\n## はじめに\nRustを使用してWebAssemblyアプリケーションを開発する方法を解説します。\n\n## 環境構築\n- Rustのインストール\n- wasm-packの設定\n- 開発環境の準備',
         likes: 22,
+        comment_cnt: 0,
         created_at: '2024-01-10T16:30:00Z',
         updated_at: '2024-01-10T16:30:00Z',
     },
@@ -114,6 +120,7 @@ const initialBlogs: Blog[] = [
         description:
             '# GraphQLスキーマ設計のベストプラクティス\n\n## スキーマ設計の原則\n1. 型の命名規則\n2. リレーションの設計\n3. ページネーションの実装\n\n## クエリの最適化\nN+1問題の解決方法とデータローダーの実装について解説します。',
         likes: 19,
+        comment_cnt: 0,
         created_at: '2024-01-09T13:20:00Z',
         updated_at: '2024-01-09T13:20:00Z',
     },
@@ -127,6 +134,7 @@ const initialBlogs: Blog[] = [
         description:
             '# Dockerコンテナのセキュリティ対策\n\n## 主要な対策\n1. イメージのスキャン\n2. 権限の最小化\n3. ネットワークセキュリティ\n\n## ベストプラクティス\nセキュアなDockerfile作成のガイドラインを紹介します。',
         likes: 27,
+        comment_cnt: 0,
         created_at: '2024-01-08T10:10:00Z',
         updated_at: '2024-01-08T10:10:00Z',
     },
@@ -140,6 +148,7 @@ const initialBlogs: Blog[] = [
         description:
             '# CSS Grid レイアウトマスターガイド\n\n## 基本概念\n- グリッドコンテナ\n- グリッドアイテム\n- グリッドライン\n\n## 実践的なレイアウト\n様々なレスポンシブレイアウトの実装例を紹介します。',
         likes: 33,
+        comment_cnt: 0,
         created_at: '2024-01-07T09:00:00Z',
         updated_at: '2024-01-07T09:00:00Z',
     },
@@ -153,6 +162,7 @@ const initialBlogs: Blog[] = [
         description:
             '# Kubernetes入門：基礎から実践まで\n\n## 基本概念\n1. Podの理解\n2. Serviceの役割\n3. Deploymentの管理\n\n## クラスター管理\nクラスターの構築から運用までを詳しく解説します。',
         likes: 29,
+        comment_cnt: 0,
         created_at: '2024-01-06T08:30:00Z',
         updated_at: '2024-01-06T08:30:00Z',
     },
@@ -166,6 +176,7 @@ const initialBlogs: Blog[] = [
         description:
             '# Vue.js 3のComposition API完全ガイド\n\n## 基本概念\n- setup関数\n- リアクティビティ\n- ライフサイクルフック\n\n## ユースケース\n実践的なコード例を交えて解説します。',
         likes: 24,
+        comment_cnt: 0,
         created_at: '2024-01-05T12:45:00Z',
         updated_at: '2024-01-05T12:45:00Z',
     },
@@ -179,6 +190,7 @@ const initialBlogs: Blog[] = [
         description:
             '# モノレポ管理ツール比較\n\n## 主要なツール\n1. Nx\n2. Turborepo\n3. Lerna\n\n## 選定のポイント\n各ツールの特徴と使い分けについて解説します。',
         likes: 21,
+        comment_cnt: 0,
         created_at: '2024-01-04T14:15:00Z',
         updated_at: '2024-01-04T14:15:00Z',
     },
