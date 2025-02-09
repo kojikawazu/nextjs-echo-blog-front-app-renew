@@ -1,0 +1,109 @@
+/* Markdown 全体のスタイル */
+.markdown-content {
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.7; /* ✅ **行間を 1.7 に調整（中間の広さ）** */
+    color: #333;
+    background-color: #fefefe;
+    font-size: 16px;
+    padding: 2em;
+}
+
+/* **見出し（# 見出し）に下線を追加** */
+.markdown-content h1 {
+    font-size: 2em;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    word-wrap: break-word;
+    word-break: break-all;
+    border-bottom: 3px solid #eaecef; /* ✅ **h1に太めの下線** */
+    padding-bottom: 0.2em;
+}
+
+.markdown-content h2 {
+    font-size: 1.5em;
+    margin-top: 1em;
+    word-wrap: break-word;
+    word-break: break-all;
+    border-bottom: 2px solid #eaecef; /* ✅ **h2に細めの下線** */
+    padding-bottom: 0.2em;
+}
+
+.markdown-content h3 {
+    font-size: 1.25em;
+    margin-top: 1em;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+/* **段落の余白を増やす** */
+.markdown-content p {
+    margin-bottom: 1.2em; /* ✅ **段落ごとに余白を増やす** */
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+/* **リストの余白を増やす** */
+.markdown-content ul {
+    list-style-type: disc;
+    margin-left: 1.5em;
+    margin-bottom: 1em; /* ✅ **リストの間隔を広げる** */
+}
+
+.markdown-content ol {
+    list-style-type: decimal;
+    margin-left: 1.5em;
+    margin-bottom: 1em; /* ✅ **リストの間隔を広げる** */
+}
+
+/* 引用ブロック */
+.markdown-content blockquote {
+    border-left: 4px solid #dfe2e5;
+    padding: 1em; /* ✅ **引用の余白も調整** */
+    color: #6a737d;
+    background-color: #f6f8fa;
+    margin-bottom: 1.2em; /* ✅ **引用ブロックの間隔を広げる** */
+}
+
+/* リンクのスタイル */
+.markdown-content a {
+    color: #0366d6;
+    text-decoration: none;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.markdown-content a:hover {
+    text-decoration: underline;
+}
+
+/* **インラインコードのスタイル（変更なし）** */
+.markdown-content code {
+    background-color: #f6f8fa;
+    color: #d63384;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* **コードブロック（黒背景 & 白文字）** */
+.markdown-content pre {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    padding: 1.5em; /* ✅ **コードブロックの余白を増やす** */
+    border-radius: 6px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* コードブロック内の `code` は `pre` の設定を継承 */
+.markdown-content pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    font-size: 100%;
+}
