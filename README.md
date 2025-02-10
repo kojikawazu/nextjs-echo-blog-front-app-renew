@@ -40,6 +40,12 @@ Zennの記事やQiitaの記事も溜まっており、GitHubに管理してい�
 
 ![Architecture](./architecture/architecture.drawio.png)
 
+## Environment
+
+環境変数は以下ファイルを参照してください。
+
+[Environment](./manuals/environment.md)
+
 ## Backend Repository
 
 バックエンド側のリポジトリは以下になります。
