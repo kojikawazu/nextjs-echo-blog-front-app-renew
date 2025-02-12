@@ -29,6 +29,10 @@ variable "invoker_role" {
   type = string
 }
 
+variable "invoker_member" {
+  type = string
+}
+
 variable "service_name" {
   type = string
 }
