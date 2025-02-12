@@ -7,5 +7,5 @@ resource "google_cloud_run_service_iam_member" "invoker" {
   project  = var.gcp_project_id
 
   role   = var.invoker_role
-  member = "allUsers"
+  member = var.invoker_member
 }
