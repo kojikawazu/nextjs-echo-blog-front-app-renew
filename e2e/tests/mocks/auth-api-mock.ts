@@ -23,7 +23,7 @@ export async function setupAuthCheckMock(page: Page, options: { authenticated: b
     });
 }
 
-// 追加：ログインAPIのモック
+// ログインAPIのモック
 export async function setupLoginMock(page: Page, options: { success: boolean }) {
     await page.route('**/users/login', async (route) => {
         if (options.success) {
@@ -44,5 +44,16 @@ export async function setupLoginMock(page: Page, options: { success: boolean }) 
                 body: JSON.stringify({ message: 'Invalid credentials' }),
             });
         }
+    });
+}
+
+// ログアウトAPIのモック
+export async function setupLogoutMock(page: Page, options: { success: boolean }) {
+    await page.route('**/users/logout', async (route) => {
+        await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ message: 'Logout successful' }),
+        });
     });
 }
