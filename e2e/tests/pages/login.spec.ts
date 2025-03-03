@@ -81,6 +81,8 @@ test.describe('Home Page (Unauthenticated)', () => {
         await page.getByRole('button', { name: 'ログイン' }).click();
 
         // ログイン失敗のメッセージが表示される
-        await expect(page.getByText('メールアドレスまたはパスワードが正しくありません')).toBeVisible();
+        await expect(
+            page.getByText('メールアドレスまたはパスワードが正しくありません'),
+        ).toBeVisible();
     });
 });
