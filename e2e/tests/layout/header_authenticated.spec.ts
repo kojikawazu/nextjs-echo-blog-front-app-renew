@@ -24,7 +24,7 @@ test.describe('Header (Authenticated)', () => {
 
         // 名前
         await expect(page.getByText('Mock User')).toBeVisible();
-       
+
         // ログアウト
         await expect(page.getByRole('button', { name: 'ログアウト' })).toBeVisible();
     });
@@ -64,7 +64,7 @@ test.describe('Header (Authenticated)', () => {
     test('Header logout link redirects to login page', async ({ page }) => {
         // ログアウトAPIのモック設定
         await setupLogoutMock(page, { success: true });
-        
+
         // ホームページにアクセス
         await page.goto('/');
 

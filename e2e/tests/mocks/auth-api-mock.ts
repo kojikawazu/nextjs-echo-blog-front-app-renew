@@ -23,7 +23,11 @@ export async function setupAuthCheckMock(page: Page, options: { authenticated: b
     });
 }
 
-// ログインAPIのモック
+/**
+ * ログインAPIのモック設定
+ * @param page
+ * @param options
+ */
 export async function setupLoginMock(page: Page, options: { success: boolean }) {
     await page.route('**/users/login', async (route) => {
         if (options.success) {
@@ -47,7 +51,11 @@ export async function setupLoginMock(page: Page, options: { success: boolean }) 
     });
 }
 
-// ログアウトAPIのモック
+/**
+ * ログアウトAPIのモック設定
+ * @param page
+ * @param options
+ */
 export async function setupLogoutMock(page: Page, options: { success: boolean }) {
     await page.route('**/users/logout', async (route) => {
         await route.fulfill({

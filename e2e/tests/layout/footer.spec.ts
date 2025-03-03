@@ -23,7 +23,7 @@ test.describe('Footer (Unauthenticated)', () => {
         await expect(page.getByText('フォロー')).toBeVisible();
         await expect(page.getByText('Twitter')).toBeVisible();
         await expect(page.getByText('GitHub')).toBeVisible();
-        
+
         // Copyright
         await expect(page.getByText(`© ${new Date().getFullYear()} TechBlog`)).toBeVisible();
     });
