@@ -6,6 +6,7 @@ test.describe('Home Page (Unauthenticated)', () => {
         // APIのモック設定（auth-checkで未認証状態を返す）
         await setupAuthCheckMock(page, { authenticated: false });
 
+        // ホームページにアクセス
         await page.goto('/');
 
         // 未認証でもホームにアクセスできる
@@ -16,6 +17,7 @@ test.describe('Home Page (Unauthenticated)', () => {
         // APIのモック設定（auth-checkで認証状態を返す）
         await setupAuthCheckMock(page, { authenticated: false });
 
+        // ログインページにアクセス
         await page.goto('/login');
 
         // ログインページが表示される
@@ -38,6 +40,7 @@ test.describe('Home Page (Unauthenticated)', () => {
         // APIのモック設定（auth-checkで認証状態を返す）
         await setupAuthCheckMock(page, { authenticated: true });
 
+        // ログインページにアクセス
         await page.goto('/login');
 
         // ログインフォームに入力
@@ -55,6 +58,7 @@ test.describe('Home Page (Unauthenticated)', () => {
     });
 
     test('Login with input invalid credentials', async ({ page }) => {
+        // ログインページにアクセス
         await page.goto('/login');
 
         // ログインボタンをクリック
@@ -71,6 +75,7 @@ test.describe('Home Page (Unauthenticated)', () => {
         // ログインAPIのモック設定（成功）
         await setupLoginMock(page, { success: false });
 
+        // ログインページにアクセス
         await page.goto('/login');
 
         // ログインフォームに入力

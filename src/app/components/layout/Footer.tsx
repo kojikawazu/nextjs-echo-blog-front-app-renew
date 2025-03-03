@@ -23,7 +23,7 @@ export function Footer() {
                             リンク
                         </h3>
                         <ul className="space-y-3">
-                            <li>
+                            {/* <li>
                                 <Link
                                     href="/terms"
                                     className="text-gray-600 hover:text-green-600 transition-colors"
@@ -38,7 +38,7 @@ export function Footer() {
                                 >
                                     プライバシーポリシー
                                 </Link>
-                            </li>
+                            </li> */}
                             <li>
                                 <Link
                                     href="/contact"
@@ -71,7 +71,7 @@ export function Footer() {
                 </div>
                 <div className="mt-12 border-t border-green-100/50 pt-8">
                     <p className="text-center text-gray-600">
-                        © 2024 TechBlog. All rights reserved.
+                        © {new Date().getFullYear()} TechBlog. All rights reserved.
                     </p>
                 </div>
             </div>
