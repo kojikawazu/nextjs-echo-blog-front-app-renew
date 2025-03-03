@@ -50,3 +50,7 @@ terraform/terraform.tfvars
 # Other
 LICENSE.txt
 private/
+
+# reports
+jest-report/
+playwright-report/

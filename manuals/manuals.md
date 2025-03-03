@@ -13,7 +13,6 @@ npm i remark-gfm remark-breaks rehype-raw rehype-highlight
 npm i highlight.js
 ```
 
-
 ## Google Cloud 有効にしたAPI
 
 - Artifact Registry API
@@ -30,3 +29,33 @@ gcloud run domain-mappings create \
   --region=[region]
 ```
 
+## テストの導入
+
+### パッケージのインストール
+
+```bash
+# jestテスト
+npm install -D jest jest-environment-jsdom @testing-library/react @testing-library/jest-dom ts-jest node-mocks-http\n
+npm install -D @types/jest
+
+# e2eテスト
+npm install -D @playwright/test
+npx playwright install
+npx playwright install-deps
+```
+
+### 初期設定
+
+### jestテスト
+
+```bash
+npx ts-jest config:init
+touch jest.setup.ts
+```
+
+### e2eテスト
+
+```bash
+touch playwright.config.ts
+mkdir -p e2e/tests
+```
