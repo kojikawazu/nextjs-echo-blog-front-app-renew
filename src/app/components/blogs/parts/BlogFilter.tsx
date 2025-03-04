@@ -53,6 +53,7 @@ export function BlogFilter({
 
                 <div className="flex flex-wrap gap-4">
                     <select
+                        aria-label="カテゴリー"
                         value={selectedCategory || ''}
                         onChange={(e) => setCategory(e.target.value || null)}
                         className="px-4 py-2 bg-sky-50 border border-sky-200 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"
@@ -66,6 +67,7 @@ export function BlogFilter({
                     </select>
 
                     <select
+                        aria-label="タグ"
                         value={selectedTag || ''}
                         onChange={(e) => setTag(e.target.value || null)}
                         className="px-4 py-2 bg-sky-50 border border-sky-200 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"

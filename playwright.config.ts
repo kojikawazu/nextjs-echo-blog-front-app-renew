@@ -10,6 +10,8 @@ export default defineConfig({
     retries: process.env.CI ? 2 : 0,
     // テストの実行結果のレポート
     reporter: [['html', { outputFolder: 'playwright-report' }]],
+    // テストのタイムアウト
+    timeout: 30000,
     // テストの実行環境
     use: {
         // テストの実行環境のベースURL
