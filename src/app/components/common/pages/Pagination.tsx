@@ -20,6 +20,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
     return (
         <div className="flex items-center justify-center space-x-3">
             <button
+                aria-label="前のページへ"
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className="p-3 rounded-full hover:bg-sky-50 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600 hover:text-sky-600 transition-colors border border-sky-100"
@@ -42,6 +43,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
             ))}
 
             <button
+                aria-label="次のページへ"
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className="p-3 rounded-full hover:bg-sky-50 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600 hover:text-sky-600 transition-colors border border-sky-100"
