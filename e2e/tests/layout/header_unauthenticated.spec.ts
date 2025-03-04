@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupAuthCheckMock } from '../mocks/auth-api-mock';
+import { setupAuthCheckMock } from '../mocks/api/auth-api-mock';
 
 test.describe('Header (Unauthenticated)', () => {
     test.beforeEach(async ({ page }) => {

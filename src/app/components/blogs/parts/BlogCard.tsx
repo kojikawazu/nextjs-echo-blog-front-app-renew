@@ -73,11 +73,11 @@ export function BlogCard({ blog, hasLiked, likeBlog, unlikeBlog }: BlogCardProps
                             } transition-colors`}
                         >
                             <ThumbsUp className="h-4 w-4" />
-                            <span>{blog.likes}</span>
+                            <span data-testid="like-count">{blog.likes}</span>
                         </button>
                         <div className="flex items-center space-x-1 text-sm text-gray-500">
                             <MessageCircle className="h-4 w-4" />
-                            <span>{blog.comment_cnt}</span>
+                            <span data-testid="comment-count">{blog.comment_cnt}</span>
                         </div>
                     </div>
 
