@@ -7,11 +7,9 @@ import type { Comment } from '@/app/types/blogs';
  * @param statusCode
  * @param responseBody
  */
-export const setupFetchCommentsMock = async ( page: Page,
-    {
-        status = 200,
-        responseBody = [],
-    }: { status?: number; responseBody?: Comment[] },
+export const setupFetchCommentsMock = async (
+    page: Page,
+    { status = 200, responseBody = [] }: { status?: number; responseBody?: Comment[] },
 ) => {
     await page.route('**/api/comments/blog/*', async (route, request: Request) => {
         await route.fulfill({
@@ -28,7 +26,8 @@ export const setupFetchCommentsMock = async ( page: Page,
  * @param statusCode
  * @param responseBody
  */
-export const setupAddCommentMock = async (page: Page,
+export const setupAddCommentMock = async (
+    page: Page,
     {
         status = 200,
         responseBody = {},

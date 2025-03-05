@@ -21,10 +21,10 @@ test.describe('Blog Detail Page (Unauthenticated)', () => {
             }),
         ]);
 
-         // ブログ詳細ページにアクセス
-         await page.goto('/blog/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234');
-         // ローディング終了まで待つ
-         await page.waitForSelector('text=/Test Blog 1/', { timeout: 20000 });
+        // ブログ詳細ページにアクセス
+        await page.goto('/blog/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234');
+        // ローディング終了まで待つ
+        await page.waitForSelector('text=/Test Blog 1/', { timeout: 20000 });
     });
 
     test('Unauthenticated blog detail page', async ({ page }) => {

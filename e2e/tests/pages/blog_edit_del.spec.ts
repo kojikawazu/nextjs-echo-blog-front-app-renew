@@ -1,7 +1,19 @@
 import { test, expect } from '@playwright/test';
-import { mockUpdateBlogAPI, mockDeleteBlogAPI, setupFetchBlogByIdMock, setupFetchBlogsMock, setupFetchSidebarMock } from '../mocks/api/blog-api-mock';
+import {
+    mockUpdateBlogAPI,
+    mockDeleteBlogAPI,
+    setupFetchBlogByIdMock,
+    setupFetchBlogsMock,
+    setupFetchSidebarMock,
+} from '../mocks/api/blog-api-mock';
 import { setupAuthCheckMock } from '../mocks/api/auth-api-mock';
-import { mockBlog, mockBlogs, mockCategories, mockPopularPosts, mockTags } from '../mocks/blog/blog-mock';
+import {
+    mockBlog,
+    mockBlogs,
+    mockCategories,
+    mockPopularPosts,
+    mockTags,
+} from '../mocks/blog/blog-mock';
 
 test.describe('Blog New Form Page (Authenticated)', () => {
     test.beforeEach(async ({ page }) => {

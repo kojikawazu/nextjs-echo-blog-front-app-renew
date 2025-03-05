@@ -1,7 +1,19 @@
 import { test, expect } from '@playwright/test';
-import { mockUpdateBlogAPI, mockDeleteBlogAPI, setupFetchBlogByIdMock, setupFetchBlogsMock, setupFetchSidebarMock } from '../mocks/api/blog-api-mock';
+import {
+    mockUpdateBlogAPI,
+    mockDeleteBlogAPI,
+    setupFetchBlogByIdMock,
+    setupFetchBlogsMock,
+    setupFetchSidebarMock,
+} from '../mocks/api/blog-api-mock';
 import { setupAuthCheckMock } from '../mocks/api/auth-api-mock';
-import { mockBlog, mockBlogs, mockCategories, mockPopularPosts, mockTags } from '../mocks/blog/blog-mock';
+import {
+    mockBlog,
+    mockBlogs,
+    mockCategories,
+    mockPopularPosts,
+    mockTags,
+} from '../mocks/blog/blog-mock';
 
 test.describe('Blog New Form Page (Authenticated)', () => {
     test.beforeEach(async ({ page }) => {
@@ -96,7 +108,9 @@ test.describe('Blog New Form Page (Authenticated)', () => {
 
         // ブログ編集フォームに入力
         await page.getByRole('textbox', { name: 'タイトル' }).fill('Updated Blog');
-        await page.getByRole('textbox', { name: 'GitHub URL' }).fill('https://github.com/updated-blog');
+        await page
+            .getByRole('textbox', { name: 'GitHub URL' })
+            .fill('https://github.com/updated-blog');
         await page.getByRole('textbox', { name: 'カテゴリ' }).fill('Updated Category');
         await page.getByRole('textbox', { name: 'タグ' }).fill('Updated Tag');
         await page.getByRole('textbox', { name: '内容' }).fill('Updated Content');
@@ -125,7 +139,9 @@ test.describe('Blog New Form Page (Authenticated)', () => {
     test('Blog New Form Page update blog cancel', async ({ page }) => {
         // ブログ編集フォームに入力
         await page.getByRole('textbox', { name: 'タイトル' }).fill('Updated Blog');
-        await page.getByRole('textbox', { name: 'GitHub URL' }).fill('https://github.com/updated-blog');
+        await page
+            .getByRole('textbox', { name: 'GitHub URL' })
+            .fill('https://github.com/updated-blog');
         await page.getByRole('textbox', { name: 'カテゴリ' }).fill('Updated Category');
         await page.getByRole('textbox', { name: 'タグ' }).fill('Updated Tag');
         await page.getByRole('textbox', { name: '内容' }).fill('Updated Content');
@@ -166,7 +182,9 @@ test.describe('Blog New Form Page (Authenticated)', () => {
 
         // フォームに入力
         await page.getByRole('textbox', { name: 'タイトル' }).fill('Updated Blog');
-        await page.getByRole('textbox', { name: 'GitHub URL' }).fill('https://github.com/updated-blog');
+        await page
+            .getByRole('textbox', { name: 'GitHub URL' })
+            .fill('https://github.com/updated-blog');
         await page.getByRole('textbox', { name: 'カテゴリ' }).fill('Updated Category');
         await page.getByRole('textbox', { name: 'タグ' }).fill('Updated Tag');
         await page.getByRole('textbox', { name: '内容' }).fill('Updated Content');
