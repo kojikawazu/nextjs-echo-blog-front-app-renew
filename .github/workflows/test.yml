@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report-${{ matrix.test_dir }}
+          name: playwright-report-${{ matrix.test_dir }} | sed 's|/¥*$||'
           path: playwright-report/
 
       - name: Remove .env.test file
