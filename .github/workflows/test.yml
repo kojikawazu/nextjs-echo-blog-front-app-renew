@@ -2,10 +2,19 @@ name: Test Workflow
 
 on:
   workflow_call:
-
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test_dir: [
+          e2e/tests/layout/*,
+          e2e/tests/pages/auth/*,
+          e2e/tests/pages/blog_detail/*,
+          e2e/tests/pages/blog_edit_form/*,
+          e2e/tests/pages/blog_home/*,
+          e2e/tests/pages/blog_new_form/*,
+        ]
 
     steps:
       - uses: actions/checkout@v3
@@ -27,13 +36,16 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright e2e tests
-        run: npm run test:e2e
+        run: npm run test:e2e -- ${{ matrix.test_dir }}
+
+      - name: Generate valid artifact name
+        run: echo "ARTIFACT_NAME=$(echo '${{ matrix.test_dir }}' | sed 's|/\*$||' | sed 's|/|-|g')" >> $GITHUB_ENV
 
       - name: Save Playwright HTML Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report
+          name: playwright-report-${{ env.ARTIFACT_NAME }}
           path: playwright-report/
 
       - name: Remove .env.test file

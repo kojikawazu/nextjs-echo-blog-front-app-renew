@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { setupFetchBlogByIdMock, setupFetchSidebarMock } from '../mocks/api/blog-api-mock';
-import { setupAuthCheckMock } from '../mocks/api/auth-api-mock';
-import { mockBlog, mockCategories, mockPopularPosts, mockTags } from '../mocks/blog/blog-mock';
-import { mockComments, mockCommentsAfterAdd } from '../mocks/blog/blog-comment-mock';
-import { setupAddCommentMock, setupFetchCommentsMock } from '../mocks/api/blog-comment-api-mock';
+import { setupFetchBlogByIdMock, setupFetchSidebarMock } from '../../mocks/api/blog-api-mock';
+import { setupAuthCheckMock } from '../../mocks/api/auth-api-mock';
+import { mockBlog, mockCategories, mockPopularPosts, mockTags } from '../../mocks/blog/blog-mock';
+import { mockComments, mockCommentsAfterAdd } from '../../mocks/blog/blog-comment-mock';
+import { setupAddCommentMock, setupFetchCommentsMock } from '../../mocks/api/blog-comment-api-mock';
 
 test.describe('Blog Detail Page (Unauthenticated)', () => {
     test.beforeEach(async ({ page }) => {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupAuthCheckMock, setupLoginMock } from '../mocks/api/auth-api-mock';
+import { setupAuthCheckMock, setupLoginMock } from '../../mocks/api/auth-api-mock';
 
 test.describe('Home Page (Unauthenticated)', () => {
     test('Unauthenticated user is redirected to login page', async ({ page }) => {

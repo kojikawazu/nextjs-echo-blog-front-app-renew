@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { setupAuthCheckMock } from '../mocks/api/auth-api-mock';
-import { setupFetchBlogsMock } from '../mocks/api/blog-api-mock';
-import { mockBlogs } from '../mocks/blog/blog-mock';
+import { setupAuthCheckMock } from '../../mocks/api/auth-api-mock';
+import { setupFetchBlogsMock } from '../../mocks/api/blog-api-mock';
+import { mockBlogs } from '../../mocks/blog/blog-mock';
 
 test.describe('Home Page (Unauthenticated) search', () => {
     test.beforeEach(async ({ page }) => {
