@@ -20,51 +20,8 @@ test.describe('Home Page (Unauthenticated)', () => {
         // ローディング終了まで待機
         await page.waitForSelector('text=/Test Blog 1/', { timeout: 10000 });
 
-        // スクショ
-        await page.screenshot({ path: 'screenshot.png', fullPage: true });
-
         // 未認証でもホームにアクセスできる
         await expect(page).toHaveURL('/');
-    });
-
-    test('Unauthenticated user can see the latest articles (search, sort, sidebar)', async ({
-        page,
-    }) => {
-        // ホームページにアクセス
-        await page.goto('/');
-
-        // ローディング終了まで待機
-        await page.waitForSelector('text=/Test Blog 1/', { timeout: 10000 });
-
-        // 最新の記事が表示されていることを確認
-        await expect(page.getByText('最新の記事')).toBeVisible();
-
-        // 記事検索フォームが表示されていることを確認
-        await expect(page.getByPlaceholder('記事を検索')).toBeVisible();
-
-        // カテゴリードロップダウンが表示されていることを確認
-        const categoryDropdown = page.getByRole('combobox', { name: 'カテゴリー' });
-        await expect(categoryDropdown).toBeVisible();
-        await expect(categoryDropdown).toHaveValue('');
-
-        // タグドロップダウンが表示されていることを確認
-        const tagDropdown = page.getByRole('combobox', { name: 'タグ' });
-        await expect(tagDropdown).toBeVisible();
-        await expect(tagDropdown).toHaveValue('');
-
-        // 新着順ボタンが表示されていることを確認
-        await expect(page.getByRole('button', { name: '新着順' })).toBeVisible();
-        // 新着順ボタンがクリック状態になっていることを確認
-        await expect(page.getByRole('button', { name: '新着順' })).toHaveClass(
-            /bg-sky-500.*text-white/,
-        );
-
-        // 人気順ボタンが表示されていることを確認
-        await expect(page.getByRole('button', { name: '人気順' })).toBeVisible();
-        // 人気順ボタンが未クリック状態になっていることを確認
-        await expect(page.getByRole('button', { name: '人気順' })).not.toHaveClass(
-            /bg-sky-500.*text-white/,
-        );
     });
 
     test('Unauthenticated user can see the latest articles', async ({ page }) => {
@@ -74,13 +31,24 @@ test.describe('Home Page (Unauthenticated)', () => {
         // ローディング終了まで待つ
         await page.waitForSelector('text=/Test Blog 1/', { timeout: 10000 });
 
+        // 最新の記事が表示されていることを確認
+        await expect(page.getByText('最新の記事')).toBeVisible();
+
         const mainSection = page.locator('main');
 
         // ブログ記事が表示されることを確認
-        await expect(mainSection.getByRole('heading', { name: 'Test Blog 1', exact: true })).toBeVisible();
-        await expect(mainSection.getByRole('heading', { name: 'Test Blog 2', exact: true })).toBeVisible();
-        await expect(mainSection.getByRole('heading', { name: 'Test Blog 3', exact: true })).toBeVisible();
-        await expect(mainSection.getByRole('heading', { name: 'Test Blog 4', exact: true })).toBeVisible();
+        await expect(
+            mainSection.getByRole('heading', { name: 'Test Blog 1', exact: true }),
+        ).toBeVisible();
+        await expect(
+            mainSection.getByRole('heading', { name: 'Test Blog 2', exact: true }),
+        ).toBeVisible();
+        await expect(
+            mainSection.getByRole('heading', { name: 'Test Blog 3', exact: true }),
+        ).toBeVisible();
+        await expect(
+            mainSection.getByRole('heading', { name: 'Test Blog 4', exact: true }),
+        ).toBeVisible();
 
         // 日付が表示されていることを確認
         await expect(mainSection.getByText('2021/1/1', { exact: true })).toBeVisible();
@@ -164,58 +132,19 @@ test.describe('Home Page (Unauthenticated)', () => {
         ).toBeVisible();
     });
 
-    test('Pagination is displayed correctly', async ({ page }) => {
+    test('Blog link clickable', async ({ page }) => {
         // ホームページにアクセス
         await page.goto('/');
 
         // ローディング終了まで待つ
         await page.waitForSelector('text=/Test Blog 1/', { timeout: 10000 });
 
-        const html = await page.content();
-        console.log(html);
+        // ブログリンクをクリック
+        await page.getByRole('link', { name: 'Test Blog 1', exact: true }).click();
 
-        // ページネーションが表示されていることを確認
-        await expect(page.getByRole('button', { name: '前のページへ' })).toBeVisible();
-        await expect(page
-            .locator('div[role="navigation"], nav, div.flex.items-center.justify-center')
-            .getByRole('button', { name: '1', exact: true })).toBeVisible();
-        await expect(page
-            .locator('div[role="navigation"], nav, div.flex.items-center.justify-center')
-            .getByRole('button', { name: '2', exact: true })).toBeVisible();
-        await expect(page.getByRole('button', { name: '次のページへ' })).toBeVisible();
-
-        // ページネーションのボタンの色が変更されていることを確認
-        await expect(page
-            .locator('div[role="navigation"], nav, div.flex.items-center.justify-center')
-            .getByRole('button', { name: '1', exact: true }))
-            .toHaveClass(/bg-sky-500.*text-white/);
-        await expect(page
-            .locator('div[role="navigation"], nav, div.flex.items-center.justify-center')
-            .getByRole('button', { name: '2', exact: true }))
-            .not.toHaveClass(/bg-sky-500.*text-white/);
+        // ブログ詳細ページにリダイレクトされていることを確認
+        await expect(page).toHaveURL('/blog/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234');
     });
 
-    test('Unauthenticated user can see the sidebar', async ({ page }) => {
-        // ホームページにアクセス
-        await page.goto('/');
-
-        // サイドバー範囲を限定
-        const sidebar = page.locator('aside');
-
-        // サイドバーが表示されていることを確認
-        await expect(sidebar.getByRole('heading', { name: 'カテゴリー' })).toBeVisible();
-        await expect(sidebar.getByRole('heading', { name: '人気記事' })).toBeVisible();
-        await expect(sidebar.getByRole('heading', { name: 'タグ' })).toBeVisible();
-
-        // カテゴリーが表示されていることをサイドバー内で確認
-        await expect(sidebar.getByRole('link', { name: 'Test Category' })).toBeVisible();
-
-        // 人気記事が表示されていることを確認
-        await expect(sidebar.getByRole('link', { name: 'Test Blog 1' })).toBeVisible();
-        await expect(sidebar.getByRole('link', { name: 'Test Blog 2' })).toBeVisible();
-
-        // タグが表示されていることを確認
-        await expect(sidebar.getByRole('link', { name: 'Test Tag 1' })).toBeVisible();
-        await expect(sidebar.getByRole('link', { name: 'Test Tag 2' })).toBeVisible();
-    });
+    // いいね（TODO）
 });

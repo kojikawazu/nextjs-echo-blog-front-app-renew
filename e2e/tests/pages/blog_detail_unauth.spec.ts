@@ -43,9 +43,6 @@ test.describe('Blog Detail Page (Unauthenticated)', () => {
         // ブログの日付が表示されていることを確認
         await expect(page.getByRole('time').getByText('2021/1/1')).toBeVisible();
 
-        // スクショ
-        await page.screenshot({ path: 'screenshot.png', fullPage: true });
-
         // ブログのタイトルが表示されていることを確認
         await expect(page.getByRole('heading', { name: 'Test Blog 1' })).toBeVisible();
 

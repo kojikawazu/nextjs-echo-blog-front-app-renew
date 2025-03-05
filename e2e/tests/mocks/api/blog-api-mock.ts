@@ -71,3 +71,29 @@ export const setupFetchSidebarMock = async (
         }),
     ]);
 };
+
+/**
+ * ブログを作成するmock
+ * @param page
+ * @param status
+ * @param responseBody
+ */
+export const mockCreateBlogAPI = async (
+    page: Page,
+    {
+        status = 200,
+        responseBody = {},
+    }: { status?: number; responseBody?: Record<string, unknown> },
+) => {
+    await page.route('**/blogs/create', async (route, request) => {
+        if (request.method() === 'POST') {
+            await route.fulfill({
+                status,
+                contentType: 'application/json',
+                body: JSON.stringify(responseBody),
+            });
+        } else {
+            await route.fallback();
+        }
+    });
+};
