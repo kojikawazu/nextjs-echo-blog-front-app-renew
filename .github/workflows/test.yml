@@ -36,7 +36,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright e2e tests
-        run: npm run test:e2e -- --grep ${{ matrix.test_dir }}
+        run: npm run test:e2e -- ${{ matrix.test_dir }}
 
       - name: Save Playwright HTML Report
         uses: actions/upload-artifact@v4
