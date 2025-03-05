@@ -35,6 +35,7 @@ Zennの記事やQiitaの記事も溜まっており、GitHubに管理してい�
 [![Terraform](https://img.shields.io/badge/-Terraform-000000?style=flat-square&logo=terraform&logoColor=white)](https://www.terraform.io/)
 [![GitHub Actions](https://img.shields.io/badge/-GitHub%20Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)](https://github.com/features/actions)
 [![Bolt](https://img.shields.io/badge/-Bolt-000000?style=flat-square&logo=bolt&logoColor=white)](https://bolt.new/)
+[![Playwright](https://img.shields.io/badge/-Playwright-2EAD33?style=flat-square&logo=playwright&logoColor=white)](https://playwright.dev/)
 
 ## Architecture
 
