@@ -20,26 +20,19 @@ test.describe('Blog Detail Page (Unauthenticated)', () => {
                 });
             }),
         ]);
+
+        // ブログ詳細ページにアクセス
+        await page.goto('/blog/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234');
+        // ローディング終了まで待つ
+        await page.waitForSelector('text=/Test Blog 1/', { timeout: 20000 });
     });
 
     test('Unauthenticated blog detail page', async ({ page }) => {
-        // ブログ詳細ページにアクセス
-        await page.goto('/blog/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234');
-
-        // ローディング終了まで待つ
-        await page.waitForSelector('text=/Test Blog 1/', { timeout: 20000 });
-
         // 未認証でもブログ詳細ページにアクセスできる
         await expect(page).toHaveURL('/blog/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234');
     });
 
     test('Unauthenticated blog detail page is displayed correctly', async ({ page }) => {
-        // ブログ詳細ページにアクセス
-        await page.goto('/blog/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234');
-
-        // ローディング終了まで待つ
-        await page.waitForSelector('text=/Test Blog 1/', { timeout: 20000 });
-
         // ブログの日付が表示されていることを確認
         await expect(page.getByRole('time').getByText('2021/1/1')).toBeVisible();
 
@@ -78,12 +71,6 @@ test.describe('Blog Detail Page (Unauthenticated)', () => {
     });
 
     test('Blog detail page sidebar is displayed correctly', async ({ page }) => {
-        // ブログ詳細ページにアクセス
-        await page.goto('/blog/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234');
-
-        // ローディング終了まで待つ
-        await page.waitForSelector('text=/Test Blog 1/', { timeout: 20000 });
-
         // カテゴリー(サイドバー)が表示されていることを確認
         await expect(page.getByRole('heading', { name: 'カテゴリー' })).toBeVisible();
         await expect(page.getByRole('link', { name: 'Test Category 1' })).toBeVisible();

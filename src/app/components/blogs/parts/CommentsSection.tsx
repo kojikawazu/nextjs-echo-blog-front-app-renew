@@ -61,6 +61,12 @@ export function CommentsSection({ blogId }: CommentSectionProps) {
                 </div>
 
                 <div className="mb-6">
+                    <label
+                        htmlFor="comment"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                        コメント
+                    </label>
                     <textarea
                         id="comment"
                         {...register('comment')}
