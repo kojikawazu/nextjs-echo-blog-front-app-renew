@@ -40,37 +40,33 @@ test.describe('Blog New Form Page (Authenticated)', () => {
         await expect(page.getByLabel('タイトル')).toBeVisible();
         await expect(page.getByRole('textbox', { name: 'タイトル' })).toBeVisible();
         // タイトルが入力されていることを確認
-        await expect(page.getByRole('textbox', { name: 'タイトル' })).toHaveValue(
-            mockBlog.title
-        );
+        await expect(page.getByRole('textbox', { name: 'タイトル' })).toHaveValue(mockBlog.title);
 
         await expect(page.getByLabel('GitHub URL')).toBeVisible();
         await expect(page.getByRole('textbox', { name: 'GitHub URL' })).toBeVisible();
         // GitHub URLが入力されていることを確認
         await expect(page.getByRole('textbox', { name: 'GitHub URL' })).toHaveValue(
-            mockBlog.github_url ?? ''
+            mockBlog.github_url ?? '',
         );
 
         await expect(page.getByLabel('カテゴリ')).toBeVisible();
         await expect(page.getByRole('textbox', { name: 'カテゴリ' })).toBeVisible();
         // カテゴリが入力されていることを確認
         await expect(page.getByRole('textbox', { name: 'カテゴリ' })).toHaveValue(
-            mockBlog.category
+            mockBlog.category,
         );
 
         await expect(page.getByLabel('タグ')).toBeVisible();
         await expect(page.getByRole('textbox', { name: 'タグ' })).toBeVisible();
         // タグが入力されていることを確認
         await expect(page.getByRole('textbox', { name: 'タグ' })).toHaveValue(
-            mockBlog.tags.join(', ')
+            mockBlog.tags.join(', '),
         );
 
         await expect(page.getByLabel('内容')).toBeVisible();
         await expect(page.getByRole('textbox', { name: '内容' })).toBeVisible();
         // 内容が入力されていることを確認
-        await expect(page.getByRole('textbox', { name: '内容' })).toHaveValue(
-            mockBlog.description
-        );
+        await expect(page.getByRole('textbox', { name: '内容' })).toHaveValue(mockBlog.description);
 
         await expect(page.getByRole('button', { name: '更新' })).toBeVisible();
     });
