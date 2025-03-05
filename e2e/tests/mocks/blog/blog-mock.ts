@@ -7,7 +7,7 @@ export const mockBlogs: Blog[] = [
     {
         id: '2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234',
         title: 'Test Blog 1',
-        user_id: '1',
+        user_id: 'mock-user-id',
         github_url: 'https://github.com/test',
         category: 'Test Category',
         tags: ['Test Tag 1', 'Test Tag 2'],
@@ -207,7 +207,7 @@ export const mockBlogs: Blog[] = [
 export const mockBlog: Blog = {
     id: '2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234',
     title: 'Test Blog 1',
-    user_id: '1',
+    user_id: 'mock-user-id',
     github_url: 'https://github.com/test',
     category: 'Test Category',
     tags: ['Test Tag 1', 'Test Tag 2'],

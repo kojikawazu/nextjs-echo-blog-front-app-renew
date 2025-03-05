@@ -120,16 +120,6 @@ test.describe('Blog New Form Page (Authenticated)', () => {
     });
 
     test('Blog New Form Page validation errors', async ({ page }) => {
-        // ブログ一覧ページにアクセス
-        await page.goto('/');
-        // ローディング終了まで待機
-        await page.waitForSelector('text=/Test Blog 1/', { timeout: 10000 });
-
-        // ブログ新規作成ページにアクセス
-        await page.getByRole('link', { name: '新規投稿' }).click();
-        // 表示されるまで待機
-        await page.waitForSelector('text=/記事の作成/', { timeout: 10000 });
-
         // タイトルが未入力
         await page.getByRole('textbox', { name: 'タイトル' }).fill('');
         await page.getByRole('textbox', { name: 'GitHub URL' }).fill('invalid-url');

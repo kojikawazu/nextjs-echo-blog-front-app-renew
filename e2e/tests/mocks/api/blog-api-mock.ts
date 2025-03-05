@@ -97,3 +97,49 @@ export const mockCreateBlogAPI = async (
         }
     });
 };
+
+/**
+ * ブログを更新するmock
+ * @param page
+ * @param status
+ * @param responseBody
+ */
+export const mockUpdateBlogAPI = async (
+    page: Page,
+    {
+        status = 200,
+        responseBody = {},
+    }: { status?: number; responseBody?: Record<string, unknown> },
+) => {
+    await page.route('**/blogs/update/*', async (route, request) => {
+        if (request.method() === 'PUT') {
+            await route.fulfill({
+                status,
+                contentType: 'application/json',
+                body: JSON.stringify(responseBody),
+            });
+        } else {
+            await route.fallback();
+        }
+    });
+};
+
+/**
+ * ブログを削除するmock
+ * @param page
+ * @param status
+ * @param responseBody
+ */
+export const mockDeleteBlogAPI = async (page: Page, status = 200, responseBody = {}) => {
+    await page.route('**/blogs/delete/*', async (route, request) => {
+        if (request.method() === 'DELETE') {
+            await route.fulfill({
+                status,
+                contentType: 'application/json',
+                body: JSON.stringify(responseBody),
+            });
+        } else {
+            await route.fallback();
+        }
+    });
+};
