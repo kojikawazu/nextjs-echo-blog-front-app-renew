@@ -42,9 +42,8 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report
+          name: playwright-report-${{ github.run_id }}-${{ github.run_attempt }}
           path: playwright-report/
-          if-no-files-found: ignore 
 
       - name: Remove .env.test file
         if: always()
