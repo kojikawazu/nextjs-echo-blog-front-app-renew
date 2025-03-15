@@ -79,8 +79,8 @@ jobs:
 
                   # すべてのタグを取得し、最新5つを除外したものを削除
                   gcloud artifacts docker images list ${IMAGE_NAME} --format="value(DIGEST)" --sort-by="~UPDATE_TIME" | tail -n +6 | while read -r DIGEST; do
-                      if [[ ! -z "$DIGEST" ]]; then
+                      if [[ ! -z "${DIGEST}" ]]; then
                           echo "Deleting old image: ${IMAGE_NAME}:${DIGEST}"
-                          gcloud artifacts docker images delete ${IMAGE_NAME}:${DIGEST} --quiet --delete-tags
+                          gcloud artifacts docker images delete "$IMAGE_NAME@$DIGEST" --quiet
                       fi
                   done
