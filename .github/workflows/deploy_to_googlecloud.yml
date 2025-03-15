@@ -10,7 +10,7 @@ on:
             - 'e2e/**'
             - 'public/**'
             - 'src/**'
-            - '.docignore'
+            - '.dockerignore'
             - '.prettierrc'
             - 'Dockerfile'
             - 'eslint.config.js'
