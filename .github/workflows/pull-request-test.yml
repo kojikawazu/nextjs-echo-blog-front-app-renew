@@ -8,7 +8,6 @@ on:
             - 'e2e/**'
             - 'public/**'
             - 'src/**'
-            - '.dockerignore'
             - '.prettierrc'
             - 'Dockerfile'
             - 'eslint.config.js'
