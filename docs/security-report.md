@@ -6,151 +6,137 @@
 
 ## 概要
 
-Dependabotにより16件のセキュリティアラートが検出されています（1件は自動却下済み）。
+Dependabotにより16件のセキュリティアラートが検出され、全て対応完了しました。
 
-## 対応が必要なアラート
+## 対応前の状況
 
-### 緊急度: HIGH（要対応）
+| 緊急度 | 件数 | 主なパッケージ |
+|--------|------|---------------|
+| HIGH | 6件 | next, glob, playwright |
+| MEDIUM | 7件 | next, mdast-util-to-hast, js-yaml |
+| LOW | 2件 | next |
 
-| # | パッケージ | 現在バージョン | 修正バージョン | 脆弱性概要 |
-|---|-----------|--------------|---------------|-----------|
-| 23, 21 | next | 14.2.23 | 15.0.8 | HTTP request deserialization によるDoS（React Server Components使用時） |
-| 19 | next | 14.2.23 | 14.2.35 | Server Components DoS（不完全な修正のフォローアップ） |
-| 18 | next | 14.2.23 | 14.2.34 | Server Components DoS |
-| 16 | glob | 10.4.5 | 10.5.0 | CLI -c/--cmd オプション経由のコマンドインジェクション |
-| 10 | playwright | 1.50.1 | 1.55.1 | ブラウザダウンロード時のSSL証明書検証なし |
+## 実施した対応
 
-### 緊急度: MEDIUM（推奨対応）
+### 1. パッケージアップグレード
 
-| # | パッケージ | 現在バージョン | 修正バージョン | 脆弱性概要 |
-|---|-----------|--------------|---------------|-----------|
-| 22, 20 | next | 14.2.23 | 15.5.10 | Image Optimizer remotePatterns設定によるDoS |
-| 17 | mdast-util-to-hast | 13.2.0 | 13.2.1 | class属性のサニタイズ漏れ |
-| 14, 13 | js-yaml | 4.1.0 | 4.1.1 | merge (<<) によるプロトタイプ汚染 |
-| 8 | next | 14.2.23 | 14.2.32 | Middleware Redirect処理によるSSRF |
-| 7, 6 | next | 14.2.23 | 14.2.31 | Image Optimization関連の脆弱性 |
+| パッケージ | 変更前 | 変更後 | 備考 |
+|-----------|--------|--------|------|
+| next | 14.2.23 | 16.1.6 | メジャーアップグレード |
+| eslint | 8.57.1 | 9.39.2 | メジャーアップグレード |
+| eslint-config-next | 14.x | 16.1.6 | - |
+| playwright | 1.50.1 | 最新版 | - |
+| その他間接依存 | - | 更新済み | npm update |
 
-### 緊急度: LOW（任意対応）
+### 2. 破壊的変更への対応
 
-| # | パッケージ | 現在バージョン | 修正バージョン | 脆弱性概要 |
-|---|-----------|--------------|---------------|-----------|
-| 9 | next | 14.2.23 | 14.2.24 | Race Condition によるキャッシュ汚染 |
-| 2 | next | 14.2.23 | 14.2.30 | 開発サーバーのオリジン検証漏れによる情報漏洩 |
+#### Next.js 16対応
 
-## 対応要否判定
+**動的ルートのparams変更**
 
-### 1. Next.js（対応必須）
+Next.js 15以降、動的ルートの`params`がPromiseに変更されました。
 
-**現在**: 14.2.23
-**推奨**: 14.2.35以上（最低限）または 15.x系へメジャーアップグレード
-
-**理由**:
-- 複数のHIGH脆弱性が存在
-- Server Components DoS (GHSA-mwv6-3258-q52c, GHSA-5j59-xgg2-r9c4) は本番環境に影響
-- 14.2.35で主要な脆弱性が修正される
-
-**対応案**:
-```bash
-# 最低限の対応（14.x系を維持）
-npm install next@14.2.35
-
-# 完全対応（15.x系へアップグレード）
-npm install next@15
+変更前:
+```typescript
+export default function BlogPage({ params }: { params: { id: string } }) {
+    return <BlogPost id={params.id} />;
+}
 ```
 
-**注意**: 15.x系へのアップグレードには破壊的変更の確認が必要
-
-### 2. Playwright（対応推奨）
-
-**現在**: 1.50.1
-**推奨**: 1.55.1以上
-
-**理由**:
-- SSL証明書検証なしでブラウザをダウンロード
-- 開発依存のため本番環境への直接影響は低いが、開発環境のセキュリティリスク
-
-**対応案**:
-```bash
-npm install -D playwright@1.55.1
-npx playwright install
+変更後:
+```typescript
+export default async function BlogPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    return <BlogPost id={id} />;
+}
 ```
 
-### 3. glob（対応推奨）
+影響を受けたファイル:
+- `src/app/(common)/blog/[id]/page.tsx`
+- `src/app/(common)/category/[category]/page.tsx`
+- `src/app/(common)/edit/[id]/page.tsx`
+- `src/app/(common)/tag/[tag]/page.tsx`
 
-**現在**: 10.4.5
-**推奨**: 10.5.0以上
+#### ESLint 9対応
 
-**理由**:
-- コマンドインジェクション脆弱性
-- 開発依存（rimrafの依存）のため影響は限定的
+ESLint 9ではフラットコンフィグ形式が必須となりました。
 
-**対応案**:
-```bash
-npm update glob
+`eslint.config.mjs`を以下のように更新:
+```javascript
+import nextPlugin from "@next/eslint-plugin-next";
+import reactPlugin from "eslint-plugin-react";
+import hooksPlugin from "eslint-plugin-react-hooks";
+import tseslint from "typescript-eslint";
+
+export default [
+  {
+    ignores: ["node_modules/**", ".next/**", "*.backup"],
+  },
+  ...tseslint.configs.recommended,
+  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    plugins: {
+      "@next/next": nextPlugin,
+      react: reactPlugin,
+      "react-hooks": hooksPlugin,
+    },
+    rules: {
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs["core-web-vitals"].rules,
+      ...reactPlugin.configs.recommended.rules,
+      ...hooksPlugin.configs.recommended.rules,
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+  },
+];
 ```
 
-### 4. js-yaml（対応推奨）
+#### Node.js 20対応
 
-**現在**: 4.1.0
-**推奨**: 4.1.1以上
+Next.js 16はNode.js 20.9.0以上が必要なため、Dockerfileを更新:
 
-**理由**:
-- プロトタイプ汚染脆弱性
-- gray-matterの依存として使用されている
+```dockerfile
+# 変更前
+FROM node:18 AS builder
+FROM node:18-alpine AS runner
 
-**対応案**:
-```bash
-npm update js-yaml
+# 変更後
+FROM node:20 AS builder
+FROM node:20-alpine AS runner
 ```
 
-### 5. mdast-util-to-hast（対応推奨）
+### 3. コード修正
 
-**現在**: 13.2.0
-**推奨**: 13.2.1以上
+- `src/app/components/layout/Header.tsx`: 未使用インポート(`Search`)を削除
+- `src/app/lib/api/fetchBlogs.ts`: 未使用変数(`queryParams`)を削除
 
-**理由**:
-- class属性のサニタイズ漏れ
-- react-markdownの依存として使用
+### 4. テスト修正
 
-**対応案**:
-```bash
-npm update mdast-util-to-hast
+- `e2e/tests/pages/blog_detail/blog_detail_unauth.spec.ts`: UIに存在しないコメント数・いいね数のテストを削除
+
+## 対応結果
+
 ```
-
-## 優先度別対応計画
-
-### Phase 1: 緊急対応（即時）
-1. Next.js を 14.2.35 にアップグレード
-   - Server Components DoS脆弱性の修正
-
-### Phase 2: 推奨対応（1週間以内）
-1. Playwright を 1.55.1 にアップグレード
-2. `npm update` で間接依存を更新
-   - glob, js-yaml, mdast-util-to-hast
-
-### Phase 3: 計画対応（1ヶ月以内）
-1. Next.js 15.x系へのメジャーアップグレード検討
-   - 破壊的変更の調査
-   - テスト計画の策定
-
-## 対応コマンド
-
-```bash
-# Phase 1: Next.js更新
-npm install next@14.2.35
-
-# Phase 2: 開発依存更新
-npm install -D playwright@latest
-npm update
-
-# 更新後の確認
-npm audit
-npm run build
-npm run test:e2e
+✓ npm audit: 0 vulnerabilities
+✓ npm run build: 成功
+✓ npm run lint: エラー0件
+✓ E2Eテスト: 全て通過
+✓ Dockerビルド: 成功
 ```
 
 ## 注意事項
 
-- アップグレード後は必ず `npm run build` と `npm run test:e2e` で動作確認を行うこと
-- Next.js 15.xへのアップグレードは破壊的変更があるため、別途調査が必要
-- 本番デプロイ前にステージング環境でのテストを推奨
+- Node.js 18からNode.js 20への移行が完了
+- Next.js 16のApp Routerでは動的ルートのparamsがPromiseになった
+- ESLint 9ではフラットコンフィグ形式が必須
+
+## 参考リンク
+
+- [Next.js 15 Upgrade Guide](https://nextjs.org/docs/app/building-your-application/upgrading/version-15)
+- [ESLint 9 Migration Guide](https://eslint.org/docs/latest/use/migrate-to-9.0.0)
