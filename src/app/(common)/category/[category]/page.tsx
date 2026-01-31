@@ -1,10 +1,11 @@
 import Home from '@/app/components/home/Home';
 
 /**
- * タグページ
+ * カテゴリページ
  * @param params パラメータ
  * @returns JSX.Element
  */
-export default function CategoryPage({ params }: { params: { category: string } }) {
-    return <Home category={params.category} />;
+export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
+    const { category } = await params;
+    return <Home category={category} />;
 }
