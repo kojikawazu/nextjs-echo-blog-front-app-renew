@@ -5,6 +5,7 @@ import EditPost from '@/app/components/blogs/EditPost';
  * @param params パラメータ
  * @returns JSX.Element
  */
-export default function EditPostPage({ params }: { params: { id: string } }) {
-    return <EditPost id={params.id} />;
+export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    return <EditPost id={id} />;
 }

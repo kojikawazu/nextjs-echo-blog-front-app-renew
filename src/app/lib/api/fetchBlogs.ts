@@ -19,16 +19,6 @@ export async function fetchBlogs(
     sortBy: 'newest' | 'popular' = 'newest',
     searchQuery?: string,
 ) {
-    // クエリパラメータ
-    const queryParams = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-        ...(tag && { tag }),
-        ...(category && { category }),
-        ...(sortBy && { sortBy }),
-        ...(searchQuery && { search: encodeURIComponent(searchQuery) }),
-    });
-
     // ブログデータを取得
     const response = await fetch(COMMON_CONSTANTS.API_URL + COMMON_CONSTANTS.URL.BLOGS, {
         method: 'GET',

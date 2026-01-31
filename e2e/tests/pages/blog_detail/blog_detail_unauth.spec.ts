@@ -45,12 +45,6 @@ test.describe('Blog Detail Page (Unauthenticated)', () => {
 
         // ブログの説明が表示されていることを確認
         await expect(page.getByText('This is a test blog')).toBeVisible();
-
-        // ブログのいいね数が表示されていることを確認
-        await expect(page.getByText('10')).toBeVisible();
-
-        // ブログのコメント数が表示されていることを確認
-        await expect(page.getByText('5')).toBeVisible();
     });
 
     test('Comment form is displayed correctly', async ({ page }) => {

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { BookOpen, Search, User } from 'lucide-react';
+import { BookOpen, User } from 'lucide-react';
 // context
 import { useAuth } from '@/app/contexts/AuthContext';
 
