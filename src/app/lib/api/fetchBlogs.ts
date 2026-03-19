@@ -20,7 +20,7 @@ export async function fetchBlogs(
     searchQuery?: string,
 ) {
     // ブログデータを取得
-    const response = await fetch(COMMON_CONSTANTS.API_URL + COMMON_CONSTANTS.URL.BLOGS, {
+    const response = await fetch(COMMON_CONSTANTS.URL.BLOGS, {
         method: 'GET',
         credentials: 'include',
     });

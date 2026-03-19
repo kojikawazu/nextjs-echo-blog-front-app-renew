@@ -9,7 +9,7 @@ import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 export async function fetchComments(blogId: string) {
     try {
         const response = await fetch(
-            `${COMMON_CONSTANTS.API_URL}${COMMON_CONSTANTS.URL.COMMENTS_BLOG.replace(':blogId', blogId)}`,
+            COMMON_CONSTANTS.URL.COMMENTS_BLOG.replace(':blogId', blogId),
             {
                 method: 'GET',
                 credentials: 'include',

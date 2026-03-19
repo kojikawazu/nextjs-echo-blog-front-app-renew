@@ -12,11 +12,12 @@ test.describe('Blog Detail Page (Unauthenticated)', () => {
             setupFetchBlogByIdMock(page, mockBlog),
             // サイドバーのモック
             setupFetchSidebarMock(page, mockCategories, mockTags, mockPopularPosts),
-            // GitHub APIのモック
-            await page.route('https://api.github.com/**', (route) => {
+            // GitHub Markdownプロキシのモック
+            await page.route('**/api/github/markdown', (route) => {
                 route.fulfill({
                     status: 200,
-                    body: 'This is mock markdown content.',
+                    contentType: 'application/json',
+                    body: JSON.stringify({ content: 'This is mock markdown content.' }),
                 });
             }),
         ]);

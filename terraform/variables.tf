@@ -41,10 +41,6 @@ variable "app_name" {
   type = string
 }
 
-variable "backend_api_url" {
-  type = string
-}
-
 variable "visit_id_key" {
   type = string
 }
@@ -52,4 +48,3 @@ variable "visit_id_key" {
 variable "domain_name" {
   type = string
 }
-

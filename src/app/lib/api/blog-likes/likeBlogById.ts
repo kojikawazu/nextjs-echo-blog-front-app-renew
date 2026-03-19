@@ -7,7 +7,7 @@ import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
  */
 export async function likeBlogById(blogId: string) {
     const response = await fetch(
-        `${COMMON_CONSTANTS.API_URL}${COMMON_CONSTANTS.URL.BLOG_LIKE_CREATE.replace(':blogId', blogId)}`,
+        COMMON_CONSTANTS.URL.BLOG_LIKE_CREATE.replace(':blogId', blogId),
         {
             method: 'POST',
             credentials: 'include',

@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import {
-    mockUpdateBlogAPI,
     mockDeleteBlogAPI,
     setupFetchBlogByIdMock,
     setupFetchBlogsMock,

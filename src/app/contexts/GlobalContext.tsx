@@ -40,17 +40,13 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
                 try {
                     const [categoriesResponse, tagsResponse, popularPostsResponse] =
                         await Promise.all([
+                            fetch(COMMON_CONSTANTS.URL.BLOG_CATEGORIES),
+                            fetch(COMMON_CONSTANTS.URL.BLOG_TAGS),
                             fetch(
-                                `${process.env.NEXT_PUBLIC_BACKEND_API_URL}${COMMON_CONSTANTS.URL.BLOG_CATEGORIES}`,
-                            ),
-                            fetch(
-                                `${process.env.NEXT_PUBLIC_BACKEND_API_URL}${COMMON_CONSTANTS.URL.BLOG_TAGS}`,
-                            ),
-                            fetch(
-                                `${process.env.NEXT_PUBLIC_BACKEND_API_URL}${COMMON_CONSTANTS.URL.BLOG_POPULAR.replace(
+                                COMMON_CONSTANTS.URL.BLOG_POPULAR.replace(
                                     ':count',
                                     COMMON_CONSTANTS.GLOBAL_CONTEXT.BLOG_POPULAR_COUNT.toString(),
-                                )}`,
+                                ),
                             ),
                         ]);
 

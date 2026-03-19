@@ -16,11 +16,12 @@ test.describe('Blog Detail Page (Unauthenticated)', () => {
             setupFetchSidebarMock(page, mockCategories, mockTags, mockPopularPosts),
             // ブログコメントのモック
             setupFetchCommentsMock(page, { status: 200, responseBody: mockComments }),
-            // GitHub APIのモック
-            await page.route('https://api.github.com/**', (route) => {
+            // GitHub Markdownプロキシのモック
+            await page.route('**/api/github/markdown', (route) => {
                 route.fulfill({
                     status: 200,
-                    body: 'This is mock markdown content.',
+                    contentType: 'application/json',
+                    body: JSON.stringify({ content: 'This is mock markdown content.' }),
                 });
             }),
         ]);

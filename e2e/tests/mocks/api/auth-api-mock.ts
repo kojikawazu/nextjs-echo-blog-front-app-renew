@@ -6,7 +6,7 @@ import { Page } from '@playwright/test';
  * @param options
  */
 export async function setupAuthCheckMock(page: Page, options: { authenticated: boolean }) {
-    await page.route('**/users/auth-check', async (route) => {
+    await page.route('**/api/auth/check', async (route) => {
         const jsonResponse = options.authenticated
             ? {
                   user_id: 'mock-user-id',
@@ -29,7 +29,7 @@ export async function setupAuthCheckMock(page: Page, options: { authenticated: b
  * @param options
  */
 export async function setupLoginMock(page: Page, options: { success: boolean }) {
-    await page.route('**/users/login', async (route) => {
+    await page.route('**/api/auth/login', async (route) => {
         if (options.success) {
             await route.fulfill({
                 status: 200,
@@ -57,11 +57,11 @@ export async function setupLoginMock(page: Page, options: { success: boolean }) 
  * @param options
  */
 export async function setupLogoutMock(page: Page, options: { success: boolean }) {
-    await page.route('**/users/logout', async (route) => {
+    await page.route('**/api/auth/logout', async (route) => {
         await route.fulfill({
-            status: 200,
+            status: options.success ? 200 : 500,
             contentType: 'application/json',
-            body: JSON.stringify({ message: 'Logout successful' }),
+            body: JSON.stringify({ message: options.success ? 'Logout successful' : 'Logout failed' }),
         });
     });
 }

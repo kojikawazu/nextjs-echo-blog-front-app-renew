@@ -9,13 +9,15 @@ import { mockBlog } from '../blog/blog-mock';
  */
 export const setupFetchBlogsMock = async (page: Page, blogs: Blog[] = []) => {
     await page.route('**/api/blogs', async (route, request: Request) => {
-        const url = new URL(request.url());
-
-        await route.fulfill({
-            status: 200,
-            contentType: 'application/json',
-            body: JSON.stringify(blogs),
-        });
+        if (request.method() === 'GET') {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify(blogs),
+            });
+        } else {
+            await route.fallback();
+        }
     });
 };
 
@@ -25,7 +27,7 @@ export const setupFetchBlogsMock = async (page: Page, blogs: Blog[] = []) => {
  * @param blog
  */
 export const setupFetchBlogByIdMock = async (page: Page, blog: Blog = mockBlog) => {
-    await page.route('**/api/blogs/detail/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234', async (route) => {
+    await page.route('**/api/blogs/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234', async (route) => {
         await route.fulfill({
             status: 200,
             contentType: 'application/json',
@@ -48,21 +50,21 @@ export const setupFetchSidebarMock = async (
     popularPosts: { id: string; title: string; likes: number }[] = [],
 ) => {
     await Promise.all([
-        page.route('**/blogs/categories', async (route) => {
+        page.route('**/api/blogs/categories', async (route) => {
             await route.fulfill({
                 status: 200,
                 contentType: 'application/json',
                 body: JSON.stringify(categories),
             });
         }),
-        page.route('**/blogs/tags', async (route) => {
+        page.route('**/api/blogs/tags', async (route) => {
             await route.fulfill({
                 status: 200,
                 contentType: 'application/json',
                 body: JSON.stringify(tags),
             });
         }),
-        page.route('**/blogs/popular/*', async (route) => {
+        page.route('**/api/blogs/popular/*', async (route) => {
             await route.fulfill({
                 status: 200,
                 contentType: 'application/json',
@@ -85,7 +87,7 @@ export const mockCreateBlogAPI = async (
         responseBody = {},
     }: { status?: number; responseBody?: Record<string, unknown> },
 ) => {
-    await page.route('**/blogs/create', async (route, request) => {
+    await page.route('**/api/blogs', async (route, request) => {
         if (request.method() === 'POST') {
             await route.fulfill({
                 status,
@@ -111,7 +113,7 @@ export const mockUpdateBlogAPI = async (
         responseBody = {},
     }: { status?: number; responseBody?: Record<string, unknown> },
 ) => {
-    await page.route('**/blogs/update/*', async (route, request) => {
+    await page.route('**/api/blogs/*', async (route, request) => {
         if (request.method() === 'PUT') {
             await route.fulfill({
                 status,
@@ -131,7 +133,7 @@ export const mockUpdateBlogAPI = async (
  * @param responseBody
  */
 export const mockDeleteBlogAPI = async (page: Page, status = 200, responseBody = {}) => {
-    await page.route('**/blogs/delete/*', async (route, request) => {
+    await page.route('**/api/blogs/*', async (route, request) => {
         if (request.method() === 'DELETE') {
             await route.fulfill({
                 status,

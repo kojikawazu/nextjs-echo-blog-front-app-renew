@@ -6,7 +6,7 @@ import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
  */
 export async function fetchLikedBlogs(): Promise<string[]> {
     const response = await fetch(
-        `${COMMON_CONSTANTS.API_URL}${COMMON_CONSTANTS.URL.BLOG_LIKE_FETCH_LIKED_BLOGS}`,
+        COMMON_CONSTANTS.URL.BLOG_LIKE_FETCH_LIKED_BLOGS,
         {
             method: 'GET',
             credentials: 'include',
