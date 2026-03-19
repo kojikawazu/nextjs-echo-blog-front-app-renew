@@ -23,11 +23,6 @@
         <mxCell id="IhHzTBvv4HT79tcJyfPD-57" parent="IhHzTBvv4HT79tcJyfPD-53" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" value="Echo + GoLang" vertex="1">
           <mxGeometry height="35.63" width="118.79" x="125.61" y="210" as="geometry" />
         </mxCell>
-        <UserObject label="/Users/kojikawazu/developer/claude/nextjs-echo-blog/nextjs-echo-blog-front-app-renew/architecture/architecture.drawio" link="/Users/kojikawazu/developer/claude/nextjs-echo-blog/nextjs-echo-blog-front-app-renew/architecture/architecture.drawio" id="IhHzTBvv4HT79tcJyfPD-1">
-          <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
-            <mxGeometry height="50" width="560" x="1080" y="740" as="geometry" />
-          </mxCell>
-        </UserObject>
         <mxCell id="IhHzTBvv4HT79tcJyfPD-2" parent="1" style="fillColor=#F6F6F6;strokeColor=none;shadow=0;gradientColor=none;fontSize=14;align=left;spacing=10;fontColor=#717171;9E9E9E;verticalAlign=top;spacingTop=-4;fontStyle=0;spacingLeft=40;html=1;" value="&lt;b&gt;Google &lt;/b&gt;Cloud Platform" vertex="1">
           <mxGeometry height="310" width="370" x="1557" y="397" as="geometry" />
         </mxCell>
