@@ -48,7 +48,6 @@ jobs:
             - name: Create file
               run: |
                   echo NEXT_PUBLIC_VISIT_ID_KEY=${{ secrets.NEXT_PUBLIC_VISIT_ID_KEY }} > .env
-                  echo NEXT_PUBLIC_BACKEND_API_URL=${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }} >> .env
    
 
             - name: Setup Google Cloud SDK

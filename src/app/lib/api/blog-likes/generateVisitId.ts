@@ -5,7 +5,7 @@ import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
  */
 export async function generateVisitId(): Promise<string> {
     const response = await fetch(
-        `${COMMON_CONSTANTS.API_URL}${COMMON_CONSTANTS.URL.BLOG_LIKE_GENERATE_VISIT_ID}`,
+        COMMON_CONSTANTS.URL.BLOG_LIKE_GENERATE_VISIT_ID,
         {
             method: 'GET',
             credentials: 'include',

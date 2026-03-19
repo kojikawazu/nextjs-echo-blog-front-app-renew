@@ -11,7 +11,7 @@ import { BlogEditFormValues } from '@/app/schema/blogSchema';
  */
 export async function updateBlogById(blogId: string, updatedData: BlogEditFormValues) {
     const response = await fetch(
-        `${COMMON_CONSTANTS.API_URL}${COMMON_CONSTANTS.URL.BLOG_UPDATE_BY_ID.replace(':id', blogId)}`,
+        COMMON_CONSTANTS.URL.BLOG_UPDATE_BY_ID.replace(':id', blogId),
         {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },

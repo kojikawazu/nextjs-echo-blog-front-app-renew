@@ -9,7 +9,7 @@ import { BlogCreateFormValues } from '@/app/schema/blogSchema';
  * @returns 作成データ
  */
 export async function createBlog(createdData: BlogCreateFormValues) {
-    const response = await fetch(`${COMMON_CONSTANTS.API_URL}${COMMON_CONSTANTS.URL.BLOG_CREATE}`, {
+    const response = await fetch(COMMON_CONSTANTS.URL.BLOG_CREATE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

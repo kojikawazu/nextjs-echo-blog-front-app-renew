@@ -8,7 +8,7 @@ import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
  */
 export async function deleteBlogById(blogId: string) {
     const response = await fetch(
-        `${COMMON_CONSTANTS.API_URL}${COMMON_CONSTANTS.URL.BLOG_DELETE_BY_ID.replace(':id', blogId)}`,
+        COMMON_CONSTANTS.URL.BLOG_DELETE_BY_ID.replace(':id', blogId),
         {
             method: 'DELETE',
             credentials: 'include',

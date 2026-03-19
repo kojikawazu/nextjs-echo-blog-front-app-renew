@@ -32,8 +32,10 @@ npx playwright test e2e/tests/pages/blog_home/home.spec.ts
 ## 環境変数
 
 ```bash
-NEXT_PUBLIC_BACKEND_API_URL=  # バックエンドAPI URL
-NEXT_PUBLIC_VISIT_ID_KEY=     # 訪問者ID用キー
+NEXT_PUBLIC_VISIT_ID_KEY=     # 訪問者ID用キー（ビルド時インライン化）
+BACKEND_API_URL=              # バックエンドAPI URL（本番: Secret Manager）
+ALLOWED_REPO_OWNER=           # GitHubプロキシ許可オーナー（本番: Secret Manager）
+GITHUB_TOKEN=                 # GitHub APIトークン（本番: Secret Manager）
 ```
 
 ## アーキテクチャ

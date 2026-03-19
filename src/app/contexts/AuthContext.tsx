@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         queryKey: ['authUser'],
         queryFn: async () => {
             const response = await fetch(
-                COMMON_CONSTANTS.API_URL + COMMON_CONSTANTS.URL.AUTH_CHECK,
+                COMMON_CONSTANTS.URL.AUTH_CHECK,
                 {
                     method: 'GET',
                     credentials: 'include',
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      */
     const loginMutation = useMutation({
         mutationFn: async ({ email, password }: { email: string; password: string }) => {
-            const response = await fetch(COMMON_CONSTANTS.API_URL + COMMON_CONSTANTS.URL.LOGIN, {
+            const response = await fetch(COMMON_CONSTANTS.URL.LOGIN, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -93,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      */
     const logoutMutation = useMutation({
         mutationFn: async () => {
-            const response = await fetch(COMMON_CONSTANTS.API_URL + COMMON_CONSTANTS.URL.LOGOUT, {
+            const response = await fetch(COMMON_CONSTANTS.URL.LOGOUT, {
                 method: 'POST',
                 credentials: 'include',
             });

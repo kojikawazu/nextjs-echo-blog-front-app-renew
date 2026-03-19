@@ -11,7 +11,7 @@ import type { Comment } from '@/app/types/blogs';
 export async function addComment(comment: Comment) {
     try {
         const response = await fetch(
-            `${COMMON_CONSTANTS.API_URL}${COMMON_CONSTANTS.URL.COMMENTS_CREATE}`,
+            COMMON_CONSTANTS.URL.COMMENTS_CREATE,
             {
                 method: 'POST',
                 headers: {
