@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import matter from 'gray-matter';
 
-const ALLOWED_OWNER = process.env.ALLOWED_REPO_OWNER;
-
 /**
  * GitHub Markdown取得プロキシ
  * - GITHUB_TOKENをサーバーサイドでのみ使用し、クライアントに露出しない
- * - GITHUB_ALLOWED_OWNERで許可されたオーナーのリポジトリのみアクセス可能
+ * - ALLOWED_REPO_OWNERで許可されたオーナーのリポジトリのみアクセス可能
  * - 許可外オーナーのリポジトリへのリクエストはトークンなしで実行（プライベートリポ漏洩防止）
  */
 export async function POST(req: NextRequest) {
@@ -37,10 +35,13 @@ export async function POST(req: NextRequest) {
     const repo = match[2];
     const path = match[3];
 
+    // 環境変数を関数内で読み取り（Next.js 16対応）
+    const githubToken = process.env.GITHUB_TOKEN;
+    const allowedOwner = process.env.ALLOWED_REPO_OWNER?.trim();
+
     // GITHUB_TOKEN があるのに ALLOWED_REPO_OWNER が未設定の場合は fail-closed
     // 設定漏れでトークンが任意リポに使われることを防止
-    const githubToken = process.env.GITHUB_TOKEN;
-    if (githubToken && !ALLOWED_OWNER) {
+    if (githubToken && !allowedOwner) {
         return NextResponse.json(
             { error: 'ALLOWED_REPO_OWNER is not configured' },
             { status: 500 },
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 許可されたオーナーのリポジトリのみアクセス可能
-    if (ALLOWED_OWNER && owner !== ALLOWED_OWNER) {
+    if (allowedOwner && owner !== allowedOwner) {
         return NextResponse.json({ error: 'Repository owner not allowed' }, { status: 403 });
     }
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
