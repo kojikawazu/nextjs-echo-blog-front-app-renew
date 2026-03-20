@@ -10,21 +10,18 @@ import { BlogEditFormValues } from '@/app/schema/blogSchema';
  * @returns 更新データ
  */
 export async function updateBlogById(blogId: string, updatedData: BlogEditFormValues) {
-    const response = await fetch(
-        COMMON_CONSTANTS.URL.BLOG_UPDATE_BY_ID.replace(':id', blogId),
-        {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({
-                title: updatedData.title,
-                description: updatedData.description,
-                category: updatedData.category,
-                tags: updatedData.tags,
-                githubUrl: updatedData.github_url,
-            }),
-        },
-    );
+    const response = await fetch(COMMON_CONSTANTS.URL.BLOG_UPDATE_BY_ID.replace(':id', blogId), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+            title: updatedData.title,
+            description: updatedData.description,
+            category: updatedData.category,
+            tags: updatedData.tags,
+            githubUrl: updatedData.github_url,
+        }),
+    });
 
     if (!response.ok) {
         throw new Error(COMMON_CONSTANTS.BLOG_UPDATE.TOAST_UPDATE_BLOG_ERROR);

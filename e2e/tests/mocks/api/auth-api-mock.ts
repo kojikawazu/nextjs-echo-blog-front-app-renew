@@ -61,7 +61,9 @@ export async function setupLogoutMock(page: Page, options: { success: boolean })
         await route.fulfill({
             status: options.success ? 200 : 500,
             contentType: 'application/json',
-            body: JSON.stringify({ message: options.success ? 'Logout successful' : 'Logout failed' }),
+            body: JSON.stringify({
+                message: options.success ? 'Logout successful' : 'Logout failed',
+            }),
         });
     });
 }

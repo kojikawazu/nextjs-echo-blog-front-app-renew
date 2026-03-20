@@ -18,10 +18,7 @@ export const fetchMarkdown = async (githubUrls: string) => {
         });
 
         if (!response.ok) {
-            console.error(
-                'Failed to fetch Markdown content from GitHub status: ',
-                response.status,
-            );
+            console.error('Failed to fetch Markdown content from GitHub status: ', response.status);
             return null;
         }
 

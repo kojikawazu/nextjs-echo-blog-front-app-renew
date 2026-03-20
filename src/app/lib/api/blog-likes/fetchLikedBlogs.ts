@@ -5,13 +5,10 @@ import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
  * @returns いいね済みのブログID一覧
  */
 export async function fetchLikedBlogs(): Promise<string[]> {
-    const response = await fetch(
-        COMMON_CONSTANTS.URL.BLOG_LIKE_FETCH_LIKED_BLOGS,
-        {
-            method: 'GET',
-            credentials: 'include',
-        },
-    );
+    const response = await fetch(COMMON_CONSTANTS.URL.BLOG_LIKE_FETCH_LIKED_BLOGS, {
+        method: 'GET',
+        credentials: 'include',
+    });
 
     if (!response.ok) {
         throw new Error(COMMON_CONSTANTS.BLOG_LIKE.TOAST_LIKE_BLOG_ERROR);

@@ -7,13 +7,10 @@ import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
  * @returns ブログデータ
  */
 export async function fetchBlogById(blogId: string) {
-    const response = await fetch(
-        COMMON_CONSTANTS.URL.BLOG_BY_ID.replace(':id', blogId),
-        {
-            method: 'GET',
-            credentials: 'include',
-        },
-    );
+    const response = await fetch(COMMON_CONSTANTS.URL.BLOG_BY_ID.replace(':id', blogId), {
+        method: 'GET',
+        credentials: 'include',
+    });
 
     if (!response.ok) {
         throw new Error(COMMON_CONSTANTS.BLOG_FETCH.TOAST_FETCH_BLOG_ERROR);
