@@ -1,0 +1,74 @@
+# ビジネス要件定義書（Business Requirements）
+
+## 1. プロジェクト概要
+
+**プロジェクト名**: TechBlog（nextjs-echo-blog-front-app-renew）
+**サイトURL**: https://techblogkk.com
+**種別**: 技術ブログWebアプリケーション（フロントエンド）
+
+GitHubに管理しているMarkdownファイルを読み込んで表示する技術ブログWebアプリケーション。Zenn・Qiitaの記事資産を自前ブログで一元管理することを目的とする。
+
+## 2. プロジェクト背景
+
+- Zenn・Qiitaなど複数プラットフォームに散在する技術記事を、自前のブログで一元管理したい
+- GitHub上のMarkdownファイルをコンテンツソースとして活用
+- 旧バージョン（Vercel運用）からのリニューアル版
+
+### リニューアルで対応した事項
+
+- 画面デザインの刷新
+- VercelからGoogle Cloud Runへのインフラ移行
+- Cloudflareの導入によるセキュリティ強化
+- バックエンドAPI URLの秘匿化（BFFプロキシ導入）
+
+## 3. ターゲットユーザー
+
+| ユーザー種別 | 説明 |
+|-------------|------|
+| 一般読者（ゲスト） | 技術記事の閲覧、いいね、コメント投稿が可能 |
+| 管理者（認証ユーザー） | 記事のCRUD操作が可能な管理者ユーザー |
+
+## 4. ビジネスゴール
+
+1. **記事資産の一元管理**: GitHub上のMarkdownファイルを技術ブログとして公開
+2. **読者とのインタラクション**: いいね・コメント機能による読者との双方向コミュニケーション
+3. **運用コストの最適化**: Cloud Run + Cloudflareによるコスト効率の高いインフラ構成
+4. **セキュリティの確保**: バックエンドAPI非公開、シークレットのSecret Manager管理
+
+## 5. システム構成
+
+```
+ユーザー → Cloudflare → Cloud Run (Next.js フロントエンド) → Cloud Run (Echo バックエンドAPI) → データベース
+```
+
+- **フロントエンド**: Next.js 16 + TypeScript（本リポジトリ）
+- **バックエンド**: Echo + Go（別リポジトリ: nextjs-echo-back-blog-app）
+- **インフラ**: Google Cloud Run, Artifact Registry, Secret Manager
+- **CDN/WAF**: Cloudflare
+- **IaC**: Terraform
+- **CI/CD**: GitHub Actions
+
+## 6. スコープ
+
+### 対象範囲（フロントエンド）
+
+- ブログ記事の一覧表示・詳細表示・検索・フィルタリング
+- GitHub Markdownファイルの取得・レンダリング
+- ユーザー認証（ログイン/ログアウト/新規登録）
+- 記事のCRUD操作（認証ユーザーのみ）
+- いいね機能（訪問者ID方式）
+- コメント機能（ゲストユーザー対応、リプライ対応）
+- BFFプロキシ（Route Handlers）によるバックエンドAPI中継
+
+### 対象外
+
+- バックエンドAPI（別リポジトリ）
+- データベース管理
+- Terraform/インフラ構築の詳細
+
+## 7. 制約条件
+
+- バックエンドAPIは別リポジトリで管理されており、フロントエンドはAPI経由でのみデータにアクセス可能
+- コンテンツ（Markdown記事）はGitHub上で管理し、API経由で取得
+- `NEXT_PUBLIC_` プレフィックス付き環境変数のみクライアントサイドに露出可能（現在は `NEXT_PUBLIC_VISIT_ID_KEY` のみ）
+- Node.js 20以上が必要（Next.js 16の要件）
