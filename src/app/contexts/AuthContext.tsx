@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -35,13 +35,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = useQuery<User | null>({
         queryKey: ['authUser'],
         queryFn: async () => {
-            const response = await fetch(
-                COMMON_CONSTANTS.URL.AUTH_CHECK,
-                {
-                    method: 'GET',
-                    credentials: 'include',
-                },
-            );
+            const response = await fetch(COMMON_CONSTANTS.URL.AUTH_CHECK, {
+                method: 'GET',
+                credentials: 'include',
+            });
 
             if (!response.ok) return null;
 
@@ -104,10 +101,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             return response.json();
         },
-        onSuccess: async () => {
+        onSuccess: () => {
             toast.success(COMMON_CONSTANTS.AUTH.TOAST_LOGOUT_SUCCESS);
-            // 認証状態を再取得
-            await refetch();
+            // 認証状態を再取得（リダイレクトをブロックしない）
+            refetch();
             // ログイン画面へ移動
             router.push(COMMON_CONSTANTS.LINK.LOGIN);
         },

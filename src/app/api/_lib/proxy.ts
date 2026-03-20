@@ -1,21 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_API_URL = process.env.BACKEND_API_URL;
-
 /**
  * バックエンドAPIへのプロキシリクエスト
  * サーバーサイドでのみ実行され、バックエンドURLをクライアントに露出しない
+ *
+ * Note: Next.js 16では req.text() + new NextResponse() パターンで
+ * POSTルートが404になるバグがあるため、req.json() + NextResponse.json() を使用
  */
 export async function proxyToBackend(
     req: NextRequest,
     backendPath: string,
     options?: { method?: string },
 ): Promise<NextResponse> {
-    if (!BACKEND_API_URL) {
-        return NextResponse.json(
-            { error: 'Backend API URL is not configured' },
-            { status: 500 },
-        );
+    const backendApiUrl = process.env.BACKEND_API_URL;
+    if (!backendApiUrl) {
+        return NextResponse.json({ error: 'Backend API URL is not configured' }, { status: 500 });
     }
 
     const method = options?.method || req.method;
@@ -37,28 +36,40 @@ export async function proxyToBackend(
 
     // GET/HEAD以外はリクエストボディを転送
     if (method !== 'GET' && method !== 'HEAD') {
-        const body = await req.text();
-        if (body) {
-            fetchOptions.body = body;
+        try {
+            const body = await req.json();
+            fetchOptions.body = JSON.stringify(body);
+        } catch {
+            // ボディなし or JSON以外（DELETEなど）
         }
     }
 
-    const backendRes = await fetch(`${BACKEND_API_URL}${backendPath}`, fetchOptions);
+    const backendRes = await fetch(`${backendApiUrl}${backendPath}`, fetchOptions);
 
     const status = backendRes.status;
-    const responseBody = status === 204 ? null : await backendRes.text();
 
-    const nextRes = new NextResponse(responseBody, { status });
-
-    // Content-Typeを転送
-    const resContentType = backendRes.headers.get('content-type');
-    if (resContentType) {
-        nextRes.headers.set('Content-Type', resContentType);
+    // 204 No Content
+    if (status === 204) {
+        const nextRes = NextResponse.json(null, { status: 204 });
+        for (const cookie of backendRes.headers.getSetCookie()) {
+            nextRes.headers.append('Set-Cookie', cookie);
+        }
+        return nextRes;
     }
 
+    // レスポンスを読み取り（bodyは1回しか読めないため、textで読んでからJSON parseを試みる）
+    const responseText = await backendRes.text();
+    let data;
+    try {
+        data = JSON.parse(responseText);
+    } catch {
+        data = responseText || null;
+    }
+
+    const nextRes = NextResponse.json(data, { status });
+
     // バックエンドからのSet-Cookieヘッダーをクライアントに転送（認証Cookie等）
-    const setCookies = backendRes.headers.getSetCookie();
-    for (const cookie of setCookies) {
+    for (const cookie of backendRes.headers.getSetCookie()) {
         nextRes.headers.append('Set-Cookie', cookie);
     }
 
