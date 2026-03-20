@@ -11,6 +11,11 @@
   - 動的ルートのparamsをPromise対応に修正
   - 詳細: `docs/security-report.md`
 
+- [x] Dependabotアラート7件の対応（2026-03-21）
+  - Next.js 16.1.6 → 16.2.1 アップグレード
+  - minimatch 3.1.2 → 3.1.5 / 9.0.5 → 9.0.9 アップグレード
+  - 詳細: `docs/security-alert-fix-2026-03-21.md`
+
 - [x] バックエンドAPI露出対策（2026-03-19）
   - BFFプロキシ（Next.js Route Handlers）の導入
   - `NEXT_PUBLIC_BACKEND_API_URL` → `BACKEND_API_URL`（サーバーサイド専用に変更）
