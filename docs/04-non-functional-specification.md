@@ -75,7 +75,7 @@
 |------|------|
 | テストフレームワーク | Playwright |
 | テスト種別 | E2E（End-to-End） |
-| テスト環境 | `npm run dev` で起動したローカルサーバー |
+| テスト環境 | `pnpm dev` で起動したローカルサーバー |
 | CI環境 | GitHub Actions上で実行、リトライ2回 |
 | タイムアウト | 30秒/テスト |
 | レポート | HTML形式（playwright-report/） |
@@ -97,7 +97,7 @@ main ブランチへプッシュ
 
 | ステージ | ベースイメージ | 用途 |
 |---------|--------------|------|
-| builder | node:20 | ビルド（npm ci + npm run build） |
+| builder | node:20 | ビルド（pnpm install --frozen-lockfile + pnpm build） |
 | runner | node:20-alpine | 本番実行（軽量イメージ） |
 
 ### 環境変数管理

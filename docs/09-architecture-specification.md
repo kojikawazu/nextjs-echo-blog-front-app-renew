@@ -33,7 +33,7 @@
 | バリデーション | Zod | 3.x |
 | Markdown | react-markdown + remark-gfm + rehype-highlight | - |
 | テスト | Playwright | 1.x |
-| パッケージ管理 | npm | - |
+| パッケージ管理 | pnpm | - |
 | コンテナ | Docker (node:20 / node:20-alpine) | - |
 | CDN/WAF | Cloudflare | - |
 | ホスティング | Google Cloud Run | - |
@@ -223,11 +223,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 ```
 Stage 1: builder (node:20)
-  → npm ci → npm run build → .next/
+  → pnpm install --frozen-lockfile → pnpm build → .next/
 
 Stage 2: runner (node:20-alpine)
   → package.json, .next/, node_modules/, public/, .env
-  → PORT=8080 → npm start
+  → PORT=8080 → node_modules/.bin/next start
 ```
 
 ### CI/CDフロー

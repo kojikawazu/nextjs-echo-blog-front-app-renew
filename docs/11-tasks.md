@@ -1,5 +1,17 @@
 # タスク管理（Tasks）
 
+## 進行中
+
+### パッケージマネージャー移行（npm → pnpm）[#62](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/issues/62)
+
+- [x] GitHub issue作成
+- [x] ブランチ作成（`chore/migrate-npm-to-pnpm`）
+- [x] ドキュメント更新（CLAUDE.md）
+- [x] `pnpm-lock.yaml` 生成（`pnpm import`）・`package-lock.json` 削除
+- [x] `Dockerfile` 修正
+- [x] GitHub Actions ワークフロー修正（3ファイル）
+- [ ] 動作確認・PR作成
+
 ## 完了済み
 
 ### セキュリティ対応

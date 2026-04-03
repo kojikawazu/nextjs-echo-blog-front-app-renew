@@ -73,28 +73,28 @@ BACKEND_API_URL=http://localhost:8080
 
 ```bash
 # 開発サーバー
-npm run dev
+pnpm dev
 
 # ビルド
-npm run build
+pnpm build
 
 # 本番サーバー
-npm start
+pnpm start
 
 # リント
-npm run lint
+pnpm lint
 
 # フォーマット
-npm run format            # 自動修正
-npm run format:check      # チェックのみ
+pnpm format            # 自動修正
+pnpm format:check      # チェックのみ
 
 # E2Eテスト
-npm run test:e2e          # HTMLレポート付き
-npm run test:e2e:ui       # インタラクティブUI
-npm run test:e2e:headed   # ブラウザ表示
+pnpm test:e2e          # HTMLレポート付き
+pnpm test:e2e:ui       # インタラクティブUI
+pnpm test:e2e:headed   # ブラウザ表示
 
 # 特定テスト
-npx playwright test e2e/tests/pages/blog_home/home.spec.ts
+pnpm dlx playwright test e2e/tests/pages/blog_home/home.spec.ts
 ```
 
 ## 4. CI/CDパイプライン
@@ -105,7 +105,7 @@ npx playwright test e2e/tests/pages/blog_home/home.spec.ts
 トリガー: PR / push to main
   1. チェックアウト
   2. Node.js 20 セットアップ
-  3. npm ci
+  3. pnpm install --frozen-lockfile
   4. .env.test 生成
   5. Playwrightブラウザインストール
   6. テスト実行（リトライ2回）

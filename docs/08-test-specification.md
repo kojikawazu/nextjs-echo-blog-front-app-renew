@@ -28,21 +28,21 @@
 | リトライ | CI: 2回 / ローカル: 0回 |
 | レポート | HTML形式（`playwright-report/`） |
 | トレース | 初回リトライ時に記録 |
-| 開発サーバー | `npm run dev`（CI時は自動起動） |
+| 開発サーバー | `pnpm dev`（CI時は自動起動） |
 | 環境変数 | `.env.test` から読み込み |
 
 ### テスト実行コマンド
 
 ```bash
 # ユニットテスト
-npm run test                  # 全ユニットテスト実行
-npm run test:watch            # ウォッチモード
+pnpm test                  # 全ユニットテスト実行
+pnpm test:watch            # ウォッチモード
 
 # E2Eテスト
-npm run test:e2e              # HTMLレポート付き
-npm run test:e2e:ui           # インタラクティブUI
-npm run test:e2e:headed       # ブラウザ表示
-npx playwright test <path>    # 特定テストのみ
+pnpm test:e2e              # HTMLレポート付き
+pnpm test:e2e:ui           # インタラクティブUI
+pnpm test:e2e:headed       # ブラウザ表示
+pnpm dlx playwright test <path>    # 特定テストのみ
 ```
 
 ## 3. モック構成
@@ -270,7 +270,7 @@ e2e/tests/mocks/
 .env.test にテスト用の環境変数を書き出し
 
 # 実行
-npx playwright test --reporter=html
+pnpm dlx playwright test --reporter=html
 
 # リトライ
 CI環境では2回リトライ
@@ -279,5 +279,5 @@ CI環境では2回リトライ
 ### テスト実行の流れ
 
 ```
-PR / push → GitHub Actions → npm ci → .env.test 作成 → npm run dev (バックグラウンド) → playwright test
+PR / push → GitHub Actions → pnpm install --frozen-lockfile → .env.test 作成 → pnpm dev (バックグラウンド) → playwright test
 ```
