@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { setupAuthCheckMock } from '../mocks/api/auth-api-mock';
-import { setupFetchBlogsMock } from '../mocks/api/blog-api-mock';
-import { mockBlogs } from '../mocks/blog/blog-mock';
+import { setupFetchBlogsMock, setupFetchSidebarMock } from '../mocks/api/blog-api-mock';
+import { mockBlogs, mockCategories, mockPopularPosts, mockTags } from '../mocks/blog/blog-mock';
 
 test.describe('smoke: アプリ起動・主要ルート疎通確認', () => {
     test('N-1: トップページ（未認証）が表示される', async ({ page }) => {
@@ -25,6 +25,7 @@ test.describe('smoke: アプリ起動・主要ルート疎通確認', () => {
         await Promise.all([
             setupAuthCheckMock(page, { authenticated: false }),
             setupFetchBlogsMock(page, mockBlogs),
+            setupFetchSidebarMock(page, mockCategories, mockTags, mockPopularPosts),
         ]);
 
         const consoleErrors: string[] = [];
