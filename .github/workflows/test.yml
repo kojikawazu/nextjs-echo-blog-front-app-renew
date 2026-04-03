@@ -28,6 +28,8 @@ jobs:
           e2e/tests/pages/blog_edit_form/*,
           e2e/tests/pages/blog_home/*,
           e2e/tests/pages/blog_new_form/*,
+          e2e/tests/pages/category/*,
+          e2e/tests/pages/tag/*,
         ]
 
     steps:

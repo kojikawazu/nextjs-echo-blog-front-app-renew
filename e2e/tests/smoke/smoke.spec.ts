@@ -12,7 +12,7 @@ test.describe('smoke: アプリ起動・主要ルート疎通確認', () => {
 
         await page.goto('/');
 
-        await expect(page.getByText('Test Blog 1')).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true })).toBeVisible();
     });
 
     test('N-2: ログインページが表示される', async ({ page }) => {
@@ -35,7 +35,7 @@ test.describe('smoke: アプリ起動・主要ルート疎通確認', () => {
         });
 
         await page.goto('/');
-        await expect(page.getByText('Test Blog 1')).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true })).toBeVisible();
 
         expect(consoleErrors).toHaveLength(0);
     });
