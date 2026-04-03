@@ -20,6 +20,10 @@ npm run lint
 npm run format
 npm run format:check
 
+# ユニットテスト
+npm run test
+npm run test:watch
+
 # E2Eテスト
 npm run test:e2e              # HTMLレポート付き
 npm run test:e2e:ui           # インタラクティブUI
