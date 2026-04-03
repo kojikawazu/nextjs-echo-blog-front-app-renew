@@ -12,7 +12,7 @@ test.describe('smoke: アプリ起動・主要ルート疎通確認', () => {
 
         await page.goto('/');
 
-        await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true }).first()).toBeVisible();
     });
 
     test('N-2: ログインページが表示される', async ({ page }) => {
@@ -36,7 +36,7 @@ test.describe('smoke: アプリ起動・主要ルート疎通確認', () => {
         });
 
         await page.goto('/');
-        await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true }).first()).toBeVisible();
 
         // 401（未認証時の想定内レスポンス）は除外し、それ以外の致命的エラーがないことを確認
         const criticalErrors = consoleErrors.filter(

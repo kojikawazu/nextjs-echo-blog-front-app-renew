@@ -14,17 +14,17 @@ test.describe('カテゴリーページ', () => {
 
     test('N-1: カテゴリーページが表示される', async ({ page }) => {
         await page.goto('/category/Test%20Category');
-        await page.waitForSelector('text=/Test Blog 1/', { timeout: 20000 });
+        await page.waitForSelector('h2', { timeout: 20000 });
 
-        await expect(page.getByText('Test Blog 1')).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true }).first()).toBeVisible();
     });
 
     test('N-2: カテゴリーページにブログ一覧が表示される', async ({ page }) => {
         await page.goto('/category/Test%20Category');
-        await page.waitForSelector('text=/Test Blog 1/', { timeout: 20000 });
+        await page.waitForSelector('h2', { timeout: 20000 });
 
         // 記事カードが表示されている
-        await expect(page.getByRole('heading', { name: 'Test Blog 1' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true }).first()).toBeVisible();
     });
 
     test('N-3: サイドバーが表示される', async ({ page }) => {
