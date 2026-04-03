@@ -38,7 +38,11 @@ test.describe('smoke: アプリ起動・主要ルート疎通確認', () => {
         await page.goto('/');
         await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true })).toBeVisible();
 
-        expect(consoleErrors).toHaveLength(0);
+        // 401（未認証時の想定内レスポンス）は除外し、それ以外の致命的エラーがないことを確認
+        const criticalErrors = consoleErrors.filter(
+            (msg) => !msg.includes('401') && !msg.includes('Unauthorized'),
+        );
+        expect(criticalErrors).toHaveLength(0);
     });
 
     test('S-1: 存在しないページにアクセスしてもクラッシュしない', async ({ page }) => {
