@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { setupAuthCheckMock } from '../../mocks/api/auth-api-mock';
-import { setupFetchBlogsMock, setupFetchSidebarMock } from '../../mocks/api/blog-api-mock';
-import { mockBlogs, mockCategories, mockPopularPosts, mockTags } from '../../mocks/blog/blog-mock';
+import { setupFetchBlogsMock, setupFetchBlogByIdMock, setupFetchSidebarMock } from '../../mocks/api/blog-api-mock';
+import { mockBlogs, mockBlog, mockCategories, mockPopularPosts, mockTags } from '../../mocks/blog/blog-mock';
+
+const BLOG_ID = '2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234';
 
 test.describe('認証リダイレクト', () => {
     test('N-1: 未認証で /new にアクセスするとトップページにリダイレクトされる', async ({
@@ -14,7 +16,6 @@ test.describe('認証リダイレクト', () => {
         ]);
 
         await page.goto('/new');
-        // useEffect内でrouter.push('/')が呼ばれるまで待機
         await page.waitForURL('/', { timeout: 10000 });
 
         await expect(page).toHaveURL('/');
@@ -27,23 +28,28 @@ test.describe('認証リダイレクト', () => {
             setupFetchSidebarMock(page, mockCategories, mockTags, mockPopularPosts),
         ]);
 
-        await page.goto('/new');
-        await page.waitForLoadState('networkidle');
+        // 一度トップページで認証状態を確定させてから /new に遷移
+        await page.goto('/');
+        await page.waitForSelector('h2', { timeout: 10000 });
 
-        // フォームが表示されている（リダイレクトされていない）
+        await page.goto('/new');
+        await page.waitForSelector('text=/記事の作成/', { timeout: 10000 });
+
         await expect(page).toHaveURL('/new');
     });
 
-    test('S-1: 未認証で /edit ページにアクセスするとリダイレクトされる', async ({ page }) => {
+    test('S-1: 未認証で /edit ページにアクセスするとログインページにリダイレクトされる', async ({
+        page,
+    }) => {
         await Promise.all([
             setupAuthCheckMock(page, { authenticated: false }),
-            setupFetchBlogsMock(page, mockBlogs),
+            setupFetchBlogByIdMock(page, mockBlog),
             setupFetchSidebarMock(page, mockCategories, mockTags, mockPopularPosts),
         ]);
 
-        await page.goto('/blog/2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234/edit');
-        await page.waitForURL('/', { timeout: 10000 });
+        await page.goto(`/edit/${BLOG_ID}`);
+        await page.waitForURL('/login', { timeout: 10000 });
 
-        await expect(page).toHaveURL('/');
+        await expect(page).toHaveURL('/login');
     });
 });
