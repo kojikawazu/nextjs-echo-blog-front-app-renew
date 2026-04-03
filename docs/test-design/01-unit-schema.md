@@ -16,9 +16,11 @@
 ## 既知の課題（テストで明示化する）
 
 `blogSchema` / `blogCommentSchema` の全フィールドが `.optional()` であるため、
-必須チェックが HTML `required` 属性依存になっている。
-テストではこの **「空文字でも通過する」** 挙動を明示的に記録し、
-将来 optional() を外した際のリグレッション検知として機能させる。
+フィールドを省略した場合（`undefined`）は必須チェックをバイパスできる。
+必須チェックは HTML `required` 属性に依存している。
+空文字（`""`）は `min(1)` が発動するため**バリデーションで弾かれる**（正常動作）。
+テストではこの **「`undefined` は `optional()` で通過する」** 挙動を明示的に記録し、
+将来 `optional()` を外した際のリグレッション検知として機能させる。
 
 ---
 
@@ -65,12 +67,12 @@
 |---|---|---|---|---|
 | N-1 | 全フィールド有効値 | `{ blog_id: "abc", guest_user: "太郎", comment: "良い記事" }` | エラーなし | High |
 
-### 準正常系（optional()により空文字が通過することの記録）
+### 準正常系
 
 | # | テストケース | 入力 | 期待結果 | 優先度 | 備考 |
 |---|---|---|---|---|---|
-| S-1 | comment が空（optional のため通過） | `{ comment: "" }` | **エラーなし**（通過） | High | 既知課題: optional()があるため空でも通る |
-| S-2 | 全フィールド未指定（undefined） | `{}` | エラーなし（全optional） | High | 既知課題の明示 |
+| S-1 | comment が空文字 | `{ comment: "" }` | **エラーあり**（失敗） | High | `min(1)` が発動するため空文字は通らない |
+| S-2 | 全フィールド未指定（undefined） | `{}` | エラーなし（全optional） | High | 既知課題: `optional()` により `undefined` は通過する |
 
 ---
 
@@ -87,9 +89,9 @@
 
 | # | テストケース | 入力 | 期待結果 | 優先度 | 備考 |
 |---|---|---|---|---|---|
-| S-1 | github_url が不正なURL | `{ github_url: "not-a-url" }` | `github_url` にエラー | High | urlバリデーションは機能する |
-| S-2 | title が空（optional のため通過） | `{ title: "" }` | **エラーなし**（通過） | High | 既知課題: optional()があるため空でも通る |
-| S-3 | 全フィールド未指定 | `{}` | エラーなし（全optional） | High | 既知課題の明示 |
+| S-1 | github_url が不正なURL | `{ github_url: "not-a-url" }` | `github_url` にエラー | High | URLバリデーションは機能する |
+| S-2 | title が空文字 | `{ title: "" }` | **エラーあり**（失敗） | High | `min(1)` が発動するため空文字は通らない |
+| S-3 | 全フィールド未指定（undefined） | `{}` | エラーなし（全optional） | High | 既知課題: `optional()` により `undefined` は通過する |
 
 ## モック方針
 
