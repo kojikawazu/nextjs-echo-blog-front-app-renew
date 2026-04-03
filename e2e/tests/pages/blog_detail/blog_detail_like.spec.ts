@@ -56,6 +56,8 @@ test.describe('Blog: いいね機能', () => {
         await page.waitForSelector('[data-testid="like-count"]', { timeout: 20000 });
 
         const likeButton = page.locator('button').filter({ has: page.getByTestId('like-count') }).first();
+        // 未いいね状態（グレー）であることを確認してからクリック
+        await expect(likeButton).not.toHaveClass(/text-sky-500/, { timeout: 10000 });
         await likeButton.click();
 
         expect(likeApiCalled).toBe(true);
@@ -78,6 +80,8 @@ test.describe('Blog: いいね機能', () => {
         await page.waitForSelector('[data-testid="like-count"]', { timeout: 20000 });
 
         const likeButton = page.locator('button').filter({ has: page.getByTestId('like-count') }).first();
+        // いいね済みデータがロードされ青色になるまで待ってからクリック
+        await expect(likeButton).toHaveClass(/text-sky-500/, { timeout: 10000 });
         await likeButton.click();
 
         expect(unlikeApiCalled).toBe(true);
