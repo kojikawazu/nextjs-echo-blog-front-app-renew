@@ -3,12 +3,14 @@ FROM node:20 AS builder
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm ci
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN npm run build
+RUN pnpm build
 
 # Stage 2: Production
 FROM node:20-alpine AS runner
@@ -24,4 +26,4 @@ COPY --from=builder /app/.env ./.env
 ENV PORT=8080
 EXPOSE 8080
 
-CMD ["npm", "start"]
+CMD ["node_modules/.bin/next", "start"]

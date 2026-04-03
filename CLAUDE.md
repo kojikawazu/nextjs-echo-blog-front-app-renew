@@ -6,31 +6,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Next.js 14で構築されたMarkdownブログアプリのフロントエンド。バックエンドはEcho + Go（別リポジトリ）。
 
+## パッケージマネージャー
+
+**pnpm** を使用しています。
+
+```bash
+# 初回セットアップ（未インストールの場合）
+npm install -g pnpm
+
+# 依存関係インストール
+pnpm install
+```
+
 ## 開発コマンド
 
 ```bash
 # 開発サーバー起動
-npm run dev
+pnpm dev
 
 # ビルド
-npm run build
+pnpm build
 
 # リント・フォーマット
-npm run lint
-npm run format
-npm run format:check
+pnpm lint
+pnpm format
+pnpm format:check
 
 # ユニットテスト
-npm run test
-npm run test:watch
+pnpm test
+pnpm test:watch
 
 # E2Eテスト
-npm run test:e2e              # HTMLレポート付き
-npm run test:e2e:ui           # インタラクティブUI
-npm run test:e2e:headed       # ブラウザ表示
+pnpm test:e2e              # HTMLレポート付き
+pnpm test:e2e:ui           # インタラクティブUI
+pnpm test:e2e:headed       # ブラウザ表示
 
 # 特定テストのみ実行
-npx playwright test e2e/tests/pages/blog_home/home.spec.ts
+pnpm dlx playwright test e2e/tests/pages/blog_home/home.spec.ts
 ```
 
 ## 環境変数

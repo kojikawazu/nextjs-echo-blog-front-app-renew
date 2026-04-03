@@ -17,8 +17,8 @@ on:
             - 'jest.config.js'
             - 'jest.setup.ts'
             - 'next.config.mjs'
-            - 'package-lock.json'
             - 'package.json'
+            - 'pnpm-lock.yaml'
             - 'playwright.config.ts'
             - 'postcss.config.js'
             - 'tailwind.config.js'
@@ -48,7 +48,7 @@ jobs:
             - name: Create file
               run: |
                   echo NEXT_PUBLIC_VISIT_ID_KEY=${{ secrets.NEXT_PUBLIC_VISIT_ID_KEY }} > .env
-   
+
 
             - name: Setup Google Cloud SDK
               uses: google-github-actions/setup-gcloud@v1
@@ -68,11 +68,11 @@ jobs:
                     --region ${{ secrets.GCP_REGION }} \
                     --platform managed \
                     --allow-unauthenticated
-            
+
             - name: Cleanup old images
               run: |
                   IMAGE_NAME="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPO_NAME }}/${{ secrets.APP_NAME }}"
-                  
+
                   # 最新5つのタグを取得
                   KEEP_IMAGES=$(gcloud artifacts docker images list ${IMAGE_NAME} --format="value(DIGEST)" --sort-by="~UPDATE_TIME" | head -n 5)
 
