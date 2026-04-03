@@ -7,7 +7,8 @@ import {
 } from '../../mocks/api/blog-likes-api-mock';
 import { mockBlogs, mockCategories, mockPopularPosts, mockTags } from '../../mocks/blog/blog-mock';
 
-const LIKED_BLOG_ID = '2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234';
+// newest順で最初に表示されるブログ（created_at: '2021-01-04'）
+const LIKED_BLOG_ID = '4';
 
 test.describe('Blog: いいね機能', () => {
     test.beforeEach(async ({ page }) => {
