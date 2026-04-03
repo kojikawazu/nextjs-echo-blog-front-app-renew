@@ -18,7 +18,7 @@ test.describe('smoke: アプリ起動・主要ルート疎通確認', () => {
     test('N-2: ログインページが表示される', async ({ page }) => {
         await page.goto('/login');
 
-        await expect(page.getByRole('textbox', { name: /メール|email/i })).toBeVisible();
+        await expect(page.getByLabel('メールアドレス')).toBeVisible();
     });
 
     test('N-3: トップページでコンソールエラーが出ない', async ({ page }) => {
