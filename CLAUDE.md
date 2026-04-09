@@ -1,10 +1,23 @@
-# CLAUDE.md
+# nextjs-echo-blog-front-app-renew
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Next.js + TypeScript で構築された Markdown ブログアプリのフロントエンド（リニューアル版）。バックエンドは Echo + Go（別リポジトリ）。
+
+## Rules
+
+明示的な指示がなくても、`.claude/rules/` 内のルールを常に守ってください。
+
+| ファイル | スコープ | 内容 |
+|---------|---------|------|
+| shortcuts.md | 全体 | 指示ショートカット（PR出して、PR承認しました 等） |
+| workflow.md | 全体 | 開発フロー（ブランチ運用・テスト必須） |
+| quality-gate.md | 全体 | 品質ゲート（セルフレビュー・設計/実装レビュー） |
+| documentation.md | 全体 | ドキュメント更新ルール |
+| git.md | 全体 | GitHub Flow・ブランチ命名・push 禁止物 |
+| testing.md | 全体 | テスト分類・原則 |
 
 ## プロジェクト概要
 
-Next.js 14で構築されたMarkdownブログアプリのフロントエンド。バックエンドはEcho + Go（別リポジトリ）。
+Next.js 16で構築されたMarkdownブログアプリのフロントエンド。バックエンドはEcho + Go（別リポジトリ）。
 
 ## パッケージマネージャー
 
