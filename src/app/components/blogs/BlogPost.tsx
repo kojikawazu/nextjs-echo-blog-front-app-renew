@@ -36,6 +36,9 @@ export function BlogPost({ id }: BlogPostProps) {
     const { user, isLoading: isAuthLoading } = useAuth();
     // states
     const [markdownData, setMarkdownData] = useState<string | null>(null);
+    const [markdownStatus, setMarkdownStatus] = useState<'idle' | 'loading' | 'error' | 'done'>(
+        'idle',
+    );
 
     // ブログデータの取得
     const {
@@ -50,13 +53,29 @@ export function BlogPost({ id }: BlogPostProps) {
 
     // GitHubのURLからMarkdownデータを取得
     useEffect(() => {
-        const fetchMarkdownData = async () => {
-            if (blog && blog.github_url) {
-                const markdownData = await fetchMarkdown(blog.github_url);
-                setMarkdownData(markdownData);
+        if (!blog || !blog.github_url) {
+            return;
+        }
+        let cancelled = false;
+        setMarkdownStatus('loading');
+        (async () => {
+            try {
+                const content = await fetchMarkdown(blog.github_url);
+                if (cancelled) return;
+                if (content) {
+                    setMarkdownData(content);
+                    setMarkdownStatus('done');
+                } else {
+                    // 取得失敗（プロキシが null を返却。トークン失効・404 等）→ 無言の空白を避ける
+                    setMarkdownStatus('error');
+                }
+            } catch {
+                if (!cancelled) setMarkdownStatus('error');
             }
+        })();
+        return () => {
+            cancelled = true;
         };
-        fetchMarkdownData();
     }, [blog]);
 
     return (
@@ -115,13 +134,36 @@ export function BlogPost({ id }: BlogPostProps) {
                         </header>
 
                         <div className="">{blog.description}</div>
-                        <ReactMarkdown
-                            className="prose prose-sky max-w-none markdown-content"
-                            remarkPlugins={[remarkGfm, remarkBreaks]}
-                            rehypePlugins={[rehypeHighlight]}
-                        >
-                            {markdownData}
-                        </ReactMarkdown>
+
+                        {markdownStatus === 'loading' && (
+                            <div className="h-16 flex items-center justify-center">
+                                <PulseLoader color="#dddddd" size={10} />
+                            </div>
+                        )}
+
+                        {markdownData && (
+                            <ReactMarkdown
+                                className="prose prose-sky max-w-none markdown-content"
+                                remarkPlugins={[remarkGfm, remarkBreaks]}
+                                rehypePlugins={[rehypeHighlight]}
+                            >
+                                {markdownData}
+                            </ReactMarkdown>
+                        )}
+
+                        {blog.github_url && markdownStatus === 'error' && (
+                            <p className="text-gray-500">
+                                本文を読み込めませんでした。
+                                <a
+                                    href={blog.github_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sky-700 underline ml-1"
+                                >
+                                    GitHub で記事を見る
+                                </a>
+                            </p>
+                        )}
 
                         <div className="mt-12 pt-12 border-t border-sky-100">
                             <CommentsSection blogId={blog.id} />
