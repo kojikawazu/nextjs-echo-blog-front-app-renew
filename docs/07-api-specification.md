@@ -1,5 +1,35 @@
 # API仕様書（API Specification）
 
+## 目次
+
+- [1. 概要](#1-概要)
+    - [共通仕様](#共通仕様)
+- [2. 認証API](#2-認証api)
+    - [POST `/api/auth/login`](#post-apiauthlogin)
+    - [POST `/api/auth/logout`](#post-apiauthlogout)
+    - [GET `/api/auth/check`](#get-apiauthcheck)
+- [3. ブログAPI](#3-ブログapi)
+    - [GET `/api/blogs`](#get-apiblogs)
+    - [POST `/api/blogs`](#post-apiblogs)
+    - [GET `/api/blogs/\[id\]`](#get-apiblogsid)
+    - [PUT `/api/blogs/\[id\]`](#put-apiblogsid)
+    - [DELETE `/api/blogs/\[id\]`](#delete-apiblogsid)
+    - [GET `/api/blogs/categories`](#get-apiblogscategories)
+    - [GET `/api/blogs/tags`](#get-apiblogstags)
+    - [GET `/api/blogs/popular/\[count\]`](#get-apiblogspopularcount)
+- [4. いいねAPI](#4-いいねapi)
+    - [GET `/api/blog-likes`](#get-apiblog-likes)
+    - [GET `/api/blog-likes/generate-visit-id`](#get-apiblog-likesgenerate-visit-id)
+    - [POST `/api/blog-likes/\[blogId\]`](#post-apiblog-likesblogid)
+    - [DELETE `/api/blog-likes/\[blogId\]`](#delete-apiblog-likesblogid)
+- [5. コメントAPI](#5-コメントapi)
+    - [GET `/api/comments/\[blogId\]`](#get-apicommentsblogid)
+    - [POST `/api/comments`](#post-apicomments)
+- [6. GitHubプロキシAPI](#6-githubプロキシapi)
+    - [POST `/api/github/markdown`](#post-apigithubmarkdown)
+- [7. Route Handler一覧](#7-route-handler一覧)
+- [8. クライアントAPI関数一覧](#8-クライアントapi関数一覧)
+
 ## 1. 概要
 
 フロントエンドはNext.js Route Handlers（BFFプロキシ）を通じてバックエンドAPIにアクセスする。クライアントからはすべて `/api/*` パスへリクエストし、Route Handlerがバックエンドへ中継する。

@@ -1,5 +1,18 @@
 # タスク管理（Tasks）
 
+## 目次
+
+- [進行中](#進行中)
+    - [パッケージマネージャー移行（npm → pnpm）\[#62\](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/issues/62)](#パッケージマネージャー移行npm--pnpm62httpsgithubcomkojikawazunextjs-echo-blog-front-app-renewissues62)
+- [完了済み](#完了済み)
+    - [セキュリティ対応](#セキュリティ対応)
+    - [基本機能](#基本機能)
+    - [インフラ・デプロイ](#インフラデプロイ)
+    - [テスト](#テスト)
+    - [ドキュメント](#ドキュメント)
+- [既知の課題](#既知の課題)
+- [今後の改善候補](#今後の改善候補)
+
 ## 進行中
 
 ### パッケージマネージャー移行（npm → pnpm）[#62](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/issues/62)
@@ -60,6 +73,11 @@
 ### テスト
 
 - [x] Playwright E2Eテスト環境構築
+- [x] ユニットテスト環境構築（Vitest + @testing-library）
+- [x] スキーマのユニットテスト（authSchema, blogSchema, blogCommentSchema）
+- [x] カスタムフックのユニットテスト（useComments, useDebounce, useLikeBlog）
+- [x] API通信関数のユニットテスト（fetchBlogs: ソート/フィルタ/変換/異常系）
+- [x] `fetchBlogs` の newest ソート精度修正（日付整形をソート後に移し、同日内の時刻順を保持）
 - [x] レイアウトテスト（Header、Footer）
 - [x] 認証テスト（ログイン）
 - [x] ブログホームテスト（一覧、検索、ページネーション、サイドバー）
@@ -78,13 +96,13 @@
 - [ ] 新規登録（`/register`）のバックエンドAPI連携が未実装（UIのみスタブ）
 - [ ] コメントのリプライ機能が未実装（型定義の `parent_id` のみ存在、UI・API送信なし）
 - [ ] フィルタ・検索・ソート変更時にページが1にリセットされない
-- [ ] サイドバーの人気記事が全体TOP5ではなく、現在ページのデータからの算出になっている
+- [ ] サイドバーの人気記事の算出元がページによって異なる（ホーム`/`は現在ページのブログデータから算出、その他ページは `/api/blogs/popular/:count` から全体TOP5を取得）。一貫性に欠ける
 - [ ] ブログ作成/編集フォームのZodスキーマが全フィールド `optional()` で、必須チェックがHTML `required` 属性依存
 - [ ] 訪問者IDの生成結果がフロント側で永続化されていない（バックエンドCookie依存の可能性）
 
 ## 今後の改善候補
 
-- [ ] ユニットテスト追加（Jest / Vitest）
+- [ ] ユニットテストのカバレッジ拡充（現在はスキーマ・カスタムフックのみ。コンポーネント等へ拡大）
 - [ ] SSR / SSGの活用（現在は全ページCSR）
 - [ ] 画像アップロード機能
 - [ ] ブログ記事のOGP設定

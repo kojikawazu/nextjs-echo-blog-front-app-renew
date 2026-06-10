@@ -1,0 +1,5 @@
+# pnpm の設定ファイル（新しい pnpm では package.json の "pnpm" フィールドではなくこちらが正準）。
+# ビルドスクリプトを持つ依存を明示的に承認し、install 時の ERR_PNPM_IGNORED_BUILDS を防ぐ。
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver
