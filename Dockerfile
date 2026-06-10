@@ -3,9 +3,13 @@ FROM node:20 AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# pnpm はバージョン固定（pnpm@latest は Node 22+ 要求の 11.x を引き、node:20 ベースで
+# ERR_UNKNOWN_BUILTIN_MODULE(node:sqlite) クラッシュするため）。CI(test.yml)と同じ 10.33.0 に揃える。
+RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
 
-COPY package.json pnpm-lock.yaml ./
+# pnpm-workspace.yaml の onlyBuiltDependencies を install 時に効かせるため一緒に COPY する
+# （未COPY だと sharp / unrs-resolver のビルドが ERR_PNPM_IGNORED_BUILDS で失敗する）
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 COPY . .
