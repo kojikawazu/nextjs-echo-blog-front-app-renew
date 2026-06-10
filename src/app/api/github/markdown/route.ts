@@ -53,12 +53,22 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Repository owner not allowed' }, { status: 403 });
     }
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-    const headers: HeadersInit = {
+    const baseHeaders: HeadersInit = {
         Accept: 'application/vnd.github.v3.raw',
-        ...(githubToken ? { Authorization: `Bearer ${githubToken}` } : {}),
     };
 
-    const response = await fetch(apiUrl, { headers });
+    // トークンがあれば付与して取得
+    let response = await fetch(apiUrl, {
+        headers: githubToken
+            ? { ...baseHeaders, Authorization: `Bearer ${githubToken}` }
+            : baseHeaders,
+    });
+
+    // トークンが失効・権限切れ（401/403）の場合、公開リポジトリ向けに無認証で再取得する。
+    // オーナーは ALLOWED_REPO_OWNER で制限済みのため、無認証で読めるのは公開リポのみ＝private 漏洩リスクはない。
+    if (githubToken && (response.status === 401 || response.status === 403)) {
+        response = await fetch(apiUrl, { headers: baseHeaders });
+    }
 
     if (!response.ok) {
         return NextResponse.json(
