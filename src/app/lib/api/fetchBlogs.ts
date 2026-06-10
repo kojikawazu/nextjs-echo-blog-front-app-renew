@@ -46,8 +46,10 @@ export async function fetchBlogs(
               description: blog.description,
               likes: blog.likes ?? 0,
               comment_cnt: blog.comment_cnt ?? 0,
-              created_at: new Date(blog.created_at).toLocaleDateString('ja-JP'),
-              updated_at: new Date(blog.updated_at).toLocaleDateString('ja-JP'),
+              // ソートの精度を保つため、この時点では ISO 8601 のまま保持し、
+              // 表示用の整形（toLocaleDateString）はソート・ページング後に行う
+              created_at: blog.created_at,
+              updated_at: blog.updated_at,
           }))
         : [];
 
@@ -84,7 +86,12 @@ export async function fetchBlogs(
 
     // ページごとのデータへフィルターをかける
     const startIndex = (page - 1) * limit;
-    const paginatedBlogs = blogs.slice(startIndex, startIndex + limit);
+    // 表示用に日付を整形（ソート・ページングは ISO 8601 の全精度で実施済み）
+    const paginatedBlogs = blogs.slice(startIndex, startIndex + limit).map((blog) => ({
+        ...blog,
+        created_at: new Date(blog.created_at).toLocaleDateString('ja-JP'),
+        updated_at: new Date(blog.updated_at).toLocaleDateString('ja-JP'),
+    }));
 
     // フィルター適用後のブログの総数
     const totalPages = Math.ceil(blogs.length / limit);

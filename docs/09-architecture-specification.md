@@ -1,5 +1,26 @@
 # アーキテクチャ仕様書（Architecture Specification）
 
+## 目次
+
+- [1. システムアーキテクチャ](#1-システムアーキテクチャ)
+    - [全体構成](#全体構成)
+    - [技術スタック](#技術スタック)
+- [2. ディレクトリ構成](#2-ディレクトリ構成)
+    - [`src/app/` 外のテスト関連ファイル](#srcapp-外のテスト関連ファイル)
+- [3. Provider構成](#3-provider構成)
+    - [Provider依存関係](#provider依存関係)
+- [4. 状態管理アーキテクチャ](#4-状態管理アーキテクチャ)
+    - [3層の状態管理](#3層の状態管理)
+    - [データフロー](#データフロー)
+- [5. ルーティング](#5-ルーティング)
+    - [Route Groups](#route-groups)
+    - [動的ルート](#動的ルート)
+- [6. デプロイアーキテクチャ](#6-デプロイアーキテクチャ)
+    - [Dockerマルチステージビルド](#dockerマルチステージビルド)
+    - [CI/CDフロー](#cicdフロー)
+    - [シークレットの注入経路](#シークレットの注入経路)
+- [7. Next.js設定](#7-nextjs設定)
+
 ## 1. システムアーキテクチャ
 
 ### 全体構成
@@ -104,6 +125,10 @@ src/app/
 │   ├── AuthContext.tsx          # 認証コンテキスト
 │   └── GlobalContext.tsx        # グローバルデータコンテキスト
 ├── hooks/                      # カスタムフック
+│   ├── __tests__/              # フックのユニットテスト（Vitest）
+│   │   ├── useComments.test.ts
+│   │   ├── useDebounce.test.ts
+│   │   └── useLikeBlog.test.ts
 │   ├── useComments.ts          # コメント機能
 │   ├── useDebounce.ts          # デバウンスユーティリティ
 │   └── useLikeBlog.ts          # いいね機能
@@ -127,6 +152,10 @@ src/app/
 │   ├── QueryProvider.tsx       # TanStack Query Provider
 │   └── ToastProvider.tsx       # react-hot-toast Provider
 ├── schema/                     # Zodスキーマ
+│   ├── __tests__/              # スキーマのユニットテスト（Vitest）
+│   │   ├── authSchema.test.ts
+│   │   ├── blogSchema.test.ts
+│   │   └── blogCommentSchema.test.ts
 │   ├── authSchema.ts           # 認証フォーム
 │   ├── blogSchema.ts           # ブログフォーム
 │   └── blogCommentSchema.ts    # コメントフォーム
@@ -144,6 +173,14 @@ src/app/
 ├── globals.css                 # グローバルCSS
 └── layout.tsx                  # ルートレイアウト
 ```
+
+### `src/app/` 外のテスト関連ファイル
+
+| パス | 用途 |
+|------|------|
+| `vitest.config.ts`（リポジトリ直下） | Vitest 設定（jsdom 環境・setup ファイル指定・パスエイリアス） |
+| `src/test/setup.ts` | Vitest のグローバルセットアップ（`@testing-library/jest-dom` 等） |
+| `e2e/`（リポジトリ直下） | Playwright E2E テスト・モック（詳細は `docs/08-test-specification.md`） |
 
 ## 3. Provider構成
 

@@ -1,5 +1,27 @@
 # その他仕様書（Miscellaneous Specification）
 
+## 目次
+
+- [1. コード規約](#1-コード規約)
+    - [書式設定（Prettier）](#書式設定prettier)
+    - [リンター（ESLint 9）](#リンターeslint-9)
+    - [カスタムルール](#カスタムルール)
+    - [パスエイリアス](#パスエイリアス)
+- [2. 環境変数](#2-環境変数)
+    - [ローカル開発（`.env`）](#ローカル開発env)
+    - [テスト環境（`.env.test`）](#テスト環境envtest)
+    - [本番環境（Cloud Run）](#本番環境cloud-run)
+- [3. 開発コマンド](#3-開発コマンド)
+- [4. CI/CDパイプライン](#4-cicdパイプライン)
+    - [テストワークフロー（`test.yml`）](#テストワークフローtestyml)
+    - [デプロイワークフロー（`deploy_to_googlecloud.yml`）](#デプロイワークフローdeploy_to_googlecloudyml)
+- [5. Terraform管理リソース](#5-terraform管理リソース)
+    - [シークレット値の投入（Terraform外）](#シークレット値の投入terraform外)
+- [6. 依存パッケージ](#6-依存パッケージ)
+    - [本番依存（dependencies）](#本番依存dependencies)
+    - [開発依存（devDependencies）](#開発依存devdependencies)
+- [7. 用語集](#7-用語集)
+
 ## 1. コード規約
 
 ### 書式設定（Prettier）
@@ -8,7 +30,9 @@
 |------|--------|
 | タブ幅 | 4スペース |
 | クォート | シングルクォート |
-| 末尾カンマ | あり（trailing comma） |
+| 末尾カンマ | あり（`trailingComma: all`） |
+| セミコロン | あり（`semi: true`） |
+| 行幅 | 100（`printWidth: 100`） |
 | 対象ファイル | `**/*.{ts,tsx}` |
 
 ### リンター（ESLint 9）
@@ -42,6 +66,8 @@
 **使用例**: `import { Blog } from '@/app/types/blogs'`
 
 ## 2. 環境変数
+
+> **正準**: 環境変数の一覧・供給元・本番（Secret Manager）構成は [`../manuals/environment.md`](../manuals/environment.md) を正準とする。ローカル雛形はリポジトリ直下の [`.env.example`](../.env.example)。本節は要点の再掲。
 
 ### ローカル開発（`.env`）
 
@@ -80,6 +106,10 @@ pnpm build
 
 # 本番サーバー
 pnpm start
+
+# ユニットテスト（Vitest）
+pnpm test              # 全ユニットテスト実行
+pnpm test:watch        # ウォッチモード
 
 # リント
 pnpm lint
@@ -170,6 +200,8 @@ gcloud secrets versions add github-token --data-file=- <<< "ghp_xxxxx"
 | `tailwindcss`, `postcss` | CSS |
 | `eslint`, `eslint-config-next`, `eslint-config-prettier` | リンター |
 | `prettier` | フォーマッター |
+| `vitest`, `@vitejs/plugin-react`, `jsdom` | ユニットテスト（実行環境） |
+| `@testing-library/react`, `@testing-library/dom`, `@testing-library/jest-dom`, `@testing-library/user-event` | ユニットテスト（DOM/フック検証） |
 | `@playwright/test`, `playwright` | E2Eテスト |
 
 ## 7. 用語集

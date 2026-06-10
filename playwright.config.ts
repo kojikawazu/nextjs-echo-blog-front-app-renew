@@ -22,7 +22,7 @@ export default defineConfig({
     // テストの実行環境
     webServer: {
         // テストの実行環境のコマンド
-        command: 'npm run dev',
+        command: 'pnpm run dev',
         // テストの実行環境のURL
         url: 'http://localhost:3000',
         // テストの実行環境の再利用

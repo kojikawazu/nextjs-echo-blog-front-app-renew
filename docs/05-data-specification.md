@@ -1,5 +1,26 @@
 # データ仕様書（Data Specification）
 
+## 目次
+
+- [1. 型定義](#1-型定義)
+    - [Blog](#blog)
+    - [Comment](#comment)
+    - [BlogLike](#bloglike)
+    - [User](#user)
+- [2. バリデーションスキーマ（Zod）](#2-バリデーションスキーマzod)
+    - [ログインフォーム](#ログインフォーム)
+    - [新規登録フォーム](#新規登録フォーム)
+    - [ブログ作成フォーム](#ブログ作成フォーム)
+    - [ブログ編集フォーム](#ブログ編集フォーム)
+    - [コメント投稿フォーム](#コメント投稿フォーム)
+- [3. データ変換処理](#3-データ変換処理)
+    - [ブログ一覧取得時の変換（`fetchBlogs.ts`）](#ブログ一覧取得時の変換fetchblogsts)
+    - [ブログ作成/更新時の変換](#ブログ作成更新時の変換)
+- [4. 状態管理](#4-状態管理)
+    - [React Context](#react-context)
+    - [TanStack Query キャッシュキー](#tanstack-query-キャッシュキー)
+    - [Zustand Store（開発用サンプル）](#zustand-store開発用サンプル)
+
 ## 1. 型定義
 
 ### Blog
@@ -162,8 +183,8 @@ const blogCommentSchema = z.object({
 | `github_url` (null) | `github_url` ('')  | null → 空文字 |
 | `likes` (null) | `likes` (0) | null → 0 |
 | `comment_cnt` (null) | `comment_cnt` (0) | null → 0 |
-| `created_at` (ISO 8601) | `created_at` ('yyyy/MM/dd') | 日本語ローカル日付に変換 |
-| `updated_at` (ISO 8601) | `updated_at` ('yyyy/MM/dd') | 日本語ローカル日付に変換 |
+| `created_at` (ISO 8601) | `created_at` ('yyyy/M/d') | `toLocaleDateString('ja-JP')` で変換（ゼロ埋めなし） |
+| `updated_at` (ISO 8601) | `updated_at` ('yyyy/M/d') | `toLocaleDateString('ja-JP')` で変換（ゼロ埋めなし） |
 
 ### ブログ作成/更新時の変換
 
