@@ -24,15 +24,6 @@ GitHub 上で管理している Markdown 記事を読み込んで公開する技
 
 > **未実装（既知）**: 新規登録（`/register`）は UI のみのスタブ、コメント返信は型定義（`parent_id`）のみ。詳細は [docs/11-tasks.md](./docs/11-tasks.md) を参照。
 
-## スクリーンショット
-
-> 📸 スクリーンショットは準備中です。実際の画面は公開サイト https://techblogkk.com で確認できます。
-
-<!-- 画像を追加する場合は docs/images/ に配置し、以下のように参照してください:
-![ホーム画面](./docs/images/home.png)
-![記事詳細](./docs/images/blog-detail.png)
--->
-
 ## 技術スタック
 
 **Frontend**
