@@ -6,22 +6,12 @@ on:
             - main
         paths:
             - '.github/**'
-            - '__tests__/**'
-            - 'e2e/**'
-            - 'public/**'
-            - 'src/**'
-            - '.dockerignore'
-            - '.prettierrc'
+            - 'apps/front/**'
             - 'Dockerfile'
-            - 'eslint.config.mjs'
-            - 'vitest.config.ts'
-            - 'next.config.mjs'
+            - '.dockerignore'
             - 'package.json'
             - 'pnpm-lock.yaml'
-            - 'playwright.config.ts'
-            - 'postcss.config.mjs'
-            - 'tailwind.config.ts'
-            - 'tsconfig.json'
+            - 'pnpm-workspace.yaml'
 jobs:
     test:
         uses: ./.github/workflows/test.yml
@@ -46,7 +36,7 @@ jobs:
 
             - name: Create file
               run: |
-                  echo NEXT_PUBLIC_VISIT_ID_KEY=${{ secrets.NEXT_PUBLIC_VISIT_ID_KEY }} > .env
+                  echo NEXT_PUBLIC_VISIT_ID_KEY=${{ secrets.NEXT_PUBLIC_VISIT_ID_KEY }} > apps/front/.env
 
 
             - name: Setup Google Cloud SDK

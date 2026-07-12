@@ -65,6 +65,33 @@
 
 ## 2. ディレクトリ構成
 
+### モノレポルート
+
+pnpm ワークスペースで管理する。フロントアプリは `apps/front/` に集約し、横断ドキュメント・インフラ・CI はルートに置く。
+
+```
+repo-root/
+├── apps/
+│   └── front/                  # フロントアプリ本体（Next.js）＝下記 src/app ツリー
+│       ├── src/
+│       ├── public/
+│       ├── e2e/                # Playwright E2E・モック
+│       ├── package.json        # name: "front"
+│       ├── next.config.mjs  tsconfig.json  eslint.config.mjs
+│       ├── tailwind.config.ts  postcss.config.mjs
+│       ├── vitest.config.ts  playwright.config.ts
+│       ├── .env  .env.example  .prettierrc
+├── packages/                   # 将来の共有パッケージ用（現状は空 / .gitkeep）
+├── package.json                # ルート＝ワークスペース管理（各コマンドを front へ委譲）
+├── pnpm-workspace.yaml         # packages: [apps/*, packages/*]
+├── pnpm-lock.yaml              # ワークスペース共通ロックファイル
+├── Dockerfile  .dockerignore   # ビルドコンテキスト＝リポジトリルート
+├── .github/  terraform/        # CI/CD・インフラ
+└── docs/  manuals/  architecture/  CLAUDE.md  README.md
+```
+
+### フロントアプリ（`apps/front/`）配下
+
 ```
 src/app/
 ├── (auth)/                     # 認証ルートグループ
@@ -178,9 +205,9 @@ src/app/
 
 | パス | 用途 |
 |------|------|
-| `vitest.config.ts`（リポジトリ直下） | Vitest 設定（jsdom 環境・setup ファイル指定・パスエイリアス） |
-| `src/test/setup.ts` | Vitest のグローバルセットアップ（`@testing-library/jest-dom` 等） |
-| `e2e/`（リポジトリ直下） | Playwright E2E テスト・モック（詳細は `docs/08-test-specification.md`） |
+| `apps/front/vitest.config.ts` | Vitest 設定（jsdom 環境・setup ファイル指定・パスエイリアス） |
+| `apps/front/src/test/setup.ts` | Vitest のグローバルセットアップ（`@testing-library/jest-dom` 等） |
+| `apps/front/e2e/` | Playwright E2E テスト・モック（詳細は `docs/08-test-specification.md`） |
 
 ## 3. Provider構成
 
@@ -258,14 +285,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 ### Dockerマルチステージビルド
 
+ビルドコンテキストはリポジトリルート。pnpm ワークスペースに対応する。
+
 ```
 Stage 1: builder (node:20)
-  → pnpm install --frozen-lockfile → pnpm build → .next/
+  → COPY package.json pnpm-lock.yaml pnpm-workspace.yaml + apps/front/package.json
+  → pnpm install --frozen-lockfile
+  → COPY . . → pnpm --filter front build → apps/front/.next/
 
-Stage 2: runner (node:20-alpine)
-  → package.json, .next/, node_modules/, public/, .env
+Stage 2: runner (node:20-alpine)  WORKDIR /app/apps/front
+  → ルート node_modules（.pnpm ストア）+ apps/front/node_modules（相対シンボリックリンク）
+  → apps/front/{package.json, .next/, public/, .env}
   → PORT=8080 → node_modules/.bin/next start
 ```
+
+> pnpm は仮想ストア（`.pnpm`）をルート `node_modules` に集約し、`apps/front/node_modules` はそこへの相対シンボリックリンク（`.bin/next` 含む）となる。runner では両ツリーを構造を保って COPY する必要がある。
 
 ### CI/CDフロー
 
@@ -274,8 +308,8 @@ main へ push
   → GitHub Actions
     ├── test.yml: E2Eテスト実行
     └── deploy_to_googlecloud.yml:
-         1. .env に NEXT_PUBLIC_VISIT_ID_KEY のみ書出
-         2. Dockerイメージビルド
+         1. apps/front/.env に NEXT_PUBLIC_VISIT_ID_KEY のみ書出
+         2. Dockerイメージビルド（context=ルート）
          3. Artifact Registry へプッシュ
          4. Cloud Run へデプロイ
 ```
@@ -288,7 +322,7 @@ GCP Secret Manager
   ├── allowed-repo-owner  → Cloud Run env: ALLOWED_REPO_OWNER
   └── github-token        → Cloud Run env: GITHUB_TOKEN
 
-.env (ビルド時)
+apps/front/.env (ビルド時)
   └── NEXT_PUBLIC_VISIT_ID_KEY → JSバンドルにインライン化
 ```
 

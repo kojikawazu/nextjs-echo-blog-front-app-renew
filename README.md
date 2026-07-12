@@ -90,17 +90,19 @@ cd nextjs-echo-blog-front-app-renew
 # 2. Node バージョンを合わせる（nvm 利用時）
 nvm use            # .nvmrc の 20 を使用
 
-# 3. 環境変数ファイルを用意して値を埋める
-cp .env.example .env
+# 3. 環境変数ファイルを用意して値を埋める（フロントアプリ配下）
+cp apps/front/.env.example apps/front/.env
 #   → BACKEND_API_URL をバックエンドの起動先に設定（例: http://localhost:8080）
 #   → 詳細は manuals/environment.md を参照
 
-# 4. 依存関係をインストール
+# 4. 依存関係をインストール（リポジトリ直下でワークスペース全体を install）
 pnpm install
 
 # 5. 開発サーバー起動 → http://localhost:3000
-pnpm dev
+pnpm dev            # ルートの委譲スクリプト（= pnpm --filter front dev）
 ```
+
+> **モノレポ構成**: pnpm ワークスペースで管理し、フロントアプリは `apps/front/` に集約しています。ルートの `package.json` は各コマンドを `apps/front` に委譲するため、`pnpm dev` / `pnpm build` / `pnpm test` 等はリポジトリ直下からそのまま実行できます（`pnpm --filter front <script>` でも可）。
 
 > ⚠️ **バックエンドが必要です。** 記事一覧・ログイン・コメント等は BFF プロキシ経由でバックエンド API を呼び出します。`BACKEND_API_URL` が未設定／到達不能だと API は 500 を返します。ローカルで全機能を動かすにはバックエンド（別リポジトリ）を起動してください。
 
@@ -130,8 +132,8 @@ pnpm test:e2e             # HTMLレポート付き
 pnpm test:e2e:ui          # インタラクティブUI
 pnpm test:e2e:headed      # ブラウザ表示
 
-# 特定の E2E ファイルのみ実行
-pnpm exec playwright test e2e/tests/pages/blog_home/blog_home_unauth.spec.ts
+# 特定の E2E ファイルのみ実行（apps/front を起点に実行）
+pnpm --filter front exec playwright test e2e/tests/pages/blog_home/blog_home_unauth.spec.ts
 ```
 
 テスト方針・ケース一覧は [docs/08-test-specification.md](./docs/08-test-specification.md) を参照。

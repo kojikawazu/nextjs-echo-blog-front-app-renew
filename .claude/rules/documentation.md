@@ -23,8 +23,8 @@ globs:
 | セットアップ手順・開発/ビルド/デプロイコマンドの変更 | README.md |
 | 環境変数の追加・変更・削除 | manuals/environment.md |
 | ルーティング・画面・機能の追加/変更 | docs/03-functional-specification.md |
-| API 通信関数・エンドポイント・リクエスト/レスポンス契約の変更 | docs/07-api-specification.md, src/app/utils/const/constants.ts |
-| 型定義・Zod スキーマ・データ構造の変更 | docs/05-data-specification.md, src/app/types/, src/app/schema/ |
+| API 通信関数・エンドポイント・リクエスト/レスポンス契約の変更 | docs/07-api-specification.md, apps/front/src/app/utils/const/constants.ts |
+| 型定義・Zod スキーマ・データ構造の変更 | docs/05-data-specification.md, apps/front/src/app/types/, apps/front/src/app/schema/ |
 | Provider 構成・データフロー・ディレクトリ構成・デプロイ構成の変更 | docs/09-architecture-specification.md |
 | 認証・認可・セキュリティ方針の変更 | docs/06-security-specification.md |
 | 非機能要件（性能・可用性・運用方針 等）の変更 | docs/04-non-functional-specification.md |

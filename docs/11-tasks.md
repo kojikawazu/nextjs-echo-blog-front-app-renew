@@ -15,6 +15,15 @@
 
 ## 進行中
 
+### モノレポ化（フロントを apps/front へ集約）
+
+- [x] pnpm ワークスペース化（ルート `package.json` + `pnpm-workspace.yaml` の `packages: [apps/*, packages/*]`）
+- [x] アプリ一式を `apps/front/` へ移動（`git mv` で履歴保持）・パッケージ名 `frontend` → `front`
+- [x] `Dockerfile` をワークスペース対応に書き換え（context=ルート、runner は両 node_modules を COPY）
+- [x] GitHub Actions 3ファイル更新（`paths` フィルタ・`--filter front`・`.env(.test)` 生成先・artifact パス）
+- [x] `.gitignore` / `.dockerignore` のパス調整、ドキュメント更新
+- [ ] 動作確認（ローカル build/test/e2e 済み・Docker ビルドは CI で検証）・PR作成
+
 ### パッケージマネージャー移行（npm → pnpm）[#62](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/issues/62)
 
 - [x] GitHub issue作成

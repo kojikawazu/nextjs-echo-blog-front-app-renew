@@ -1,10 +1,14 @@
+# build context = リポジトリルート。プロダクションビルド（pnpm --filter front build）に不要なものを除外。
+.git/
 .github/
-.next/
+**/node_modules
+**/.next
+**/playwright-report
+**/test-results
+**/coverage
 architecture/
-e2e/
+docs/
 manuals/
-node_modules/
-playwright-report/
-private/
 terraform/
-test-results/
+private/
+apps/front/e2e/

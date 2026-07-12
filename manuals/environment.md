@@ -2,14 +2,17 @@
 
 ## アプリケーション側の設定
 
-ローカル開発用に .env を設定します。
+ローカル開発用に、フロントアプリのディレクトリ `apps/front/.env` を設定します（雛形は `apps/front/.env.example`）。
 
 ```bash
+# apps/front/.env
 NEXT_PUBLIC_VISIT_ID_KEY=
 BACKEND_API_URL=
 ALLOWED_REPO_OWNER=
 GITHUB_TOKEN=
 ```
+
+> モノレポ構成のため、環境変数ファイルはリポジトリ直下ではなく `apps/front/` 配下に置きます。E2E 用の `apps/front/.env.test` も同様です。
 
 ## 本番環境（Cloud Run）
 
