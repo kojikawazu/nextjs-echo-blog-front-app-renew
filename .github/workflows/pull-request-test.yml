@@ -4,21 +4,12 @@ on:
     pull_request:
         paths:
             - '.github/**'
-            - '__tests__/**'
-            - 'e2e/**'
-            - 'public/**'
-            - 'src/**'
-            - '.prettierrc'
+            - 'apps/front/**'
             - 'Dockerfile'
-            - 'eslint.config.mjs'
-            - 'next.config.mjs'
+            - '.dockerignore'
             - 'package.json'
             - 'pnpm-lock.yaml'
-            - 'playwright.config.ts'
-            - 'postcss.config.mjs'
-            - 'tailwind.config.ts'
-            - 'tsconfig.json'
-            - 'vitest.config.ts'
+            - 'pnpm-workspace.yaml'
 
 jobs:
     test:

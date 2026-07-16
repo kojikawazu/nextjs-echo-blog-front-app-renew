@@ -67,9 +67,11 @@
 
 ## 2. 環境変数
 
-> **正準**: 環境変数の一覧・供給元・本番（Secret Manager）構成は [`../manuals/environment.md`](../manuals/environment.md) を正準とする。ローカル雛形はリポジトリ直下の [`.env.example`](../.env.example)。本節は要点の再掲。
+> **正準**: 環境変数の一覧・供給元・本番（Secret Manager）構成は [`../manuals/environment.md`](../manuals/environment.md) を正準とする。ローカル雛形はフロントアプリ配下の [`apps/front/.env.example`](../apps/front/.env.example)。本節は要点の再掲。
+>
+> モノレポ構成のため、環境変数ファイルは `apps/front/.env`・`apps/front/.env.test` に置く。
 
-### ローカル開発（`.env`）
+### ローカル開発（`apps/front/.env`）
 
 ```bash
 NEXT_PUBLIC_VISIT_ID_KEY=visit_id   # 訪問者ID用キー（ビルド時インライン化）
@@ -78,7 +80,7 @@ ALLOWED_REPO_OWNER=kojikawazu        # GitHubプロキシ許可オーナー
 GITHUB_TOKEN=ghp_xxxxx              # GitHub APIトークン
 ```
 
-### テスト環境（`.env.test`）
+### テスト環境（`apps/front/.env.test`）
 
 ```bash
 # GitHub Actionsのテストworkflowで生成
@@ -123,9 +125,11 @@ pnpm test:e2e          # HTMLレポート付き
 pnpm test:e2e:ui       # インタラクティブUI
 pnpm test:e2e:headed   # ブラウザ表示
 
-# 特定テスト
-pnpm dlx playwright test e2e/tests/pages/blog_home/home.spec.ts
+# 特定テスト（apps/front を起点に実行）
+pnpm --filter front exec playwright test e2e/tests/pages/blog_home/blog_home_unauth.spec.ts
 ```
+
+> モノレポのルート `package.json` は各スクリプトを `pnpm --filter front <script>` に委譲する。上記コマンドはリポジトリ直下からそのまま実行できる。
 
 ## 4. CI/CDパイプライン
 
@@ -134,12 +138,12 @@ pnpm dlx playwright test e2e/tests/pages/blog_home/home.spec.ts
 ```
 トリガー: PR / push to main
   1. チェックアウト
-  2. Node.js 20 セットアップ
-  3. pnpm install --frozen-lockfile
-  4. .env.test 生成
-  5. Playwrightブラウザインストール
-  6. テスト実行（リトライ2回）
-  7. レポートアップロード
+  2. pnpm セットアップ（10.33.0）
+  3. pnpm install --frozen-lockfile（ワークスペース全体）
+  4. apps/front/.env.test 生成
+  5. Playwrightブラウザインストール（pnpm --filter front exec）
+  6. テスト実行（pnpm --filter front test:e2e・リトライ2回）
+  7. レポートアップロード（apps/front/playwright-report/）
 ```
 
 ### デプロイワークフロー（`deploy_to_googlecloud.yml`）
@@ -148,8 +152,8 @@ pnpm dlx playwright test e2e/tests/pages/blog_home/home.spec.ts
 トリガー: push to main
   1. チェックアウト
   2. GCP認証
-  3. .env に NEXT_PUBLIC_VISIT_ID_KEY のみ書出
-  4. Dockerイメージビルド
+  3. apps/front/.env に NEXT_PUBLIC_VISIT_ID_KEY のみ書出
+  4. Dockerイメージビルド（context=リポジトリルート）
   5. Artifact Registry へプッシュ
   6. Cloud Run へデプロイ（--set-secrets は使用しない）
 ```

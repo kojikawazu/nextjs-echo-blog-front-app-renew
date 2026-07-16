@@ -56,10 +56,12 @@
 | リトライ | CI: 2回 / ローカル: 0回 |
 | レポート | HTML形式（`playwright-report/`） |
 | トレース | 初回リトライ時に記録 |
-| 開発サーバー | `pnpm dev`（CI時は自動起動） |
-| 環境変数 | `.env.test` から読み込み |
+| 開発サーバー | `pnpm run dev`（`apps/front` を cwd に CI時は自動起動） |
+| 環境変数 | `apps/front/.env.test` から読み込み |
 
 ### テスト実行コマンド
+
+> ルートの `package.json` が各スクリプトを `pnpm --filter front <script>` に委譲するため、下記はリポジトリ直下から実行できる。
 
 ```bash
 # ユニットテスト
@@ -70,7 +72,7 @@ pnpm test:watch            # ウォッチモード
 pnpm test:e2e              # HTMLレポート付き
 pnpm test:e2e:ui           # インタラクティブUI
 pnpm test:e2e:headed       # ブラウザ表示
-pnpm dlx playwright test <path>    # 特定テストのみ
+pnpm --filter front exec playwright test <path>    # 特定テストのみ
 ```
 
 ## 3. モック構成
@@ -295,10 +297,10 @@ e2e/tests/mocks/
 
 ```yaml
 # テスト環境変数
-.env.test にテスト用の環境変数を書き出し
+apps/front/.env.test にテスト用の環境変数を書き出し
 
 # 実行
-pnpm dlx playwright test --reporter=html
+pnpm --filter front test:e2e -- $TEST_DIR
 
 # リトライ
 CI環境では2回リトライ
@@ -307,5 +309,5 @@ CI環境では2回リトライ
 ### テスト実行の流れ
 
 ```
-PR / push → GitHub Actions → pnpm install --frozen-lockfile → .env.test 作成 → pnpm dev (バックグラウンド) → playwright test
+PR / push → GitHub Actions → pnpm install --frozen-lockfile → apps/front/.env.test 作成 → pnpm --filter front test:e2e（webServer が pnpm run dev を自動起動）
 ```
