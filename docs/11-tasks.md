@@ -108,6 +108,7 @@
 - [ ] サイドバーの人気記事の算出元がページによって異なる（ホーム`/`は現在ページのブログデータから算出、その他ページは `/api/blogs/popular/:count` から全体TOP5を取得）。一貫性に欠ける
 - [ ] ブログ作成/編集フォームのZodスキーマが全フィールド `optional()` で、必須チェックがHTML `required` 属性依存
 - [ ] 訪問者IDの生成結果がフロント側で永続化されていない（バックエンドCookie依存の可能性）
+- [ ] ユニットテスト 8 件が `.claude/rules/testing.md` の配置ルール（`tests/` 集約・`src/` にテストを置かない）に未追従。`apps/front/src/app/**/__tests__/` から `apps/front/tests/` への移設が必要（対象: `hooks/__tests__/` 3 件、`schema/__tests__/` 3 件、`lib/api/__tests__/` 1 件、`api/github/markdown/__tests__/` 1 件）。移設時は `docs/09-architecture-specification.md` のディレクトリツリーと `vitest.config.ts` も併せて更新する
 
 ## 今後の改善候補
 
