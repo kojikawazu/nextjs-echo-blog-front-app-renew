@@ -37,7 +37,9 @@
 
 ### リンター（ESLint 9）
 
-フラットコンフィグ形式（`eslint.config.mjs`）を使用。
+フラットコンフィグ形式（`eslint.config.mjs`）を使用。実行は `pnpm lint`（= `eslint`）。
+
+> Next.js 16 で `next lint` は削除されたため、lint スクリプトは `eslint` を直接呼び出す。`eslint.config.mjs` が import する各プラグインは、pnpm の厳格な `node_modules` で解決できるよう **直接 devDependency** として明示している（`eslint-config-next` の推移的依存に依存しない）。
 
 | プラグイン | 用途 |
 |-----------|------|
@@ -45,7 +47,23 @@
 | `eslint-plugin-react` | Reactルール |
 | `eslint-plugin-react-hooks` | Hooksルール |
 | `typescript-eslint` | TypeScriptルール |
+| `eslint-plugin-jsdoc` | JSDoc（TSDoc）規約の機械強制（`.claude/rules/jsdoc.md` 準拠） |
 | `eslint-config-prettier` | Prettierとの競合解消 |
+
+#### JSDoc ルール（`eslint-plugin-jsdoc`）
+
+`src/**/*.{ts,tsx}` に適用。**書かれた JSDoc の整合性を検証**する方針（`require-jsdoc` による有無強制はしない。有無・質はレビューで担保）。
+
+| ルール | 設定 | 意図 |
+|-------|------|------|
+| `jsdoc/no-types` | error | 型ブレース（`@param {string}`）禁止。型は TS シグネチャが唯一の真実 |
+| `jsdoc/require-param` / `-description` | error | JSDoc を持つ関数は全引数を説明（分割代入ルートは非展開） |
+| `jsdoc/check-param-names` | error（`.ts`のみ） | `@param` 名と実引数の照合。`.tsx` は per-prop 慣習と非互換のため off |
+| `jsdoc/require-returns` / `-description` | error（`.ts`のみ） | 戻り値の意味付け必須。`.tsx`（JSX 返却）は off |
+| `jsdoc/check-alignment` / `no-multi-asterisks` | warn | 体裁 |
+
+- **テストコード**（`__tests__/`・`*.test.*`・`src/test/`）は公開シンボルでないため JSDoc 必須系を免除。
+- `react-hooks/set-state-in-effect` は正当なパターン（async フェッチ前の loading セット等）に過剰反応するため `warn` に降格。挙動を伴う修正は `docs/11-tasks.md` の課題として管理。
 
 ### カスタムルール
 
@@ -202,7 +220,7 @@ gcloud secrets versions add github-token --data-file=- <<< "ghp_xxxxx"
 |-----------|------|
 | `typescript`, `@types/*` | TypeScript |
 | `tailwindcss`, `postcss` | CSS |
-| `eslint`, `eslint-config-next`, `eslint-config-prettier` | リンター |
+| `eslint`, `eslint-config-next`, `eslint-config-prettier`, `@next/eslint-plugin-next`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `typescript-eslint`, `eslint-plugin-jsdoc` | リンター |
 | `prettier` | フォーマッター |
 | `vitest`, `@vitejs/plugin-react`, `jsdom` | ユニットテスト（実行環境） |
 | `@testing-library/react`, `@testing-library/dom`, `@testing-library/jest-dom`, `@testing-library/user-event` | ユニットテスト（DOM/フック検証） |

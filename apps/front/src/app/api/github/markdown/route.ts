@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import matter from 'gray-matter';
 
 /**
- * GitHub Markdown取得プロキシ
+ * GitHub Markdown取得プロキシ（Route Handler）。
  * - GITHUB_TOKENをサーバーサイドでのみ使用し、クライアントに露出しない
  * - ALLOWED_REPO_OWNERで許可されたオーナーのリポジトリのみアクセス可能
  * - 許可外オーナーのリポジトリへのリクエストはトークンなしで実行（プライベートリポ漏洩防止）
+ *
+ * @param req - `{ url: string }`（GitHub の Markdown blob URL）を含む POST リクエスト
+ * @returns Markdown 本文の JSON。入力不正は 400、設定不備は 500、取得失敗は該当ステータス
  */
 export async function POST(req: NextRequest) {
     let body: unknown;

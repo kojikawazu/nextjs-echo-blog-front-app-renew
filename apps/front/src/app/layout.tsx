@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 };
 
 /**
- * RootLayout
- * @param children
- * @returns
+ * アプリのルートレイアウト。全ページ共通の Provider ツリー（Query/Auth/Global/Toast）で子要素を包む。
+ *
+ * @param children - 各ルートページの要素
  */
 export default function RootLayout({
     children,

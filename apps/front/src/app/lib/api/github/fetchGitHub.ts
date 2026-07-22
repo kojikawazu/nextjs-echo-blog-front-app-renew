@@ -2,10 +2,12 @@
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 
 /**
- * GitHub URLからMarkdownファイルの内容を取得する
- * Route Handler経由でサーバーサイドで取得するため、GITHUB_TOKENは露出しない
- * @param githubUrls
- * @returns markdown content or null
+ * GitHub URLからMarkdownファイルの内容を取得する。
+ * Route Handler経由でサーバーサイドで取得するため、GITHUB_TOKENは露出しない。
+ *
+ * @param githubUrls - 取得対象の Markdown ファイルの GitHub URL
+ * @returns Markdown 本文。取得失敗（プロキシが null 返却・トークン失効・404 等）時は `null`
+ * @throws {Error} fetch 自体が失敗した場合（ネットワークエラー等）
  */
 export const fetchMarkdown = async (githubUrls: string) => {
     try {
