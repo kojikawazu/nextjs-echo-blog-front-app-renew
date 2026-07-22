@@ -152,10 +152,6 @@ src/app/
 │   ├── AuthContext.tsx          # 認証コンテキスト
 │   └── GlobalContext.tsx        # グローバルデータコンテキスト
 ├── hooks/                      # カスタムフック
-│   ├── __tests__/              # フックのユニットテスト（Vitest）
-│   │   ├── useComments.test.ts
-│   │   ├── useDebounce.test.ts
-│   │   └── useLikeBlog.test.ts
 │   ├── useComments.ts          # コメント機能
 │   ├── useDebounce.ts          # デバウンスユーティリティ
 │   └── useLikeBlog.ts          # いいね機能
@@ -179,10 +175,6 @@ src/app/
 │   ├── QueryProvider.tsx       # TanStack Query Provider
 │   └── ToastProvider.tsx       # react-hot-toast Provider
 ├── schema/                     # Zodスキーマ
-│   ├── __tests__/              # スキーマのユニットテスト（Vitest）
-│   │   ├── authSchema.test.ts
-│   │   ├── blogSchema.test.ts
-│   │   └── blogCommentSchema.test.ts
 │   ├── authSchema.ts           # 認証フォーム
 │   ├── blogSchema.ts           # ブログフォーム
 │   └── blogCommentSchema.ts    # コメントフォーム
@@ -206,6 +198,7 @@ src/app/
 | パス | 用途 |
 |------|------|
 | `apps/front/vitest.config.ts` | Vitest 設定（jsdom 環境・setup ファイル指定・パスエイリアス） |
+| `apps/front/tests/` | ユニット / コンポーネントテスト集約（ソースツリー鏡写し: `schema/` `hooks/` `lib/api/` `api/github/markdown/`）。`.claude/rules/testing.md` 準拠で `src/` にはテストを置かない |
 | `apps/front/src/test/setup.ts` | Vitest のグローバルセットアップ（`@testing-library/jest-dom` 等） |
 | `apps/front/e2e/` | Playwright E2E テスト・モック（詳細は `docs/08-test-specification.md`） |
 

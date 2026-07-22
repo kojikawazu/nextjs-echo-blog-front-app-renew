@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { useLikeBlog } from '../useLikeBlog';
+import { useLikeBlog } from '@/app/hooks/useLikeBlog';
 
 vi.mock('@/app/lib/api/blog-likes/fetchLikedBlogs');
 vi.mock('@/app/lib/api/blog-likes/likeBlogById');

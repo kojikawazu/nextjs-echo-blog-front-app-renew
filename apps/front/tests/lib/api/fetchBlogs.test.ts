@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { fetchBlogs } from '../fetchBlogs';
+import { fetchBlogs } from '@/app/lib/api/fetchBlogs';
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 
 /**
@@ -160,5 +160,17 @@ describe('fetchBlogs', () => {
             .mockRejectedValue(new Error('Network down')) as unknown as typeof fetch;
 
         await expect(fetchBlogs(1, 10)).rejects.toThrow('Network down');
+    });
+
+    it('レスポンスの JSON パースが失敗した場合は例外を伝播する', async () => {
+        // 想定外: response.ok だが body が壊れており json() が throw する
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => {
+                throw new Error('Malformed JSON');
+            },
+        }) as unknown as typeof fetch;
+
+        await expect(fetchBlogs(1, 10)).rejects.toThrow('Malformed JSON');
     });
 });

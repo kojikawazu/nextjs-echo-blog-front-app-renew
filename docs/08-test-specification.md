@@ -124,6 +124,24 @@ e2e/tests/mocks/
 
 ## 4. テストケース一覧
 
+### ユニットテスト（Vitest）
+
+`.claude/rules/testing.md` 準拠で `apps/front/tests/` に集約（ソースツリー鏡写し）。SUT は `@/` エイリアスで参照する。外部 I/O（`fetch`・`lib/api/` 通信関数）のみモックし、ソート・整形・バリデーション等のロジックは実物を検証する。
+
+| テストファイル | 対象 | 件数 |
+|---|---|---|
+| `tests/schema/blogSchema.test.ts` | ブログ作成/編集スキーマ | 12 |
+| `tests/schema/authSchema.test.ts` | ログイン/登録スキーマ | 10 |
+| `tests/schema/blogCommentSchema.test.ts` | コメントスキーマ | 6 |
+| `tests/hooks/useLikeBlog.test.ts` | いいねフック | 5 |
+| `tests/hooks/useDebounce.test.ts` | デバウンスフック | 5 |
+| `tests/hooks/useComments.test.ts` | コメントフック | 5 |
+| `tests/lib/api/fetchBlogs.test.ts` | ブログ取得（ソート/フィルタ/変換/異常系） | 10 |
+| `tests/api/github/markdown/route.test.ts` | GitHub Markdown プロキシ | 7 |
+| **合計** | | **60** |
+
+ケース分類の比率は **正常系 20 : 異常系（準正常系 + 異常系）40 ≒ 1:2**（`.claude/rules/testing.md` の「正常 1 : 異常系 2 以上」を満たす）。スキーマには型不一致・`null`・非オブジェクトの異常系、`fetchBlogs` には JSON パース失敗、`useComments` には mutation 失敗の異常系を含む。
+
 ### レイアウトテスト
 
 #### `e2e/tests/layout/footer.spec.ts`

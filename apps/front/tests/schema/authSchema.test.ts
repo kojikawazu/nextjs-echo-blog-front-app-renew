@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { loginSchema, registerSchema } from '../authSchema';
+import { loginSchema, registerSchema } from '@/app/schema/authSchema';
 
 describe('loginSchema', () => {
     // --- 正常系 ---
@@ -45,6 +45,26 @@ describe('loginSchema', () => {
         if (!result.success) {
             expect(result.error.flatten().fieldErrors.email).toBeDefined();
         }
+    });
+
+    // --- 異常系（想定外の型・入力 → 安全に fail） ---
+
+    it('should fail when password is a non-string (number)', () => {
+        // 想定外: 6桁以上の数値でも文字列ではないため型不一致で fail
+        const result = loginSchema.safeParse({ email: 'user@example.com', password: 123456 });
+        expect(result.success).toBe(false);
+    });
+
+    it('should fail when email is null', () => {
+        // 想定外: null は string ではないため fail
+        const result = loginSchema.safeParse({ email: null, password: 'pass123' });
+        expect(result.success).toBe(false);
+    });
+
+    it('should fail when input is an array (object expected)', () => {
+        // 想定外: 配列はオブジェクトスキーマに適合せず fail
+        const result = loginSchema.safeParse([]);
+        expect(result.success).toBe(false);
     });
 });
 
