@@ -93,6 +93,8 @@
 - [x] ブログ詳細テスト（表示、コメント）
 - [x] ブログ作成テスト
 - [x] ブログ編集・削除テスト
+- [x] ユニットテストを `tests/` に集約（`src/**/__tests__/` から移設・`.claude/rules/testing.md` 準拠）。ソースツリー鏡写し（`tests/schema/` `tests/hooks/` `tests/lib/api/` `tests/api/github/markdown/`）。相対 import を `@/` エイリアスへ変更、`eslint.config.mjs` の免除 glob に `tests/**` を追加
+- [x] ユニットテストの異常系拡充（正常系 20 : 異常系〈準正常+異常〉40 ≒ 1:2 に到達）。スキーマ 3 種へ型不一致・null・非オブジェクトの異常系、`fetchBlogs` へ JSON パース失敗、`useComments` へ mutation 失敗を追加（計 48→60 件）
 
 ### ドキュメント
 
@@ -108,7 +110,7 @@
 - [ ] サイドバーの人気記事の算出元がページによって異なる（ホーム`/`は現在ページのブログデータから算出、その他ページは `/api/blogs/popular/:count` から全体TOP5を取得）。一貫性に欠ける
 - [ ] ブログ作成/編集フォームのZodスキーマが全フィールド `optional()` で、必須チェックがHTML `required` 属性依存
 - [ ] 訪問者IDの生成結果がフロント側で永続化されていない（バックエンドCookie依存の可能性）
-- [ ] ユニットテスト 8 件が `.claude/rules/testing.md` の配置ルール（`tests/` 集約・`src/` にテストを置かない）に未追従。`apps/front/src/app/**/__tests__/` から `apps/front/tests/` への移設が必要（対象: `hooks/__tests__/` 3 件、`schema/__tests__/` 3 件、`lib/api/__tests__/` 1 件、`api/github/markdown/__tests__/` 1 件）。移設時は `docs/09-architecture-specification.md` のディレクトリツリーと `vitest.config.ts` も併せて更新する
+- [x] ~~ユニットテスト 8 件が `.claude/rules/testing.md` の配置ルールに未追従~~ → `apps/front/tests/`（ソースツリー鏡写し）へ移設済み。`vitest.config.ts` は既定 include で `tests/` を自動検出するため変更不要、`eslint.config.mjs` の免除 glob と `docs/09` ツリーは更新済み
 
 ## 今後の改善候補
 

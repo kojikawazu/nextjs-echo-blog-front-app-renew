@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { blogCreateSchema, blogEditSchema } from '../blogSchema';
+import { blogCreateSchema, blogEditSchema } from '@/app/schema/blogSchema';
 
 describe('blogCreateSchema', () => {
     // --- 正常系 ---
@@ -45,6 +45,32 @@ describe('blogCreateSchema', () => {
         // 必須チェックはHTML required属性に依存している
         const result = blogCreateSchema.safeParse({});
         expect(result.success).toBe(true);
+    });
+
+    // --- 異常系（想定外の型・入力 → 安全に fail） ---
+
+    it('should fail when title is a non-string (number)', () => {
+        // 想定外: 文字列フィールドに数値。型不一致で安全に fail する
+        const result = blogCreateSchema.safeParse({ title: 123 });
+        expect(result.success).toBe(false);
+    });
+
+    it('should fail when github_url is null (optional accepts undefined, not null)', () => {
+        // 想定外: optional() は undefined のみ許可。null は弾く
+        const result = blogCreateSchema.safeParse({ github_url: null });
+        expect(result.success).toBe(false);
+    });
+
+    it('should fail when tags is an array (string expected)', () => {
+        // 想定外: tags は "a,b" 形式の文字列。配列は型不一致で fail
+        const result = blogCreateSchema.safeParse({ tags: ['react', 'next'] });
+        expect(result.success).toBe(false);
+    });
+
+    it('should fail when input is not an object (null)', () => {
+        // 想定外: オブジェクト以外のルート入力は安全に fail
+        const result = blogCreateSchema.safeParse(null);
+        expect(result.success).toBe(false);
     });
 });
 

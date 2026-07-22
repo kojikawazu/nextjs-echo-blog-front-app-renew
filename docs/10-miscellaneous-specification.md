@@ -62,7 +62,7 @@
 | `jsdoc/require-returns` / `-description` | error（`.ts`のみ） | 戻り値の意味付け必須。`.tsx`（JSX 返却）は off |
 | `jsdoc/check-alignment` / `no-multi-asterisks` | warn | 体裁 |
 
-- **テストコード**（`__tests__/`・`*.test.*`・`src/test/`）は公開シンボルでないため JSDoc 必須系を免除。
+- **テストコード**（`tests/`・`src/test/`、および過去のコロケート配置 `__tests__/`・`*.test.*`）は公開シンボルでないため JSDoc 必須系を免除。`react/display-name` もテストのインラインラッパー向けに off（免除 glob は `tests/**` を含む）。ユニットテストは `tests/` に集約する（`.claude/rules/testing.md`）。
 - `react-hooks/set-state-in-effect` は正当なパターン（async フェッチ前の loading セット等）に過剰反応するため `warn` に降格。挙動を伴う修正は `docs/11-tasks.md` の課題として管理。
 
 ### カスタムルール

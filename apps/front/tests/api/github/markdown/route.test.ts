@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { POST } from '../route';
+import { POST } from '@/app/api/github/markdown/route';
 import type { NextRequest } from 'next/server';
 
 /**

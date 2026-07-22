@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { useComments } from '../useComments';
+import { useComments } from '@/app/hooks/useComments';
 import type { Comment } from '@/app/types/blogs';
 
 vi.mock('@/app/lib/api/blog-comments/fetchComments');
@@ -84,5 +84,23 @@ describe('useComments', () => {
         });
 
         await waitFor(() => expect(result.current.isError).toBe(true));
+    });
+
+    // --- 異常系（想定外のエラー） ---
+
+    it('should surface mutation error when addComment fails', async () => {
+        // 想定外: コメント投稿 API が失敗 → mutation が isError となり安全に失敗する
+        vi.mocked(fetchComments).mockResolvedValue([]);
+        vi.mocked(addComment).mockRejectedValue(new Error('Post failed'));
+
+        const { result } = renderHook(() => useComments('blog-1'), {
+            wrapper: createWrapper(),
+        });
+
+        await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+        result.current.addCommentMutation.mutate(mockComment);
+
+        await waitFor(() => expect(result.current.addCommentMutation.isError).toBe(true));
     });
 });

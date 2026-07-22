@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { blogCommentSchema } from '../blogCommentSchema';
+import { blogCommentSchema } from '@/app/schema/blogCommentSchema';
 
 describe('blogCommentSchema', () => {
     // --- 正常系 ---
@@ -26,5 +26,25 @@ describe('blogCommentSchema', () => {
         // 必須チェックはHTML required属性に依存している
         const result = blogCommentSchema.safeParse({});
         expect(result.success).toBe(true);
+    });
+
+    // --- 異常系（想定外の型・入力 → 安全に fail） ---
+
+    it('should fail when comment is a non-string (number)', () => {
+        // 想定外: 文字列フィールドに数値。型不一致で fail
+        const result = blogCommentSchema.safeParse({ comment: 123 });
+        expect(result.success).toBe(false);
+    });
+
+    it('should fail when blog_id is null (optional accepts undefined, not null)', () => {
+        // 想定外: optional() は undefined のみ許可。null は弾く
+        const result = blogCommentSchema.safeParse({ blog_id: null });
+        expect(result.success).toBe(false);
+    });
+
+    it('should fail when input is not an object (null)', () => {
+        // 想定外: オブジェクト以外のルート入力は安全に fail
+        const result = blogCommentSchema.safeParse(null);
+        expect(result.success).toBe(false);
     });
 });

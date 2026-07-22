@@ -80,7 +80,14 @@ export default [
     // （jsdoc.md の必須対象は公開 API・コンポーネント props・フック等）。書かれた JSDoc の
     // 整合性チェック（no-types / check-param-names）は残す。display-name もテストの
     // インラインラッパーには不要。
-    files: ["src/**/__tests__/**", "src/**/*.test.{ts,tsx}", "src/test/**"],
+    // ユニットテストは tests/ に集約（.claude/rules/testing.md）。src/ 側の glob は
+    // 過去のコロケート配置・setup（src/test/）向けに残す。
+    files: [
+      "tests/**",
+      "src/**/__tests__/**",
+      "src/**/*.test.{ts,tsx}",
+      "src/test/**",
+    ],
     rules: {
       "jsdoc/require-param": "off",
       "jsdoc/require-param-description": "off",
