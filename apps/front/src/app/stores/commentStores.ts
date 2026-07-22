@@ -29,6 +29,9 @@ const initialComments: Comment[] = [
     },
 ];
 
+/**
+ * コメント一覧の取得（ページング）と追加を扱う Zustand ストア（開発用サンプル・初期データ入り）。
+ */
 export const useCommentStore = create<CommentState>((set, get) => ({
     comments: initialComments,
     totalPages: 1,

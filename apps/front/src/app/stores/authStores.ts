@@ -19,6 +19,10 @@ const sampleUser: User = {
     updated_at: new Date().toISOString(),
 };
 
+/**
+ * 認証状態を扱う Zustand ストア（開発用サンプル。本番の認証は `AuthContext` を使用）。
+ * サインイン/サインアップ/サインアウトとサンプルユーザーによる初期化を提供する。
+ */
 export const useAuthStore = create<AuthState>((set) => ({
     user: null,
     loading: false,

@@ -20,7 +20,11 @@ interface AuthContextType {
 // Context の作成
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Provider コンポーネント
+/**
+ * 認証状態を供給する Provider。ログイン中ユーザー・`signIn` / `signOut` をツリーへ提供する。
+ *
+ * @param children - Provider 配下にレンダリングする子要素
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
     // router
     const router = useRouter();
@@ -121,7 +125,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// Context を利用するカスタムフック
+/**
+ * 認証コンテキストを取得するカスタムフック。
+ *
+ * @returns 認証状態と操作（`user` / `isLoading` / `signIn` / `signOut`）
+ * @throws {Error} `AuthProvider` の外側で呼ばれた場合
+ */
 export function useAuth() {
     const context = useContext(AuthContext);
     if (!context) {
