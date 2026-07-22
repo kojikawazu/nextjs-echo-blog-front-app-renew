@@ -208,6 +208,10 @@ const saveLikedPosts = (posts: string[]) => {
     localStorage.setItem(LIKED_POSTS_KEY, JSON.stringify(posts));
 };
 
+/**
+ * ブログ一覧・検索・フィルタ・ページネーションといいね状態を扱う Zustand ストア（開発用サンプル）。
+ * いいねは localStorage（`techblog_liked_posts`）に永続化する。
+ */
 export const useBlogStore = create<BlogState>((set, get) => ({
     blogs: initialBlogs,
     filteredBlogs: initialBlogs,

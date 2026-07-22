@@ -8,6 +8,7 @@ import { GlobalProvider } from '@/app/contexts/GlobalContext';
 // css
 import './globals.css';
 
+/** アプリ共通の HTML メタデータ（Next.js が `<head>` に反映する）。 */
 export const metadata: Metadata = {
     title: 'Echo Blog App',
     description: 'Echo Blog App',

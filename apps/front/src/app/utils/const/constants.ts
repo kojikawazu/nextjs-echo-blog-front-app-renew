@@ -1,3 +1,7 @@
+/**
+ * アプリ全体で共有する定数。API エンドポイント（`/api/*`）・トースト文言・各種設定値を集約する。
+ * 文言・URL をコンポーネントに直書きせず、ここを唯一の定義元とする。
+ */
 export const COMMON_CONSTANTS = {
     URL: {
         LOGIN: '/api/auth/login',
