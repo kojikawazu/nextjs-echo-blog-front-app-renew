@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * バックエンドAPIへのプロキシリクエスト
- * サーバーサイドでのみ実行され、バックエンドURLをクライアントに露出しない
+ * バックエンドAPIへのプロキシリクエスト。
+ * サーバーサイドでのみ実行され、バックエンドURLをクライアントに露出しない。
  *
  * Note: Next.js 16では req.text() + new NextResponse() パターンで
- * POSTルートが404になるバグがあるため、req.json() + NextResponse.json() を使用
+ * POSTルートが404になるバグがあるため、req.json() + NextResponse.json() を使用。
+ *
+ * @param req - クライアントからの受信リクエスト（Cookie・ボディを転送元とする）
+ * @param backendPath - バックエンド上の転送先パス（例: `/blogs/detail/:id`）
+ * @param options - 任意設定。`method` で HTTP メソッドを上書きできる（未指定時は `req.method`）
+ * @returns バックエンドの応答を整形した JSON レスポンス。`BACKEND_API_URL` 未設定時は 500
  */
 export async function proxyToBackend(
     req: NextRequest,

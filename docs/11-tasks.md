@@ -112,6 +112,9 @@
 
 ## 今後の改善候補
 
+- [ ] ESLint で warn に留めている React Hooks 警告の解消（挙動確認しつつ対応）:
+  - `react-hooks/set-state-in-effect`（`BlogPost.tsx`・async フェッチ前の loading セット）
+  - `react-hooks/exhaustive-deps`（`EditPost.tsx` の `isLoading`・`Home.tsx` の `setGlobalData`）
 - [ ] ユニットテストのカバレッジ拡充（現在はスキーマ・カスタムフックのみ。コンポーネント等へ拡大）
 - [ ] SSR / SSGの活用（現在は全ページCSR）
 - [ ] 画像アップロード機能

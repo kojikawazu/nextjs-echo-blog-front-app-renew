@@ -11,7 +11,9 @@ import { generateVisitId } from '@/app/lib/api/blog-likes/generateVisitId';
 const VISIT_ID_KEY = process.env.NEXT_PUBLIC_VISIT_ID_KEY as string;
 
 /**
- * いいね機能のカスタムフック
+ * いいね機能のカスタムフック。訪問者IDの初期化・いいね済み一覧の取得・いいね登録/取消を提供する。
+ *
+ * @returns いいね操作関数（`likeBlog` / `unlikeBlog`）といいね判定関数（`hasLiked`）
  */
 export function useLikeBlog() {
     const queryClient = useQueryClient();
@@ -60,7 +62,10 @@ export function useLikeBlog() {
     });
 
     /**
-     * ブログがいいねされているか判定
+     * 指定ブログが（訪問者単位で）いいね済みか判定する。
+     *
+     * @param blogId - 判定対象のブログ ID
+     * @returns いいね済みなら `true`
      */
     const hasLiked = (blogId: string) => likedPosts?.includes(blogId) ?? false;
 
