@@ -27,6 +27,8 @@ globs: "apps/front/src/app/components/**,apps/front/src/app/hooks/**,apps/front/
 
 - **クライアントコンポーネント**のロジック（状態・副作用・データ取得・ドメイン処理）は**カスタムフック**（`hooks/`）に切り出す。コンポーネントは UI 描画に専念する。
 - **サーバーコンポーネント**のデータ取得は `page.tsx` や `lib/` 内のサーバー関数で行う（hooks は使用しない）。
+- **store（Zustand）・Context value・カスタムフックの戻り値は型を先に定義し、各メンバーにコメントを付ける**（`create<BlogState>()` のようにインラインのオブジェクトリテラルで済ませない）。これらは定義ファイルを開かずに使われるため、コメントが唯一の説明になる。詳細は `jsdoc.md`「状態・ロジック層のコメント」に従う。
+- コンポーネント内に閉じた `useState`・ハンドラ関数は一律必須にしない（「なぜ」が非自明なときのみ）。
 
 ## 状態管理・Context
 
@@ -46,6 +48,9 @@ globs: "apps/front/src/app/components/**,apps/front/src/app/hooks/**,apps/front/
 ## 型定義
 
 - props・state・API レスポンス型は**原則 `type`** を使う（`typescript.md` の type/interface 方針に従う）。
+- 置き場所は**参照範囲**で決める。1 ファイルに閉じる型（props 型等）はコロケーション、2 箇所以上から参照される型は `types/` へ集約する。詳細は `typescript.md`「型定義の配置」に従う。
+- `type` / `interface` は型本体・各メンバーともにコメント必須（`jsdoc.md`）。
+- **マジックナンバー・マジック文字列を直接書かない**（判断軸は型と同じ「参照範囲」）。ただし union の元になる定数は、導出される型と**同じファイルに同居**させる。環境変数は定数に含めない。詳細は `typescript.md`「定数の配置」に従う。
 
 ## ディレクトリ構成
 
@@ -75,7 +80,7 @@ apps/front/src/app/
 ## 通知
 
 - 通知は **react-hot-toast** を使用する。全操作の成功/失敗をトーストで通知する。
-- トーストのメッセージ文言は `utils/const/constants.ts` に集約し、コンポーネントに直書きしない。
+- トーストのメッセージ文言は**共通定数に集約**し、コンポーネントに直書きしない。現状の置き場は `utils/const/constants.ts`（`COMMON_CONSTANTS`）。ドメイン単位への分割は移行目標であり、`typescript.md`「定数の配置」に従う。
 
 ## テスト
 
