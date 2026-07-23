@@ -1,0 +1,43 @@
+name: Integration Test (testcontainers)
+
+# IT は実 Go バックエンド + 実 PostgreSQL を testcontainers で起動するため重い。
+# 毎 PR は塞がず、手動実行と nightly（定時）でのみ回す。
+on:
+    workflow_dispatch:
+    schedule:
+        # 毎日 JST 03:00（UTC 18:00）に実行
+        - cron: '0 18 * * *'
+
+jobs:
+    it-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout frontend
+              uses: actions/checkout@v4
+
+            # バックエンドは別リポジトリ（public）。testcontainers が Dockerfile をビルドする。
+            - name: Checkout backend
+              uses: actions/checkout@v4
+              with:
+                  repository: kojikawazu/nextjs-echo-back-blog-app
+                  path: backend-repo
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10.33.0
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            # globalSetup が BACKEND_REPO_PATH の Dockerfile / testdata をビルド・投入する。
+            - name: Run integration tests
+              env:
+                  BACKEND_REPO_PATH: ${{ github.workspace }}/backend-repo/backend
+              run: pnpm --filter front test:it

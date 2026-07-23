@@ -166,9 +166,12 @@ Vitest(IT) → BFF Route Handler(@/app/api/**, in-process)
 | `tests-it/api/blogs-meta.it.test.ts` | categories/tags/popular | 正常（seed 値含む・popular 200）・400（count 非数値） |
 | `tests-it/api/blogs-write.it.test.ts` | 作成/更新/削除の認証ガード | 401（Cookie 無しの POST/PUT/DELETE = Cookie 転送の結合検証） |
 | `tests-it/api/comments.it.test.ts` | コメント | 正常（seed コメント取得）・400（空ボディ投稿） |
+| `tests-it/api/auth.it.test.ts` | 認証（auth-check / login） | auth-check 未認証/不正トークン→200+null（BFF 正規化）・login 空/不正メール→400・誤認証→401 |
 | `tests-it/api/proxy.it.test.ts` | BFF 設定契約 | 500（`BACKEND_API_URL` 未設定 = fail-closed） |
 
-> **CI 未導入（ローカル先行）**: 現状 IT は CI に組み込んでいない。実バックエンドのイメージビルドを CI で用意する方式（兄弟 repo checkout / Artifact Registry の pinned image）は今後の判断事項（`docs/11-tasks.md`）。
+計 19 ケース（正常系 6 : 異常系〈準正常 + 異常〉13 ≒ 1:2）。`auth.it.test.ts` は BFF が backend の 401 を `200 + null` に正規化する挙動を実バックエンド相手に検証する。
+
+> **CI（専用ワークフロー・ローカル先行）**: IT は実バックエンドのイメージビルドを伴い重いため、毎 PR ではなく専用ワークフロー `it-test.yml`（`workflow_dispatch` + nightly cron）で実行する。バックエンドは別リポジトリ（public）を checkout し、testcontainers が Dockerfile をビルドする（`BACKEND_REPO_PATH` で参照先を指定）。`BACKEND_IMAGE` を与えれば Artifact Registry の pinned image へ切替可能。ローカルは `pnpm test:it`。
 
 ### レイアウトテスト
 
