@@ -20,6 +20,8 @@ type GlobalSetupContext = {
  *
  * バックエンドのソース/資産は別リポジトリ（`nextjs-echo-back-blog-app`）にあり、
  * 既定では兄弟ディレクトリを参照する。`BACKEND_REPO_PATH` で上書きできる。
+ * `BACKEND_IMAGE` を指定した場合はビルドせず既存イメージ（例: Artifact Registry の
+ * pinned image）を使う。
  */
 
 const CURRENT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -65,10 +67,14 @@ export default async function setup({ provide }: GlobalSetupContext) {
         .start();
     teardownFns.push(() => postgres.stop());
 
-    // 2) 実 Go バックエンド: 別 repo の Dockerfile をビルドして起動
-    //    DB_SSLMODE=disable はコンテナ Postgres が非 SSL のため（backend/supabase/client.go 参照）
-    const backendImage = await GenericContainer.fromDockerfile(BACKEND_DIR).build();
-    const backend = await backendImage
+    // 2) 実 Go バックエンド。DB_SSLMODE=disable はコンテナ Postgres が非 SSL のため
+    //    （backend/supabase/client.go 参照）。
+    //    BACKEND_IMAGE 指定時は既存イメージ（例: Artifact Registry の pinned image）を使い、
+    //    未指定なら別 repo の Dockerfile をビルドする（ローカル/自己完結 CI 向け）。
+    const backendBase = process.env.BACKEND_IMAGE
+        ? new GenericContainer(process.env.BACKEND_IMAGE)
+        : await GenericContainer.fromDockerfile(BACKEND_DIR).build();
+    const backend = await backendBase
         .withNetwork(network)
         .withEnvironment({
             SUPABASE_URL: `postgresql://postgres:postgres@${DB_ALIAS}:5432/testdb`,

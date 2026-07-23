@@ -15,6 +15,16 @@ export const getReq = (url = 'http://localhost/api'): NextRequest =>
     new NextRequest(url, { method: 'GET' });
 
 /**
+ * Cookie ヘッダー付きの GET リクエストを生成する（BFF の Cookie 転送検証用）。
+ *
+ * @param cookie - 転送する Cookie 文字列（例: `token=xxx`）
+ * @param url - リクエスト URL
+ * @returns 生成した `NextRequest`
+ */
+export const getReqWithCookie = (cookie: string, url = 'http://localhost/api'): NextRequest =>
+    new NextRequest(url, { method: 'GET', headers: { cookie } });
+
+/**
  * ボディ付き（または無し）のリクエストを生成する。
  *
  * @param method - HTTP メソッド（POST / PUT / DELETE 等）
