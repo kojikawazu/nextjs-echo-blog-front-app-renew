@@ -131,6 +131,9 @@ pnpm start
 pnpm test              # 全ユニットテスト実行
 pnpm test:watch        # ウォッチモード
 
+# インテグレーションテスト（Vitest + testcontainers・要 docker）
+pnpm test:it           # 実スタック（Postgres + 実 Go バックエンド）を起動して IT 実行
+
 # リント
 pnpm lint
 

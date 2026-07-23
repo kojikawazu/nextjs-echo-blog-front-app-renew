@@ -95,6 +95,7 @@
 - [x] ブログ編集・削除テスト
 - [x] ユニットテストを `tests/` に集約（`src/**/__tests__/` から移設・`.claude/rules/testing.md` 準拠）。ソースツリー鏡写し（`tests/schema/` `tests/hooks/` `tests/lib/api/` `tests/api/github/markdown/`）。相対 import を `@/` エイリアスへ変更、`eslint.config.mjs` の免除 glob に `tests/**` を追加
 - [x] ユニットテストの異常系拡充（正常系 20 : 異常系〈準正常+異常〉40 ≒ 1:2 に到達）。スキーマ 3 種へ型不一致・null・非オブジェクトの異常系、`fetchBlogs` へ JSON パース失敗、`useComments` へ mutation 失敗を追加（計 48→60 件）
+- [x] インテグレーションテスト（IT）基盤の導入（`tests-it/` + `vitest.config.it.ts` + `pnpm test:it`）。testcontainers で実 Go バックエンド + 実 PostgreSQL を起動し、BFF Route Handler を in-process 検証（UT=mock / IT=testcontainers、バックエンド repo の方針と対）。バックエンドの `Dockerfile` / `schema.sql` / `seed.sql` を再利用。ケース 14 件（blogs/meta/write-auth/comments/proxy）
 
 ### ドキュメント
 
@@ -111,6 +112,13 @@
 - [ ] ブログ作成/編集フォームのZodスキーマが全フィールド `optional()` で、必須チェックがHTML `required` 属性依存
 - [ ] 訪問者IDの生成結果がフロント側で永続化されていない（バックエンドCookie依存の可能性）
 - [x] ~~ユニットテスト 8 件が `.claude/rules/testing.md` の配置ルールに未追従~~ → `apps/front/tests/`（ソースツリー鏡写し）へ移設済み。`vitest.config.ts` は既定 include で `tests/` を自動検出するため変更不要、`eslint.config.mjs` の免除 glob と `docs/09` ツリーは更新済み
+
+## 既知の課題（IT・型）
+
+- [ ] **IT のグリーン実行環境**: IT は実 Go バックエンドのイメージ（`golang:1.22` / `gcr.io/distroless/base`）ビルドを伴うため、レジストリ接続のある環境で `pnpm test:it` を実行して初回グリーンを確認する必要がある（実装・静的検証は完了済み。導入時の開発環境ではレジストリ pull 不可で未実行）。
+- [ ] **IT の CI 導入**: 現状ローカル先行。CI 化には実バックエンドの入手方式（兄弟 repo checkout してビルド / Artifact Registry の pinned image を pull）の判断が必要。CI 時間とクロス repo 結合のコストを踏まえて決める。
+- [ ] **IT 異常系の追加観点**: 初回グリーン後、実挙動を観察して追加（コメント不在時の 404/空配列、popular の境界値 等）。
+- [ ] **`tsc --noEmit` の型エラー解消**: `tests/hooks/useLikeBlog.test.ts` の `mockResolvedValue(undefined)` が `Promise<string>` と不整合（7 件）。CI は vitest（esbuild）実行のため顕在化していないが、型チェックを CI に加える場合は要修正。
 
 ## 今後の改善候補
 

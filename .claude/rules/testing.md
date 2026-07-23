@@ -13,6 +13,13 @@ globs:
 | 準正常系（Semi-Normal） | 想定内の異常入力 → 適切なハンドリング |
 | 異常系（Abnormal） | 想定外のエラー → 安全な失敗 |
 
+## モック方針（UT / IT）
+
+バックエンド repo と揃えて、レベルでモック方針を分ける:
+
+- **UT = mock**: 外部 I/O（fetch・`lib/api/` 通信関数）のみモック。ビジネスロジックはモックしない。
+- **IT = testcontainers（実依存）**: モックせず、testcontainers で実 Go バックエンド + 実 PostgreSQL を起動し、BFF Route Handler を in-process で叩く。真の外部 3rd-party（GitHub API 等）のみスタブ。
+
 ## 原則
 
 - テストは仕様の証明。テストが失敗したら実装を修正する（テストを実装に合わせない）。
@@ -25,6 +32,7 @@ globs:
 | テスト種別 | ツール |
 |-----------|--------|
 | ユニットテスト | Vitest + Testing Library |
+| インテグレーションテスト | Vitest + testcontainers（実 Go バックエンド + 実 PostgreSQL） |
 | E2E テスト | Playwright |
 | スモークテスト | Playwright（起動確認・主要ページ表示） |
 
@@ -33,6 +41,7 @@ globs:
 FE はテストを**専用ディレクトリに集約する**（ソースにコロケートしない）:
 
 - **ユニット / コンポーネントテスト**: `tests/` に集約（例: `tests/components/BlogCard.test.tsx`）
+- **インテグレーションテスト**: `tests-it/` に集約（例: `tests-it/api/blogs.it.test.ts`）。`*.it.test.ts` 命名、`vitest.config.it.ts` で実行し UT からは除外。
 - **E2E テスト**: `e2e/` に集約（例: `e2e/tests/pages/blog_home/blog_home_unauth.spec.ts`）
 - ソースツリー（`src/`）にテストファイルを置かない。
 

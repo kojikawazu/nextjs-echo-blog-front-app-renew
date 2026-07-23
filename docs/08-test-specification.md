@@ -34,12 +34,14 @@
 
 | 種別 | フレームワーク | 目的 |
 |------|-------------|------|
-| ユニットテスト | Vitest + @testing-library/react | スキーマ・カスタムフック・API通信関数のロジック検証 |
+| ユニットテスト（UT） | Vitest + @testing-library/react | スキーマ・カスタムフック・API通信関数のロジック検証 |
+| インテグレーションテスト（IT） | Vitest + testcontainers | BFF Route Handler ↔ 実バックエンド ↔ 実 DB の結合検証 |
 | E2E（End-to-End） | Playwright | ユーザー操作に基づく画面レベルの自動テスト |
 
 ### テスト方針
 
-- ユニットテスト: 外部I/O（fetch・APIモジュール）のみモック。ビジネスロジックはモックしない
+- **UT**: 外部I/O（fetch・APIモジュール）のみモック。ビジネスロジックはモックしない（バックエンドの UT=mock 方針と対）
+- **IT**: モックせず**実依存**を使う。testcontainers で実 Go バックエンド + 実 PostgreSQL を起動し、BFF Route Handler を in-process で叩く。真の外部 3rd-party（GitHub API 等）のみスタブ（バックエンドの IT=testcontainers 方針と対）
 - E2E: APIレスポンスは全てモック化し、バックエンドに依存しないテストを実現
 - 認証状態（認証済み/未認証）を切り替えてテスト
 - CI環境（GitHub Actions）ではリトライ2回で安定性を確保
@@ -141,6 +143,32 @@ e2e/tests/mocks/
 | **合計** | | **60** |
 
 ケース分類の比率は **正常系 20 : 異常系（準正常系 + 異常系）40 ≒ 1:2**（`.claude/rules/testing.md` の「正常 1 : 異常系 2 以上」を満たす）。スキーマには型不一致・`null`・非オブジェクトの異常系、`fetchBlogs` には JSON パース失敗、`useComments` には mutation 失敗の異常系を含む。
+
+### インテグレーションテスト（Vitest + testcontainers）
+
+`apps/front/tests-it/` に集約。`pnpm --filter front test:it`（`vitest.config.it.ts`）で実行する。**docker が必要**。`tests-it/setup/globalSetup.ts` が testcontainers で以下の実スタックを 1 度だけ起動し、BFF Route Handler を in-process で検証する。
+
+```
+Vitest(IT) → BFF Route Handler(@/app/api/**, in-process)
+                 │ process.env.BACKEND_API_URL（globalSetup が provide）
+                 ▼
+   実 Go バックエンド(container・別 repo の Dockerfile をビルド)
+                 ▼
+   PostgreSQL(container・backend の testdata/schema.sql + seed.sql を投入)
+```
+
+- バックエンド資産（`Dockerfile` / `schema.sql` / `seed.sql`）は別リポジトリ `nextjs-echo-back-blog-app` を参照する。既定は兄弟ディレクトリ、`BACKEND_REPO_PATH` で上書き可能。
+- 検証観点: BFF のプロキシ・Cookie 転送・ステータス/JSON 整形が**実バックエンド相手に**機能するか。
+
+| テストファイル | 対象 | 主なケース |
+|---|---|---|
+| `tests-it/api/blogs.it.test.ts` | 一覧・詳細 | 正常（seed 一覧/詳細）・404（不在 UUID）・404（不正 UUID 形式） |
+| `tests-it/api/blogs-meta.it.test.ts` | categories/tags/popular | 正常（seed 値含む・popular 200）・400（count 非数値） |
+| `tests-it/api/blogs-write.it.test.ts` | 作成/更新/削除の認証ガード | 401（Cookie 無しの POST/PUT/DELETE = Cookie 転送の結合検証） |
+| `tests-it/api/comments.it.test.ts` | コメント | 正常（seed コメント取得）・400（空ボディ投稿） |
+| `tests-it/api/proxy.it.test.ts` | BFF 設定契約 | 500（`BACKEND_API_URL` 未設定 = fail-closed） |
+
+> **CI 未導入（ローカル先行）**: 現状 IT は CI に組み込んでいない。実バックエンドのイメージビルドを CI で用意する方式（兄弟 repo checkout / Artifact Registry の pinned image）は今後の判断事項（`docs/11-tasks.md`）。
 
 ### レイアウトテスト
 
