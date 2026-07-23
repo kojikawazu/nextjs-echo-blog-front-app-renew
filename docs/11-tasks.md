@@ -130,6 +130,9 @@
   - `react-hooks/exhaustive-deps`（`EditPost.tsx` の `isLoading`・`Home.tsx` の `setGlobalData`）
 - [ ] ユニットテストのカバレッジ拡充（現在はスキーマ・カスタムフックのみ。コンポーネント等へ拡大）
 - [ ] SSR / SSGの活用（現在は全ページCSR）
+- [ ] **定数配置の移行**（`.claude/rules/typescript.md`「定数の配置」の移行目標）: 現在は `utils/const/constants.ts` の `COMMON_CONSTANTS` 1 オブジェクトに全ドメインを集約し `as const` も未付与。ドメイン単位のファイル分割 + `as const` 付与へ段階移行する。`as const` を付けると `BLOG_LIST.POPULAR` 等がリテラル型に固定され、union の導出・補完が効くようになる
+- [ ] **型定義の `type` 統一**（`.claude/rules/typescript.md`「type vs interface」の移行目標）: `types/blogs.ts` `types/users.ts` と各コンポーネントの props（`BlogCardProps` 等）が `interface` で定義されている。class 契約・宣言マージのいずれにも該当しないため `type` へ寄せる。新規追加分は `type` を使う
+- [ ] **状態・ロジック層のコメント拡充**（`.claude/rules/jsdoc.md`「状態・ロジック層のコメント」）: Zustand ストアの型（`AuthState` / `BlogState` / `CommentState`）と Context value の各メンバーにコメントが未付与。型メンバー単位で「いつ変わるか・空値の意味・副作用の有無」を補う
 - [ ] 画像アップロード機能
 - [ ] ブログ記事のOGP設定
 - [ ] アクセス解析の導入

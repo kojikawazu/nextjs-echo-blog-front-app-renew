@@ -62,6 +62,8 @@
 | `jsdoc/require-returns` / `-description` | error（`.ts`のみ） | 戻り値の意味付け必須。`.tsx`（JSX 返却）は off |
 | `jsdoc/check-alignment` / `no-multi-asterisks` | warn | 体裁 |
 
+> **型メンバー単位の強制は未導入**。`.claude/rules/jsdoc.md`「型定義のコメント」「状態・ロジック層のコメント」は、`jsdoc/require-jsdoc` の `contexts` に AST セレクタ（`TSTypeAliasDeclaration` / `TSInterfaceDeclaration` / `TSPropertySignature`）を追加して warn から強制する案を推奨として示している。現状は上記「有無強制はしない」方針を維持し、**規約はレビューで担保**する。導入する場合は誤検知を避けるため対象を `types/**` に絞り、warn から始める。
+
 - **テストコード**（`tests/`・`src/test/`、および過去のコロケート配置 `__tests__/`・`*.test.*`）は公開シンボルでないため JSDoc 必須系を免除。`react/display-name` もテストのインラインラッパー向けに off（免除 glob は `tests/**` を含む）。ユニットテストは `tests/` に集約する（`.claude/rules/testing.md`）。
 - `react-hooks/set-state-in-effect` は正当なパターン（async フェッチ前の loading セット等）に過剰反応するため `warn` に降格。挙動を伴う修正は `docs/11-tasks.md` の課題として管理。
 
