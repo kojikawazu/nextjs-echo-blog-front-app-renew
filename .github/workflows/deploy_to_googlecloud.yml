@@ -62,13 +62,13 @@ jobs:
               run: |
                   IMAGE_NAME="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPO_NAME }}/${{ secrets.APP_NAME }}"
 
-                  # 最新5つのタグを取得
-                  KEEP_IMAGES=$(gcloud artifacts docker images list ${IMAGE_NAME} --format="value(DIGEST)" --sort-by="~UPDATE_TIME" | head -n 5)
-
-                  # すべてのタグを取得し、最新5つを除外したものを削除
-                  gcloud artifacts docker images list ${IMAGE_NAME} --format="value(DIGEST)" --sort-by="~UPDATE_TIME" | tail -n +6 | while read -r DIGEST; do
-                      if [[ ! -z "${DIGEST}" ]]; then
-                          echo "Deleting old image: ${IMAGE_NAME}:${DIGEST}"
-                          gcloud artifacts docker images delete "$IMAGE_NAME@$DIGEST" --quiet
-                      fi
-                  done
+                  # 更新時刻の新しい順に並べ、最新5世代を残して6件目以降を削除する
+                  gcloud artifacts docker images list "${IMAGE_NAME}" \
+                      --format="value(DIGEST)" --sort-by="~UPDATE_TIME" \
+                    | tail -n +6 \
+                    | while read -r DIGEST; do
+                          if [[ -n "${DIGEST}" ]]; then
+                              echo "Deleting old image: ${IMAGE_NAME}@${DIGEST}"
+                              gcloud artifacts docker images delete "${IMAGE_NAME}@${DIGEST}" --quiet
+                          fi
+                      done
