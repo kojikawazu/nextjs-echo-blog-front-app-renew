@@ -14,6 +14,16 @@ GITHUB_TOKEN=
 
 > モノレポ構成のため、環境変数ファイルはリポジトリ直下ではなく `apps/front/` 配下に置きます。E2E 用の `apps/front/.env.test` も同様です。
 
+### インテグレーションテスト（IT）用
+
+IT（`pnpm test:it`）は testcontainers で実 Go バックエンド + 実 PostgreSQL を起動するため、**Docker が必要**です。`BACKEND_API_URL` は `globalSetup` が起動したコンテナの URL を自動注入するため設定不要です。
+
+| 変数 | 既定 | 用途 |
+|------|------|------|
+| `BACKEND_REPO_PATH` | 兄弟ディレクトリ（`../../../nextjs-echo-back-blog-app/backend`） | バックエンド repo の `backend/` パス。Dockerfile と `testsupport/testdata/{schema,seed}.sql` の参照元。配置が異なる環境で上書きする |
+
+> バックエンドコンテナには IT 内部で `JWT_SECRET_KEY` / `SUPABASE_URL`（コンテナ Postgres 向け）/ `DB_SSLMODE=disable` 等をテスト用の値として与える（`tests-it/setup/globalSetup.ts`）。本番シークレットは使用しない。
+
 ## 本番環境（Cloud Run）
 
 | 変数名 | 供給元 | 備考 |

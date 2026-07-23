@@ -199,6 +199,7 @@ src/app/
 |------|------|
 | `apps/front/vitest.config.ts` | Vitest 設定（jsdom 環境・setup ファイル指定・パスエイリアス） |
 | `apps/front/tests/` | ユニット / コンポーネントテスト集約（ソースツリー鏡写し: `schema/` `hooks/` `lib/api/` `api/github/markdown/`）。`.claude/rules/testing.md` 準拠で `src/` にはテストを置かない |
+| `apps/front/tests-it/` | IT（インテグレーションテスト）集約。testcontainers で実スタックを起動（`setup/globalSetup.ts`）。`vitest.config.it.ts` で実行、UT からは除外 |
 | `apps/front/src/test/setup.ts` | Vitest のグローバルセットアップ（`@testing-library/jest-dom` 等） |
 | `apps/front/e2e/` | Playwright E2E テスト・モック（詳細は `docs/08-test-specification.md`） |
 

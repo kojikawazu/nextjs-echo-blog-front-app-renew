@@ -127,6 +127,11 @@ pnpm format:check         # Prettier チェックのみ
 pnpm test                 # 全ユニットテスト
 pnpm test:watch           # ウォッチモード
 
+# インテグレーションテスト（Vitest + testcontainers・要 Docker）
+pnpm test:it              # 実 Go バックエンド + 実 PostgreSQL を起動して IT 実行
+#   → バックエンド repo（別リポジトリ）を参照しイメージをビルドする。
+#     既定は兄弟ディレクトリ。配置が異なる場合は BACKEND_REPO_PATH で指定。
+
 # E2E テスト（Playwright）
 pnpm test:e2e             # HTMLレポート付き
 pnpm test:e2e:ui          # インタラクティブUI
