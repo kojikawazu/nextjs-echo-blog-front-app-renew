@@ -52,6 +52,23 @@ globs: "apps/front/src/app/components/**,apps/front/src/app/hooks/**,apps/front/
 - `type` / `interface` は型本体・各メンバーともにコメント必須（`jsdoc.md`）。
 - **マジックナンバー・マジック文字列を直接書かない**（判断軸は型と同じ「参照範囲」）。ただし union の元になる定数は、導出される型と**同じファイルに同居**させる。環境変数は定数に含めない。詳細は `typescript.md`「定数の配置」に従う。
 
+## 関心別にディレクトリを切る
+
+`types/` `constants/` `schemas/` `repositories/` は**それぞれ独立したディレクトリ**として置く（本プロジェクトでは `src/app/` 直下）。いずれも**単一ファイルにまとめない**（`utils/const/constants.ts` のように 1 ファイルへ詰め込む形にしない。ドメイン単位でファイルを分ける）。詳細は `typescript.md`「型定義の配置」「定数の配置」「スキーマの配置」に従う。
+
+| ディレクトリ | 置くもの | 置かないもの |
+|---|---|---|
+| `types/` | 2 箇所以上から参照される型 | 値・ロジック |
+| `constants/` | 全環境で不変な値 | 環境変数・型を導出する定数（`types/` 側へ） |
+| `schemas/` | Zod スキーマ（フォーム・API レスポンスの検証） | 検証を伴わない型定義（`types/` へ） |
+| `repositories/` | **API アクセス**（`fetch` / BFF 呼び出し） | UI・画面都合の整形・業務判断 |
+| `lib/` | **通信を持たない純粋ユーティリティ**（日付整形・計算等） | API アクセス（`repositories/` へ）・定数・型 |
+
+- **`fetch` を書いてよいのは API アクセス層だけ**。コンポーネント・hooks・`lib/` の純粋関数から直接叩かない。呼び出し口を 1 箇所に閉じることで、Cookie 転送・エラー処理・リトライの実装が散らばらない。
+- ディレクトリ名は**複数形で統一**する（`types` / `constants` / `schemas` / `repositories`）。
+
+> **現状**: 本プロジェクトの API アクセス層は `lib/api/`（`fetchBlogs.ts` 等）、スキーマは単数形 `schema/`、定数は `utils/const/constants.ts` の 1 ファイルに置かれている。既存コードは即違反としない。`repositories/` への切り出し・`schemas/` への改名・`constants/` のドメイン分割は `docs/11-tasks.md` の改善候補として管理し、**新規追加分から上表に従う**。なお `lib/api/` を維持する間も、「`fetch` は API アクセス層のみ」「`lib/` の他のファイルは通信しない」は現時点から守る。
+
 ## ディレクトリ構成
 
 本プロジェクトは App Router 配下（`src/app/`）に実装一式を集約する。
@@ -65,12 +82,12 @@ apps/front/src/app/
 │   ├── auth/  blogs/  home/  common/  layout/
 ├── contexts/               # React Context（AuthContext, GlobalContext）
 ├── hooks/                  # クライアントロジック（useXxx）
-├── lib/api/                # API 通信関数
+├── lib/api/                # API アクセス（fetch はここだけ・移行目標: repositories/）
 ├── provider/               # QueryProvider / ToastProvider
-├── schema/                 # Zod スキーマ
+├── schema/                 # Zod スキーマ（移行目標: schemas/）
 ├── stores/                 # Zustand Store
 ├── types/                  # 型定義
-└── utils/const/            # 定数（constants.ts）
+└── utils/const/            # 定数（constants.ts・移行目標: constants/ へドメイン分割）
 ```
 
 ## インポート

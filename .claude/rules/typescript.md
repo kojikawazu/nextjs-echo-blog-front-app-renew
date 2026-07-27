@@ -33,6 +33,16 @@ type OnSelectTag = (tag: string) => void;
 
 > **現状**: `types/blogs.ts` `types/users.ts` および各コンポーネントの props（`BlogCardProps` 等）は `interface` で定義されている。既存コードは即違反としない。`type` への統一は `docs/11-tasks.md` の改善候補として管理し、**新規追加分から `type` を使う**。
 
+## スキーマの配置（`schemas/` 集約）
+
+- Zod スキーマは**ソースルート直下の `schemas/` ディレクトリ**に集約する（本プロジェクトでは `apps/front/src/app/schemas/`）。
+- **`lib/validation.ts` のような単一ファイルにまとめない。** ディレクトリを切り、ドメイン単位でファイルを分ける（`schemas/blogs.ts` / `schemas/users.ts`）。`lib/` `utils/` の下に置かない（「関数の置き場」と分離する）。
+- **スキーマから導出した型は `types/` に再定義しない。** `z.infer<typeof blogSchema>` をスキーマファイルから `export` し、それを参照する（手書きの二重定義をしない）。
+- **検証を伴わない純粋な型は `schemas/` に置かない**（`types/` へ）。`schemas/` に置くのは「実行時に `parse` するもの」だけ。
+- barrel（`schemas/index.ts`）は作らない（理由は型・定数と同じ）。
+
+> **現状**: 本プロジェクトのスキーマは単数形の `apps/front/src/app/schema/`（`authSchema.ts` / `blogSchema.ts` / `blogCommentSchema.ts`）に置かれている。既存コードは即違反としない。複数形 `schemas/` への改名と、ファイル名からの `Schema` 接尾辞除去（`schemas/blogs.ts`）は `docs/11-tasks.md` の改善候補として管理する。
+
 ## 型定義の配置（コロケーション / `types/` 集約）
 
 型を各ファイルに散在させず、**参照範囲**で置き場所を決める。判断軸は「**その型を参照するファイルが 1 つに閉じるか**」。
@@ -41,6 +51,22 @@ type OnSelectTag = (tag: string) => void;
 |---|---|
 | **1 ファイルに閉じる** | その定義ファイル内にコロケーション（`export` しない） |
 | **2 ファイル以上** / レイヤ・機能をまたぐ | `types/` に集約して `export` |
+
+### 置き場所（ディレクトリを切る）
+
+- 集約先は**ソースルート直下の `types/` ディレクトリ**。本プロジェクトは実装一式を App Router 配下に集約しているため **`apps/front/src/app/types/`**（`@/app/types/*`）が該当する。
+- **単一ファイルにまとめない。** `lib/type.ts` のように 1 ファイルへ全型を詰め込む形は禁止。必ず**ディレクトリを切り、ドメイン単位でファイルを分ける**。
+- **`lib/` `utils/` の下に型ファイルを置かない。** `lib/` は「関数の置き場」、`types/` は「型の置き場」で分離する（定数も同様。「定数の配置」参照）。
+- 命名は**ディレクトリが複数形の `types`、ファイルはドメイン名**（`types/blogs.ts` / `types/users.ts`）。`type.ts` / `Types.ts` のような単数形・PascalCase のディレクトリ名は使わない。
+
+```
+apps/front/src/app/
+├── lib/            # 関数（API 通信・ユーティリティ）
+├── utils/const/    # 値（→ 移行目標: constants/）
+└── types/          # 型
+    ├── blogs.ts
+    └── users.ts
+```
 
 ### 運用ルール
 
@@ -78,6 +104,14 @@ export type Blog = { id: string; title: string; tags: string[]; likes: number };
 |---|---|
 | **1 ファイルに閉じる** | その定義ファイルの先頭で `const` 宣言（`export` しない） |
 | **2 ファイル以上** / レイヤ・機能をまたぐ | 共通定数へ集約して `export` |
+
+### 置き場所（ディレクトリを切る）
+
+型と同じ方針で置き場所を決める（詳細は「型定義の配置」の同名節）。
+
+- 集約先は**ソースルート直下の `constants/` ディレクトリ**（本プロジェクトでは `apps/front/src/app/constants/`）。
+- **単一ファイルにまとめない。** `utils/const/constants.ts` のように 1 ファイル・1 オブジェクトへ全定数を詰め込む形は禁止。**ディレクトリを切り、ドメイン単位でファイルを分ける**。
+- 命名は**ディレクトリが複数形の `constants`**（`constant.ts` のような単数形の単一ファイルにしない）。
 
 ### 運用ルール
 
