@@ -132,6 +132,8 @@
 - [ ] SSR / SSGの活用（現在は全ページCSR）
 - [ ] **定数配置の移行**（`.claude/rules/typescript.md`「定数の配置」の移行目標）: 現在は `utils/const/constants.ts` の `COMMON_CONSTANTS` 1 オブジェクトに全ドメインを集約し `as const` も未付与。ドメイン単位のファイル分割 + `as const` 付与へ段階移行する。`as const` を付けると `BLOG_LIST.POPULAR` 等がリテラル型に固定され、union の導出・補完が効くようになる
 - [ ] **型定義の `type` 統一**（`.claude/rules/typescript.md`「type vs interface」の移行目標）: `types/blogs.ts` `types/users.ts` と各コンポーネントの props（`BlogCardProps` 等）が `interface` で定義されている。class 契約・宣言マージのいずれにも該当しないため `type` へ寄せる。新規追加分は `type` を使う
+- [ ] **API アクセス層の `repositories/` 切り出し**（`.claude/rules/frontend.md`「関心別にディレクトリを切る」の移行目標）: 現在 API 通信関数は `lib/api/` に置かれている。`lib/` を「通信を持たない純粋ユーティリティ」に限定し、`fetch` を含む関数は `src/app/repositories/` へドメイン単位で移す
+- [ ] **スキーマディレクトリの複数形化**（`.claude/rules/typescript.md`「スキーマの配置」の移行目標）: 単数形 `schema/` + `xxxSchema.ts` 命名を `schemas/blogs.ts` `schemas/users.ts` のようにドメイン単位へ改名する。導出型は `z.infer` を各スキーマファイルから `export` し、`types/` に手書きで再定義しない
 - [ ] **状態・ロジック層のコメント拡充**（`.claude/rules/jsdoc.md`「状態・ロジック層のコメント」）: Zustand ストアの型（`AuthState` / `BlogState` / `CommentState`）と Context value の各メンバーにコメントが未付与。型メンバー単位で「いつ変わるか・空値の意味・副作用の有無」を補う
 - [ ] 画像アップロード機能
 - [ ] ブログ記事のOGP設定
