@@ -161,6 +161,13 @@ src/app/
 │   ├── createBlog.ts           # ブログ作成
 │   ├── updateBlogById.ts       # ブログ更新
 │   ├── deleteBlogById.ts       # ブログ削除
+│   ├── fetchCategories.ts      # カテゴリ一覧取得（サイドバー）
+│   ├── fetchTags.ts            # タグ一覧取得（サイドバー）
+│   ├── fetchPopularBlogs.ts    # 人気記事取得（サイドバー）
+│   ├── auth/
+│   │   ├── fetchAuthUser.ts    # 認証状態確認
+│   │   ├── login.ts            # ログイン
+│   │   └── logout.ts           # ログアウト
 │   ├── blog-comments/
 │   │   ├── fetchComments.ts    # コメント取得
 │   │   └── addComment.ts       # コメント追加

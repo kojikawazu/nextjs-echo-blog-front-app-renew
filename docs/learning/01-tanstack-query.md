@@ -91,13 +91,8 @@ const {
     refetch,
 } = useQuery({
     queryKey: ['authUser'],
-    queryFn: async () => {
-        const response = await fetch(COMMON_CONSTANTS.URL.AUTH_CHECK, {
-            credentials: 'include',
-        });
-        if (!response.ok) return null;
-        return response.json();
-    },
+    // 通信は API アクセス層（lib/api/auth/fetchAuthUser.ts）に閉じ、未認証は null に正規化される
+    queryFn: fetchAuthUser,
     initialData: null,
 });
 ```

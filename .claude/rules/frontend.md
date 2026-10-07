@@ -69,7 +69,7 @@ globs: "apps/front/src/app/components/**,apps/front/src/app/hooks/**,apps/front/
 
 > **現状**: 本プロジェクトの API アクセス層は `lib/api/`（`fetchBlogs.ts` 等）、スキーマは単数形 `schema/`、定数は `utils/const/constants.ts` の 1 ファイルに置かれている。既存コードは即違反としない。`repositories/` への切り出し・`schemas/` への改名・`constants/` のドメイン分割は `docs/11-tasks.md` の改善候補として管理し、**新規追加分から上表に従う**。なお `lib/api/` を維持する間も、「`fetch` は API アクセス層のみ」「`lib/` の他のファイルは通信しない」は**新規追加分では現時点から守る**。
 >
-> ただし既存の例外として、`contexts/AuthContext.tsx`（認証チェック・ログイン・ログアウト）と `contexts/GlobalContext.tsx`（カテゴリ・タグ・人気記事）が `fetch` を直接呼んでいる。これらの `lib/api/` への切り出しも `docs/11-tasks.md` の改善候補として管理する。
+> なお `contexts/AuthContext.tsx`（認証チェック・ログイン・ログアウト）と `contexts/GlobalContext.tsx`（カテゴリ・タグ・人気記事）の直接 `fetch` は #129 で `lib/api/auth/` `lib/api/` へ切り出し済み。`contexts/` から `fetch` を直接呼ばない。
 
 ## レイヤ依存の一方向ルール
 

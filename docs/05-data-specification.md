@@ -6,6 +6,7 @@
     - [Blog](#blog)
     - [Comment](#comment)
     - [BlogLike](#bloglike)
+    - [PopularBlog](#popularblog)
     - [User](#user)
 - [2. バリデーションスキーマ（Zod）](#2-バリデーションスキーマzod)
     - [ログインフォーム](#ログインフォーム)
@@ -77,6 +78,19 @@ interface BlogLike {
     created_at: string;  // 作成日時
     updated_at: string;  // 更新日時
 }
+```
+
+### PopularBlog
+
+サイドバーの人気記事 1 件分。`/api/blogs/popular/:count` のレスポンス要素（`fetchPopularBlogs`）と、ホーム画面で一覧データから算出した人気記事の双方で使う。
+
+```typescript
+// src/app/types/blogs.ts
+type PopularBlog = {
+    id: string;     // ブログID（UUID）
+    title: string;  // 記事タイトル
+    likes: number;  // いいね数（累計）。人気順はこの値の降順
+};
 ```
 
 ### User

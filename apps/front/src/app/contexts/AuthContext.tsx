@@ -6,6 +6,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 // constants
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
+// api
+import { fetchAuthUser } from '@/app/lib/api/auth/fetchAuthUser';
+import { login } from '@/app/lib/api/auth/login';
+import { logout } from '@/app/lib/api/auth/logout';
 // types
 import { User } from '@/app/types/users';
 
@@ -38,24 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         refetch,
     } = useQuery<User | null>({
         queryKey: ['authUser'],
-        queryFn: async () => {
-            const response = await fetch(COMMON_CONSTANTS.URL.AUTH_CHECK, {
-                method: 'GET',
-                credentials: 'include',
-            });
-
-            if (!response.ok) return null;
-
-            const dataJson = await response.json();
-            const safeUser: User = {
-                id: dataJson.user_id,
-                name: dataJson.username,
-                email: dataJson.email,
-                created_at: '',
-                updated_at: '',
-            };
-            return safeUser;
-        },
+        queryFn: fetchAuthUser,
         initialData: null,
     });
 
@@ -63,20 +50,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      * ログイン処理
      */
     const loginMutation = useMutation({
-        mutationFn: async ({ email, password }: { email: string; password: string }) => {
-            const response = await fetch(COMMON_CONSTANTS.URL.LOGIN, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-                credentials: 'include',
-            });
-
-            if (!response.ok) {
-                throw new Error(COMMON_CONSTANTS.AUTH.TOAST_LOGIN_ERROR);
-            }
-
-            return response.json();
-        },
+        mutationFn: ({ email, password }: { email: string; password: string }) =>
+            login(email, password),
         onSuccess: async () => {
             toast.success(COMMON_CONSTANTS.AUTH.TOAST_LOGIN_SUCCESS);
             // 認証状態を再取得
@@ -93,18 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      * ログアウト処理
      */
     const logoutMutation = useMutation({
-        mutationFn: async () => {
-            const response = await fetch(COMMON_CONSTANTS.URL.LOGOUT, {
-                method: 'POST',
-                credentials: 'include',
-            });
-
-            if (!response.ok) {
-                throw new Error(COMMON_CONSTANTS.AUTH.TOAST_LOGOUT_ERROR);
-            }
-
-            return response.json();
-        },
+        mutationFn: logout,
         onSuccess: () => {
             toast.success(COMMON_CONSTANTS.AUTH.TOAST_LOGOUT_SUCCESS);
             // 認証状態を再取得（リダイレクトをブロックしない）

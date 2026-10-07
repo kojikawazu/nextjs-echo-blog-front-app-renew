@@ -139,10 +139,16 @@ e2e/tests/mocks/
 | `tests/hooks/useDebounce.test.ts` | デバウンスフック | 5 |
 | `tests/hooks/useComments.test.ts` | コメントフック | 5 |
 | `tests/lib/api/fetchBlogs.test.ts` | ブログ取得（ソート/フィルタ/変換/異常系） | 10 |
+| `tests/lib/api/fetchCategories.test.ts` | カテゴリ一覧取得 | 4 |
+| `tests/lib/api/fetchTags.test.ts` | タグ一覧取得 | 4 |
+| `tests/lib/api/fetchPopularBlogs.test.ts` | 人気記事取得（`:count` 置換） | 4 |
+| `tests/lib/api/auth/fetchAuthUser.test.ts` | 認証状態確認（User 変換・未認証の `null` 正規化） | 5 |
+| `tests/lib/api/auth/login.test.ts` | ログイン | 3 |
+| `tests/lib/api/auth/logout.test.ts` | ログアウト | 3 |
 | `tests/api/github/markdown/route.test.ts` | GitHub Markdown プロキシ | 7 |
-| **合計** | | **60** |
+| **合計** | | **83** |
 
-ケース分類の比率は **正常系 20 : 異常系（準正常系 + 異常系）40 ≒ 1:2**（`.claude/rules/testing.md` の「正常 1 : 異常系 2 以上」を満たす）。スキーマには型不一致・`null`・非オブジェクトの異常系、`fetchBlogs` には JSON パース失敗、`useComments` には mutation 失敗の異常系を含む。
+ケース分類の比率は **正常系 26 : 異常系（準正常系 + 異常系）57 ≒ 1:2.2**（`.claude/rules/testing.md` の「正常 1 : 異常系 2 以上」を満たす）。スキーマには型不一致・`null`・非オブジェクトの異常系、`fetchBlogs` には JSON パース失敗、`useComments` には mutation 失敗、サイドバー・認証の API 通信関数にはエラーステータス・ネットワーク障害・JSON パース失敗の異常系を含む。
 
 ### インテグレーションテスト（Vitest + testcontainers）
 
