@@ -13,6 +13,7 @@
     - [本番環境（Cloud Run）](#本番環境cloud-run)
 - [3. 開発コマンド](#3-開発コマンド)
 - [4. CI/CDパイプライン](#4-cicdパイプライン)
+    - [静的チェックワークフロー（`static-check.yml`）](#静的チェックワークフローstatic-checkyml)
     - [テストワークフロー（`test.yml`）](#テストワークフローtestyml)
     - [デプロイワークフロー（`deploy_to_googlecloud.yml`）](#デプロイワークフローdeploy_to_googlecloudyml)
 - [5. Terraform管理リソース](#5-terraform管理リソース)
@@ -48,7 +49,7 @@
 | `eslint-plugin-react-hooks` | Hooksルール |
 | `typescript-eslint` | TypeScriptルール |
 | `eslint-plugin-jsdoc` | JSDoc（TSDoc）規約の機械強制（`.claude/rules/jsdoc.md` 準拠） |
-| `eslint-config-prettier` | Prettierとの競合解消 |
+| `eslint-config-prettier` | Prettierとの競合解消（`eslint-config-prettier/flat` を設定配列の**末尾**に置き、見た目系ルールを無効化。flat config は後勝ちのため） |
 
 #### JSDoc ルール（`eslint-plugin-jsdoc`）
 
@@ -155,6 +156,22 @@ pnpm --filter front exec playwright test e2e/tests/pages/blog_home/blog_home_una
 > モノレポのルート `package.json` は各スクリプトを `pnpm --filter front <script>` に委譲する。上記コマンドはリポジトリ直下からそのまま実行できる。
 
 ## 4. CI/CDパイプライン
+
+### 静的チェックワークフロー（`static-check.yml`）
+
+```
+トリガー: pull_request（全 PR・paths フィルタなし） / push to main
+  1. チェックアウト
+  2. pnpm（10.33.0）/ Node 20 セットアップ
+  3. pnpm install --frozen-lockfile
+  4. 型チェック（pnpm --filter front exec tsc --noEmit）
+  5. Lint（pnpm --filter front lint・エラーで失敗。警告では失敗しない）
+  6. フォーマットチェック（pnpm --filter front format:check）
+```
+
+> main のルールセットの**必須チェック**（`static-check`）として使う。必須チェックは該当ジョブが起動しないと「報告なし」のまま待機し、マージがブロックされるため、**paths フィルタを付けず全 PR で起動させる**（重い E2E / IT は別ワークフローで起動条件を絞る）。
+>
+> Next.js の自動生成物（`.next/`・`next-env.d.ts`）は `apps/front/.prettierignore` でフォーマットチェック対象から除外している。
 
 ### テストワークフロー（`test.yml`）
 

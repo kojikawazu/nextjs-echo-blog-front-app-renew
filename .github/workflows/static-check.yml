@@ -1,0 +1,45 @@
+name: Static Check
+
+# 型チェック・Lint・フォーマットチェックを実行する。
+# ルールセットの必須チェック（static-check）として使うため、paths フィルタを付けない。
+# 起動しない PR があると必須チェックが「報告なし」のまま待機し、マージがブロックされる。
+on:
+    pull_request:
+    push:
+        branches:
+            - main
+
+# 検査のみでリポジトリへ書き込まないため、読み取り権限に絞る
+permissions:
+    contents: read
+
+jobs:
+    static-check:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10.33.0
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            # Next.js のビルドは型エラーを検出しない経路があるため、tsc で明示的に検査する
+            - name: Type check
+              run: pnpm --filter front exec tsc --noEmit
+
+            - name: Lint
+              run: pnpm --filter front lint
+
+            - name: Format check
+              run: pnpm --filter front format:check

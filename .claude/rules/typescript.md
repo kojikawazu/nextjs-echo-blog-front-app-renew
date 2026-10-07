@@ -15,7 +15,7 @@ globs: "apps/front/src/**"
 - **Formatter**: **Prettier**（設定は `coding-standards.md`「Prettier 設定」）。**`eslint-config-prettier` を必ず適用**し、ESLint 側の見た目ルールを無効化して競合を防ぐ。
 - **JSDoc の強制**: `eslint-plugin-jsdoc`（有効ルールの唯一の真実は `eslint.config.mjs`、方針の根拠は `jsdoc.md`）。
 
-> **現状**: CI（`.github/workflows/test.yml` / `pull-request-test.yml` / `it-test.yml`）はテストのみを実行しており、`pnpm lint` / `tsc --noEmit` / `format:check` は含まれていない。また `typescript-eslint` は `recommended`（型情報なし）のみ適用で、`eslint-config-prettier` は依存に入っているが `eslint.config.mjs` で適用されていない。既存構成は即違反としない。CI への型チェック・Lint 追加と型情報ルールの有効化は `docs/11-tasks.md` の改善候補として管理する。
+> **現状**: `tsc --noEmit` / `pnpm lint` / `format:check` は `.github/workflows/static-check.yml` で全 PR に対して実行し、main の必須チェックとしている。`eslint-config-prettier` は `eslint.config.mjs` の末尾で適用済み。一方 `typescript-eslint` は `recommended`（型情報なし）のみ適用で、型情報ルールは未有効。既存構成は即違反としない。型情報ルールの有効化は `docs/11-tasks.md` の改善候補として管理する。
 
 ## type vs interface
 

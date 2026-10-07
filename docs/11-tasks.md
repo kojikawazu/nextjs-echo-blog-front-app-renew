@@ -137,8 +137,8 @@
 - [ ] **状態・ロジック層のコメント拡充**（`.claude/rules/jsdoc.md`「状態・ロジック層のコメント」）: Zustand ストアの型（`AuthState` / `BlogState` / `CommentState`）と Context value の各メンバーにコメントが未付与。型メンバー単位で「いつ変わるか・空値の意味・副作用の有無」を補う
 - [ ] **`components/` からの API アクセス層直呼びの解消**（#130）（`.claude/rules/frontend.md`「レイヤ依存の一方向ルール」の移行目標）: `components/home/Home.tsx` `components/blogs/BlogPost.tsx` `NewPost.tsx` `EditPost.tsx` が `lib/api/` を直接 import している。データ取得を `hooks/` へ寄せ、コンポーネントは UI 描画に専念させる（SSR / SSG 化とあわせて検討する）
 - [ ] **`contexts/` からの直接 `fetch` の解消**（#129）（`.claude/rules/frontend.md`「関心別にディレクトリを切る」の移行目標）: `contexts/AuthContext.tsx`（認証チェック・ログイン・ログアウト）と `contexts/GlobalContext.tsx`（カテゴリ・タグ・人気記事）が `fetch` を直接呼んでおり、Cookie 転送・エラー処理が API アクセス層の外に散っている。`lib/api/`（移行後は `repositories/`）へ切り出す
-- [ ] **CI に型チェック・Lint を追加**（#128）（`.claude/rules/typescript.md`「ツール」の移行目標）: CI はテストのみを実行しており `tsc --noEmit` / `pnpm lint` / `format:check` が未実行。Next.js のビルドは型を検査せず通る経路があるため、型崩れが CI をすり抜ける
-- [ ] **`typescript-eslint` の型情報ルール有効化**（#128）（同「ツール」）: 現在は `recommended`（型情報なし）のみ。`no-floating-promises` / `no-misused-promises` / `await-thenable` を有効にし、await 漏れを検出できるようにする。あわせて依存済みの `eslint-config-prettier` を `eslint.config.mjs` に適用し、ESLint と Prettier の見た目ルール競合を防ぐ
+- [x] **CI に型チェック・Lint を追加**（#128）（`.claude/rules/typescript.md`「ツール」の移行目標）: CI はテストのみを実行しており `tsc --noEmit` / `pnpm lint` / `format:check` が未実行。Next.js のビルドは型を検査せず通る経路があるため、型崩れが CI をすり抜ける
+- [ ] **`typescript-eslint` の型情報ルール有効化**（同「ツール」）: 現在は `recommended`（型情報なし）のみ。`no-floating-promises` / `no-misused-promises` / `await-thenable` を有効にし、await 漏れを検出できるようにする（`eslint-config-prettier` の適用と CI での Lint 実行は #128 で対応済み）
 - [ ] 画像アップロード機能
 - [ ] ブログ記事のOGP設定
 - [ ] アクセス解析の導入

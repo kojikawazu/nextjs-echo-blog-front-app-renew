@@ -16,7 +16,9 @@ test.describe('カテゴリーページ', () => {
         await page.goto('/category/Test%20Category');
         await page.waitForSelector('h2', { timeout: 20000 });
 
-        await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true }).first()).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: 'Test Blog 1', exact: true }).first(),
+        ).toBeVisible();
     });
 
     test('N-2: カテゴリーページにブログ一覧が表示される', async ({ page }) => {
@@ -24,7 +26,9 @@ test.describe('カテゴリーページ', () => {
         await page.waitForSelector('h2', { timeout: 20000 });
 
         // 記事カードが表示されている
-        await expect(page.getByRole('heading', { name: 'Test Blog 1', exact: true }).first()).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: 'Test Blog 1', exact: true }).first(),
+        ).toBeVisible();
     });
 
     test('N-3: サイドバーが表示される', async ({ page }) => {

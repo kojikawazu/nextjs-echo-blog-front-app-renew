@@ -36,7 +36,10 @@ test.describe('Blog: いいね機能', () => {
         await page.waitForSelector('[data-testid="like-count"]', { timeout: 20000 });
 
         // いいね済みのカードのボタンが青色になっている（text-gray-500がない＝いいね済み）
-        const likeButton = page.locator('button').filter({ has: page.getByTestId('like-count') }).first();
+        const likeButton = page
+            .locator('button')
+            .filter({ has: page.getByTestId('like-count') })
+            .first();
         await expect(likeButton).not.toHaveClass(/text-gray-500/);
     });
 
@@ -56,7 +59,10 @@ test.describe('Blog: いいね機能', () => {
         await page.goto('/');
         await page.waitForSelector('[data-testid="like-count"]', { timeout: 20000 });
 
-        const likeButton = page.locator('button').filter({ has: page.getByTestId('like-count') }).first();
+        const likeButton = page
+            .locator('button')
+            .filter({ has: page.getByTestId('like-count') })
+            .first();
         // 未いいね状態（グレー）であることを確認してからクリック
         await expect(likeButton).toHaveClass(/text-gray-500/, { timeout: 10000 });
         await likeButton.click();
@@ -80,7 +86,10 @@ test.describe('Blog: いいね機能', () => {
         await page.goto('/');
         await page.waitForSelector('[data-testid="like-count"]', { timeout: 20000 });
 
-        const likeButton = page.locator('button').filter({ has: page.getByTestId('like-count') }).first();
+        const likeButton = page
+            .locator('button')
+            .filter({ has: page.getByTestId('like-count') })
+            .first();
         // いいね済みデータがロードされ青色（text-gray-500なし）になるまで待ってからクリック
         await expect(likeButton).not.toHaveClass(/text-gray-500/, { timeout: 10000 });
         await likeButton.click();

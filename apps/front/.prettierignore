@@ -1,0 +1,3 @@
+# Next.js の自動生成物。手で整形しても次回のビルド・dev 起動で上書きされる
+.next/
+next-env.d.ts
