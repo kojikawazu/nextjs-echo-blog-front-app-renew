@@ -2,6 +2,7 @@
 
 [![Pull Request Test](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/pull-request-test.yml/badge.svg)](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/pull-request-test.yml)
 [![Static Check](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/static-check.yml/badge.svg)](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/static-check.yml)
+[![Secret Scan](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/secret-scan.yml/badge.svg)](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/secret-scan.yml)
 [![Deploy to Cloud Run](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/deploy_to_googlecloud.yml/badge.svg)](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/deploy_to_googlecloud.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
@@ -119,6 +120,10 @@ pnpm start                # 本番サーバー
 pnpm lint                 # ESLint
 pnpm format               # Prettier 自動修正
 pnpm format:check         # Prettier チェックのみ
+
+# 秘匿ファイル（鍵・.env 系）の混入チェック（リポジトリ直下で実行・CI の secret-scan と同じ判定）
+bash scripts/check-secret-files.sh
+bash scripts/check-secret-files.test.sh   # 判定ロジック自体のテスト
 ```
 
 ## テスト

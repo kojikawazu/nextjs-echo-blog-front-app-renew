@@ -313,7 +313,8 @@ Stage 2: runner (node:20-alpine)  WORKDIR /app/apps/front
 ```
 PR 作成・更新 / main へ push
   → GitHub Actions
-    └── static-check.yml: 型チェック・Lint・フォーマットチェック（必須チェック）
+    ├── static-check.yml: 型チェック・Lint・フォーマットチェック（必須チェック）
+    └── secret-scan.yml: 鍵・.env 系の秘匿ファイル混入検出（scripts/check-secret-files.sh）
 
 main へ push
   → GitHub Actions
