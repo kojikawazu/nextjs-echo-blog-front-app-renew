@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
 import { Calendar, Tag } from 'lucide-react';
 import { PulseLoader } from 'react-spinners';
 import ReactMarkdown from 'react-markdown';
@@ -13,9 +12,9 @@ import rehypeHighlight from 'rehype-highlight';
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // contexts
 import { useAuth } from '@/app/contexts/AuthContext';
-// lib
-import { fetchBlogById } from '@/app/lib/api/fetchBlogById';
-import { fetchMarkdown } from '@/app/lib/api/github/fetchGitHub';
+// hooks
+import { useBlog } from '@/app/hooks/useBlog';
+import { useBlogMarkdown } from '@/app/hooks/useBlogMarkdown';
 // components
 import { CommentsSection } from '@/app/components/blogs/parts/CommentsSection';
 // css
@@ -34,49 +33,10 @@ interface BlogPostProps {
 export function BlogPost({ id }: BlogPostProps) {
     // contexts
     const { user, isLoading: isAuthLoading } = useAuth();
-    // states
-    const [markdownData, setMarkdownData] = useState<string | null>(null);
-    const [markdownStatus, setMarkdownStatus] = useState<'idle' | 'loading' | 'error' | 'done'>(
-        'idle',
-    );
-
     // ブログデータの取得
-    const {
-        data: blog,
-        isLoading,
-        isError,
-    } = useQuery({
-        queryKey: ['blog', id],
-        queryFn: () => fetchBlogById(id),
-        enabled: !!id,
-    });
-
+    const { blog, isLoading, isError } = useBlog(id);
     // GitHubのURLからMarkdownデータを取得
-    useEffect(() => {
-        if (!blog || !blog.github_url) {
-            return;
-        }
-        let cancelled = false;
-        setMarkdownStatus('loading');
-        (async () => {
-            try {
-                const content = await fetchMarkdown(blog.github_url);
-                if (cancelled) return;
-                if (content) {
-                    setMarkdownData(content);
-                    setMarkdownStatus('done');
-                } else {
-                    // 取得失敗（プロキシが null を返却。トークン失効・404 等）→ 無言の空白を避ける
-                    setMarkdownStatus('error');
-                }
-            } catch {
-                if (!cancelled) setMarkdownStatus('error');
-            }
-        })();
-        return () => {
-            cancelled = true;
-        };
-    }, [blog]);
+    const { markdown: markdownData, status: markdownStatus } = useBlogMarkdown(blog?.github_url);
 
     return (
         <article className="bg-white rounded-2xl shadow-sm border border-sky-100">

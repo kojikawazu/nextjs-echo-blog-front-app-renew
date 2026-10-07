@@ -107,24 +107,23 @@ const {
 
 ### 3.2 ブログ一覧取得
 
-**ファイル**: `src/app/components/home/Home.tsx`
+**ファイル**: `src/app/hooks/useBlogs.ts`（呼び出し元: `src/app/components/home/Home.tsx`）
 
 ```typescript
 const { data, isLoading, isError } = useQuery({
     queryKey: [
         'blogs',
-        { selectedTag, selectedCategory, sortBy, currentPage, debouncedSearchQuery },
+        {
+            selectedTag: tag,
+            selectedCategory: category,
+            sortBy,
+            currentPage: page,
+            debouncedSearchQuery: searchQuery,
+        },
     ],
     queryFn: () =>
-        fetchBlogs(
-            currentPage,
-            ITEMS_PER_PAGE,
-            selectedTag,
-            selectedCategory,
-            sortBy,
-            debouncedSearchQuery
-        ),
-    enabled: currentPage > 0,
+        fetchBlogs(page, limit, tag ?? undefined, category ?? undefined, sortBy, searchQuery),
+    enabled: page > 0,
 });
 ```
 
@@ -138,7 +137,7 @@ const { data, isLoading, isError } = useQuery({
 
 ### 3.3 ブログ詳細取得
 
-**ファイル**: `src/app/components/blogs/BlogPost.tsx`, `src/app/components/blogs/EditPost.tsx`
+**ファイル**: `src/app/hooks/useBlog.ts`（呼び出し元: `BlogPost.tsx`, `EditPost.tsx`）
 
 ```typescript
 const { data: blog, isLoading, isError } = useQuery({
@@ -261,7 +260,7 @@ const unlikeMutation = useMutation({
 
 ### 4.4 ブログCRUDミューテーション
 
-**ファイル**: `src/app/components/blogs/NewPost.tsx`, `src/app/components/blogs/EditPost.tsx`
+**ファイル**: `src/app/hooks/useCreateBlog.ts`, `useUpdateBlog.ts`, `useDeleteBlog.ts`（呼び出し元: `NewPost.tsx`, `EditPost.tsx`。各フックは `{ createBlog / updateBlog / deleteBlog, isPending }` を返し、トースト・遷移までフック内で完結する）
 
 ```typescript
 // 作成
@@ -312,8 +311,8 @@ const deleteMutation = useMutation({
 | キー | データ | 使用箇所 |
 |------|--------|---------|
 | `['authUser']` | 認証ユーザー情報 | `AuthContext.tsx` |
-| `['blogs', { フィルタ条件 }]` | ブログ一覧 | `Home.tsx` |
-| `['blog', id]` | 個別ブログ | `BlogPost.tsx`, `EditPost.tsx` |
+| `['blogs', { フィルタ条件 }]` | ブログ一覧 | `useBlogs.ts`（Home） |
+| `['blog', id]` | 個別ブログ | `useBlog.ts`（BlogPost, EditPost） |
 | `['comments', blogId]` | コメント一覧 | `useComments.ts` |
 | `['likedBlogs']` | いいね済みブログID配列 | `useLikeBlog.ts` |
 
@@ -413,10 +412,9 @@ TanStack Query エンジン
 |---------|------|
 | `src/app/provider/QueryProvider.tsx` | Provider セットアップ |
 | `src/app/contexts/AuthContext.tsx` | 認証の useQuery + useMutation |
-| `src/app/components/home/Home.tsx` | ブログ一覧の useQuery |
-| `src/app/components/blogs/BlogPost.tsx` | ブログ詳細の useQuery |
-| `src/app/components/blogs/EditPost.tsx` | ブログ詳細の useQuery + CRUD useMutation |
-| `src/app/components/blogs/NewPost.tsx` | ブログ作成の useMutation |
+| `src/app/hooks/useBlogs.ts` | ブログ一覧の useQuery |
+| `src/app/hooks/useBlog.ts` | ブログ詳細の useQuery（BlogPost / EditPost で共有） |
+| `src/app/hooks/useCreateBlog.ts` / `useUpdateBlog.ts` / `useDeleteBlog.ts` | ブログ CRUD の useMutation |
 | `src/app/hooks/useComments.ts` | コメントの useQuery + useMutation |
 | `src/app/hooks/useLikeBlog.ts` | いいねの useQuery + useMutation |
 | `src/app/lib/api/*.ts` | TanStack Query から呼び出されるAPI関数群 |

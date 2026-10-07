@@ -111,7 +111,7 @@ app  →  components  →  hooks  →  lib/api  →  lib/ ・ schema/  →  type
 
 **レビュー観点**: import 文の向きを見る。下位レイヤのファイルに上位レイヤ（ルートセグメント / `components/`）へのパスが現れていたら指摘する。Client Component がサーバー専用モジュールを引き込んでいないか。
 
-> **現状**: `components/home/Home.tsx` `components/blogs/BlogPost.tsx` `NewPost.tsx` `EditPost.tsx` が `lib/api/` を直接 import している（全ページ CSR のため、コンポーネントが自らフェッチする構成になっている）。既存コードは即違反としない。`components/` から API アクセス層を呼ばず `hooks/` 経由にする整理は `docs/11-tasks.md` の改善候補として管理し、**新規追加分から上表に従う**。上表のうち「下位レイヤが上位レイヤを import しない」「`hooks/` は JSX を返さない」「BFF は UI 層に依存しない」は現時点から守る。
+> **現状**: `components/` から `lib/api/` への直接 import は #130 で解消済み（`Home` / `BlogPost` / `NewPost` / `EditPost` は `hooks/` の `useBlogs` `useBlog` `useBlogMarkdown` `useCreateBlog` `useUpdateBlog` `useDeleteBlog` 経由）。全ページ CSR のため、データ取得はサーバーコンポーネントではなく `hooks/` で行っている。上表は全項目を現時点から守る。
 
 ## 型の扱い（API の形を画面に持ち込まない）
 

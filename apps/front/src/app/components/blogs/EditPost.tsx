@@ -3,16 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PulseLoader } from 'react-spinners';
-import { useQuery, useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import toast from 'react-hot-toast';
 // constants
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
-// lib
-import { fetchBlogById } from '@/app/lib/api/fetchBlogById';
-import { updateBlogById } from '@/app/lib/api/updateBlogById';
-import { deleteBlogById } from '@/app/lib/api/deleteBlogById';
+// hooks
+import { useBlog } from '@/app/hooks/useBlog';
+import { useUpdateBlog } from '@/app/hooks/useUpdateBlog';
+import { useDeleteBlog } from '@/app/hooks/useDeleteBlog';
 // contexts
 import { useAuth } from '@/app/contexts/AuthContext';
 // schema
@@ -40,15 +38,7 @@ export default function EditPost({ id }: EditPostProps) {
     const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
 
     // ブログデータを取得
-    const {
-        data: blog,
-        isLoading,
-        isError,
-    } = useQuery({
-        queryKey: ['blog', id],
-        queryFn: () => fetchBlogById(id),
-        enabled: !!id,
-    });
+    const { blog, isLoading, isError } = useBlog(id);
 
     useEffect(() => {
         if (isUserLoading || isLoading) {
@@ -75,29 +65,9 @@ export default function EditPost({ id }: EditPostProps) {
         resolver: zodResolver(blogEditSchema),
     });
 
-    // 更新用のミューテーション
-    const updateMutation = useMutation({
-        mutationFn: (updatedData: BlogEditFormValues) => updateBlogById(id, updatedData),
-        onSuccess: () => {
-            toast.success(COMMON_CONSTANTS.BLOG_UPDATE.TOAST_UPDATE_BLOG_SUCCESS);
-            router.push(COMMON_CONSTANTS.LINK.BLOG_BY_ID.replace(':id', id));
-        },
-        onError: () => {
-            toast.error(COMMON_CONSTANTS.BLOG_UPDATE.TOAST_UPDATE_BLOG_ERROR);
-        },
-    });
-
-    // 削除用のミューテーション
-    const deleteMutation = useMutation({
-        mutationFn: () => deleteBlogById(id),
-        onSuccess: () => {
-            toast.success(COMMON_CONSTANTS.BLOG_DELETE.TOAST_DELETE_BLOG_SUCCESS);
-            router.push(COMMON_CONSTANTS.LINK.HOME);
-        },
-        onError: () => {
-            toast.error(COMMON_CONSTANTS.BLOG_DELETE.TOAST_DELETE_BLOG_ERROR);
-        },
-    });
+    // 更新・削除処理（通知・遷移はフック側）
+    const { updateBlog, isPending: isUpdating } = useUpdateBlog(id);
+    const { deleteBlog } = useDeleteBlog(id);
 
     // 更新確認モーダルの表示
     const handleConfirmUpdate = (data: BlogEditFormValues) => {
@@ -108,7 +78,7 @@ export default function EditPost({ id }: EditPostProps) {
     // 更新処理
     const onSubmit = () => {
         if (formValues) {
-            updateMutation.mutate({
+            updateBlog({
                 title: formValues?.title,
                 description: formValues?.description,
                 category: formValues?.category,
@@ -242,9 +212,9 @@ export default function EditPost({ id }: EditPostProps) {
                         <button
                             type="submit"
                             className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                            disabled={updateMutation.isPending}
+                            disabled={isUpdating}
                         >
-                            {updateMutation.isPending ? '更新中...' : '更新'}
+                            {isUpdating ? '更新中...' : '更新'}
                         </button>
                     </form>
                 )}
@@ -268,7 +238,7 @@ export default function EditPost({ id }: EditPostProps) {
                 confirmText="削除"
                 cancelText="キャンセル"
                 onConfirm={() => {
-                    deleteMutation.mutate();
+                    deleteBlog();
                     setIsConfirmDeleteModalOpen(false);
                 }}
                 onCancel={() => setIsConfirmDeleteModalOpen(false)}

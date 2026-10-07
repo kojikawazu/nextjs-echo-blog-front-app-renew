@@ -220,8 +220,8 @@ const blogCommentSchema = z.object({
 | キー | データ | 使用場所 |
 |------|--------|---------|
 | `['authUser']` | 認証ユーザー情報 | AuthContext |
-| `['blogs', {filters}]` | ブログ一覧（フィルタ条件付き） | Home |
-| `['blog', id]` | 個別ブログ | BlogPost, EditPost |
+| `['blogs', {filters}]` | ブログ一覧（フィルタ条件付き） | useBlogs（Home） |
+| `['blog', id]` | 個別ブログ | useBlog（BlogPost, EditPost） |
 | `['comments', blogId]` | コメント一覧 | useComments |
 | `['likedBlogs']` | いいね済みブログID配列 | useLikeBlog |
 

@@ -151,7 +151,13 @@ src/app/
 ├── contexts/                   # React Context
 │   ├── AuthContext.tsx          # 認証コンテキスト
 │   └── GlobalContext.tsx        # グローバルデータコンテキスト
-├── hooks/                      # カスタムフック
+├── hooks/                      # カスタムフック（components/ はここ経由でデータ取得・更新する）
+│   ├── useBlogs.ts             # ブログ一覧取得
+│   ├── useBlog.ts              # ブログ詳細取得（BlogPost / EditPost で共有）
+│   ├── useBlogMarkdown.ts      # 本文 Markdown 取得（GitHub・BFF 経由）
+│   ├── useCreateBlog.ts        # ブログ作成（トースト・遷移含む）
+│   ├── useUpdateBlog.ts        # ブログ更新（トースト・遷移含む）
+│   ├── useDeleteBlog.ts        # ブログ削除（トースト・遷移含む）
 │   ├── useComments.ts          # コメント機能
 │   ├── useDebounce.ts          # デバウンスユーティリティ
 │   └── useLikeBlog.ts          # いいね機能
