@@ -14,6 +14,9 @@ import { likeBlogById } from '@/app/lib/api/blog-likes/likeBlogById';
 import { unlikeBlogById } from '@/app/lib/api/blog-likes/unLikeBlogById';
 import { generateVisitId } from '@/app/lib/api/blog-likes/generateVisitId';
 
+/** generateVisitId のモック戻り値。フックは戻り値を使わないため値自体に意味はない（型を満たすためのダミー） */
+const VISIT_ID = 'visit-id-test';
+
 const createWrapper = () => {
     const queryClient = new QueryClient({
         defaultOptions: { queries: { retry: false } },
@@ -30,7 +33,7 @@ describe('useLikeBlog', () => {
     // --- 正常系 ---
 
     it('should return hasLiked=true for a blog that is already liked', async () => {
-        vi.mocked(generateVisitId).mockResolvedValue(undefined);
+        vi.mocked(generateVisitId).mockResolvedValue(VISIT_ID);
         vi.mocked(fetchLikedBlogs).mockResolvedValue(['blog-1', 'blog-3']);
 
         const { result } = renderHook(() => useLikeBlog(), {
@@ -42,7 +45,7 @@ describe('useLikeBlog', () => {
     });
 
     it('should return hasLiked=false for a blog that is not liked', async () => {
-        vi.mocked(generateVisitId).mockResolvedValue(undefined);
+        vi.mocked(generateVisitId).mockResolvedValue(VISIT_ID);
         vi.mocked(fetchLikedBlogs).mockResolvedValue(['blog-1']);
 
         const { result } = renderHook(() => useLikeBlog(), {
@@ -54,9 +57,9 @@ describe('useLikeBlog', () => {
     });
 
     it('should call likeBlogById when likeBlog is invoked', async () => {
-        vi.mocked(generateVisitId).mockResolvedValue(undefined);
+        vi.mocked(generateVisitId).mockResolvedValue(VISIT_ID);
         vi.mocked(fetchLikedBlogs).mockResolvedValue([]);
-        vi.mocked(likeBlogById).mockResolvedValue(undefined);
+        vi.mocked(likeBlogById).mockResolvedValue('blog-1');
 
         const { result } = renderHook(() => useLikeBlog(), {
             wrapper: createWrapper(),
@@ -71,9 +74,9 @@ describe('useLikeBlog', () => {
     });
 
     it('should call unlikeBlogById when unlikeBlog is invoked', async () => {
-        vi.mocked(generateVisitId).mockResolvedValue(undefined);
+        vi.mocked(generateVisitId).mockResolvedValue(VISIT_ID);
         vi.mocked(fetchLikedBlogs).mockResolvedValue(['blog-1']);
-        vi.mocked(unlikeBlogById).mockResolvedValue(undefined);
+        vi.mocked(unlikeBlogById).mockResolvedValue('blog-1');
 
         const { result } = renderHook(() => useLikeBlog(), {
             wrapper: createWrapper(),
@@ -90,7 +93,7 @@ describe('useLikeBlog', () => {
     // --- 準正常系 ---
 
     it('should return hasLiked=false when fetchLikedBlogs fails', async () => {
-        vi.mocked(generateVisitId).mockResolvedValue(undefined);
+        vi.mocked(generateVisitId).mockResolvedValue(VISIT_ID);
         vi.mocked(fetchLikedBlogs).mockRejectedValue(new Error('Network error'));
 
         const { result } = renderHook(() => useLikeBlog(), {
