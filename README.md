@@ -1,6 +1,7 @@
 # TechBlog — Markdown ブログ Web アプリ（フロントエンド / リニューアル版）
 
 [![Pull Request Test](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/pull-request-test.yml/badge.svg)](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/pull-request-test.yml)
+[![Static Check](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/static-check.yml/badge.svg)](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/static-check.yml)
 [![Deploy to Cloud Run](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/deploy_to_googlecloud.yml/badge.svg)](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/actions/workflows/deploy_to_googlecloud.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 

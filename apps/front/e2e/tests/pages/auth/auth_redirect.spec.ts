@@ -1,7 +1,17 @@
 import { test, expect } from '@playwright/test';
 import { setupAuthCheckMock } from '../../mocks/api/auth-api-mock';
-import { setupFetchBlogsMock, setupFetchBlogByIdMock, setupFetchSidebarMock } from '../../mocks/api/blog-api-mock';
-import { mockBlogs, mockBlog, mockCategories, mockPopularPosts, mockTags } from '../../mocks/blog/blog-mock';
+import {
+    setupFetchBlogsMock,
+    setupFetchBlogByIdMock,
+    setupFetchSidebarMock,
+} from '../../mocks/api/blog-api-mock';
+import {
+    mockBlogs,
+    mockBlog,
+    mockCategories,
+    mockPopularPosts,
+    mockTags,
+} from '../../mocks/blog/blog-mock';
 
 const BLOG_ID = '2a3f4d9c-6c7b-4e2f-a2f8-9b10b4cd1234';
 

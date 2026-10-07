@@ -298,6 +298,10 @@ Stage 2: runner (node:20-alpine)  WORKDIR /app/apps/front
 ### CI/CDフロー
 
 ```
+PR 作成・更新 / main へ push
+  → GitHub Actions
+    └── static-check.yml: 型チェック・Lint・フォーマットチェック（必須チェック）
+
 main へ push
   → GitHub Actions
     ├── test.yml: E2Eテスト実行

@@ -3,6 +3,7 @@ import reactPlugin from "eslint-plugin-react";
 import hooksPlugin from "eslint-plugin-react-hooks";
 import jsdoc from "eslint-plugin-jsdoc";
 import tseslint from "typescript-eslint";
+import eslintConfigPrettier from "eslint-config-prettier/flat";
 
 export default [
   {
@@ -96,4 +97,6 @@ export default [
       "react/display-name": "off",
     },
   },
+  // Prettier と競合する見た目系ルールを無効化する。flat config は後勝ちのため必ず末尾に置く。
+  eslintConfigPrettier,
 ];
