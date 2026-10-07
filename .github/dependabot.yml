@@ -1,0 +1,20 @@
+# GitHub Actions のバージョンを Dependabot で追従する（#132）。
+# 旧版（node16 / node20 ランタイム）のアクションは非推奨となり、Node 24 で強制実行されている。
+# 手で一括置換せず、以後の更新も Dependabot の PR をレビューしてマージする運用とする。
+version: 2
+updates:
+    - package-ecosystem: github-actions
+      # "/" を指定すると .github/workflows/ 配下を走査する
+      directory: /
+      schedule:
+          interval: weekly
+      commit-message:
+          # Conventional Commits に合わせる（例: "chore(ci): bump actions/checkout from 3 to 5"）
+          prefix: chore(ci)
+      groups:
+          # minor / patch は 1 PR にまとめる。major は入力仕様の変更がありうるため個別 PR のままにし、
+          # 不具合が出たときにどのアクションが原因か切り分けられるようにする
+          github-actions-minor-patch:
+              update-types:
+                  - minor
+                  - patch

@@ -139,6 +139,7 @@
 - [x] **`contexts/` からの直接 `fetch` の解消**（#129）（`.claude/rules/frontend.md`「関心別にディレクトリを切る」の移行目標）: `contexts/AuthContext.tsx`（認証チェック・ログイン・ログアウト）と `contexts/GlobalContext.tsx`（カテゴリ・タグ・人気記事）が `fetch` を直接呼んでおり、Cookie 転送・エラー処理が API アクセス層の外に散っている。`lib/api/`（移行後は `repositories/`）へ切り出す → `lib/api/auth/{fetchAuthUser,login,logout}.ts` と `lib/api/{fetchCategories,fetchTags,fetchPopularBlogs}.ts` へ切り出し済み。あわせて auth-check の `200 + null` を明示的に `null` へ正規化し、サイドバー取得に `response.ok` チェックを追加
 - [x] **CI に型チェック・Lint を追加**（#128）（`.claude/rules/typescript.md`「ツール」の移行目標）: CI はテストのみを実行しており `tsc --noEmit` / `pnpm lint` / `format:check` が未実行。Next.js のビルドは型を検査せず通る経路があるため、型崩れが CI をすり抜ける
 - [x] **秘匿ファイル混入の CI 検出**（#131）: `.gitignore` は未追跡ファイルにしか効かず、push 済みの秘匿ファイルは履歴に残る（対処はローテーションのみ）。判定を `scripts/check-secret-files.sh` に集約し、`.github/workflows/secret-scan.yml` で全 PR に常時実行。分類テスト `scripts/check-secret-files.test.sh` も CI で実行。※ ルールセットの必須チェックへの追加は GitHub 設定で別途行う
+- [ ] **GitHub Actions の Dependabot 導入**（#132）: Node 20 非推奨のため旧版アクション（`checkout@v3` / `google-github-actions/auth@v1` / `setup-gcloud@v1` 等）を更新する。`.github/dependabot.yml`（github-actions・週次・minor/patch はグループ化、major は個別 PR）を追加済み。残: Dependabot の更新 PR をレビュー・マージし、CI の Node 20 非推奨注記が消えたら完了
 - [ ] **`typescript-eslint` の型情報ルール有効化**（同「ツール」）: 現在は `recommended`（型情報なし）のみ。`no-floating-promises` / `no-misused-promises` / `await-thenable` を有効にし、await 漏れを検出できるようにする（`eslint-config-prettier` の適用と CI での Lint 実行は #128 で対応済み）
 - [ ] 画像アップロード機能
 - [ ] ブログ記事のOGP設定
