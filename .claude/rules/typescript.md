@@ -7,6 +7,16 @@ globs: "apps/front/src/**"
 
 共通の `coding-standards.md` に加え、TypeScript 固有の指針を定める。命名規則は Linter 既定に委ね、本書では扱わない。
 
+## ツール
+
+- **コンパイラ**: `tsconfig.json` は **`strict: true`**（設定済み）。加えて `noUncheckedIndexedAccess` / `noImplicitOverride` / `exactOptionalPropertyTypes` の有効化を推奨する。
+- **型チェック**: **`tsc --noEmit`** を CI で実行する。Next.js のビルドは型を検査せず通る経路があるため、**ビルドが通ることは型が正しいことを意味しない**。
+- **Linter**: **ESLint**（flat config `eslint.config.mjs`）+ `typescript-eslint`。型情報を使うルール（`no-floating-promises` / `no-misused-promises` / `await-thenable`）の有効化を推奨する — **await 漏れは型だけでは検出できない**ため実害が大きい。
+- **Formatter**: **Prettier**（設定は `coding-standards.md`「Prettier 設定」）。**`eslint-config-prettier` を必ず適用**し、ESLint 側の見た目ルールを無効化して競合を防ぐ。
+- **JSDoc の強制**: `eslint-plugin-jsdoc`（有効ルールの唯一の真実は `eslint.config.mjs`、方針の根拠は `jsdoc.md`）。
+
+> **現状**: CI（`.github/workflows/test.yml` / `pull-request-test.yml` / `it-test.yml`）はテストのみを実行しており、`pnpm lint` / `tsc --noEmit` / `format:check` は含まれていない。また `typescript-eslint` は `recommended`（型情報なし）のみ適用で、`eslint-config-prettier` は依存に入っているが `eslint.config.mjs` で適用されていない。既存構成は即違反としない。CI への型チェック・Lint 追加と型情報ルールの有効化は `docs/11-tasks.md` の改善候補として管理する。
+
 ## type vs interface
 
 **原則 `type` を使う。** 以下の 2 条件のいずれかに当たる場合のみ `interface` を使う。
@@ -32,6 +42,18 @@ type OnSelectTag = (tag: string) => void;
 ```
 
 > **現状**: `types/blogs.ts` `types/users.ts` および各コンポーネントの props（`BlogCardProps` 等）は `interface` で定義されている。既存コードは即違反としない。`type` への統一は `docs/11-tasks.md` の改善候補として管理し、**新規追加分から `type` を使う**。
+
+## スキーマバリデーションは Zod に統一する
+
+**TypeScript のスキーマバリデーションは Zod を使う。** フロントエンド（フォーム）と BFF（Route Handler の入力検証）で**同じ 1 つのライブラリに揃える**（`yup` / `joi` / 自前の検証関数を混在させない）。
+
+- **理由**: 層ごとに検証ライブラリが変わると、同じ入力ルールを別の書き方で二重に定義することになる。Zod なら**スキーマそのものを共有でき**、片方から他方を導出できる。
+- **型はスキーマから導出する**。`z.infer<typeof schema>` を使い、**同じ形を手書きで二重定義しない**。**スキーマが単一の真実**であり、型はその影である。
+- 外部入力（API レスポンス・`JSON.parse`・フォーム入力）は `unknown` で受け、**Zod で `parse` してからドメインに入れる**（「any 禁止・unknown 優先」参照）。
+- 用途別のアダプタを使う（`react-hook-form` の `zodResolver`）。**アダプタは変わってもスキーマは変わらない**。
+- **環境変数は例外扱いにしない**。`process.env` も文字列 or `undefined` の外部入力であり、必須値の欠落はスキーマで弾く（値そのものは定数に置かない — 「環境変数は定数ではない」参照）。
+
+> バックエンド（Echo + Go）は別リポジトリのため言語をまたぐ共有はできない。**信頼境界が違うため検証は FE / BFF / バックエンドの各層で必要**であり、この重複は削ってよいものではない。
 
 ## スキーマの配置（`schemas/` 集約）
 

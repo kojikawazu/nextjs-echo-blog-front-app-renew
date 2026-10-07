@@ -67,7 +67,66 @@ globs: "apps/front/src/app/components/**,apps/front/src/app/hooks/**,apps/front/
 - **`fetch` を書いてよいのは API アクセス層だけ**。コンポーネント・hooks・`lib/` の純粋関数から直接叩かない。呼び出し口を 1 箇所に閉じることで、Cookie 転送・エラー処理・リトライの実装が散らばらない。
 - ディレクトリ名は**複数形で統一**する（`types` / `constants` / `schemas` / `repositories`）。
 
-> **現状**: 本プロジェクトの API アクセス層は `lib/api/`（`fetchBlogs.ts` 等）、スキーマは単数形 `schema/`、定数は `utils/const/constants.ts` の 1 ファイルに置かれている。既存コードは即違反としない。`repositories/` への切り出し・`schemas/` への改名・`constants/` のドメイン分割は `docs/11-tasks.md` の改善候補として管理し、**新規追加分から上表に従う**。なお `lib/api/` を維持する間も、「`fetch` は API アクセス層のみ」「`lib/` の他のファイルは通信しない」は現時点から守る。
+> **現状**: 本プロジェクトの API アクセス層は `lib/api/`（`fetchBlogs.ts` 等）、スキーマは単数形 `schema/`、定数は `utils/const/constants.ts` の 1 ファイルに置かれている。既存コードは即違反としない。`repositories/` への切り出し・`schemas/` への改名・`constants/` のドメイン分割は `docs/11-tasks.md` の改善候補として管理し、**新規追加分から上表に従う**。なお `lib/api/` を維持する間も、「`fetch` は API アクセス層のみ」「`lib/` の他のファイルは通信しない」は**新規追加分では現時点から守る**。
+>
+> ただし既存の例外として、`contexts/AuthContext.tsx`（認証チェック・ログイン・ログアウト）と `contexts/GlobalContext.tsx`（カテゴリ・タグ・人気記事）が `fetch` を直接呼んでいる。これらの `lib/api/` への切り出しも `docs/11-tasks.md` の改善候補として管理する。
+
+## レイヤ依存の一方向ルール
+
+**依存は上位から下位への一方向のみ**。下位レイヤが上位レイヤを import してはならない。
+
+```
+app  →  components  →  hooks  →  lib/api  →  lib/ ・ schema/  →  types/ ・ utils/const/
+（ルーティング・合成）（表示） （ロジック）（API アクセス）（純粋関数・検証）      （最下層）
+```
+
+| レイヤ | import してよい | import 禁止 |
+|---|---|---|
+| `(auth)/` `(common)/` | `components/`, `hooks/`, `contexts/`, `stores/`, `provider/`, `lib/`, `schema/`, `types/`, `utils/` | （なし。ルートセグメントは誰からも参照されない） |
+| `components/` | 下位の `components/`, `hooks/`, `contexts/`, `lib/`（純粋関数）, `types/`, `utils/` | **ルートセグメント**（ページ固有の型・定数を含む）, **`lib/api/`**（データ取得は `hooks/` 経由） |
+| `hooks/` | `lib/api/`, `lib/`, `stores/`, `contexts/`, `schema/`, `types/`, `utils/` | **ルートセグメント**, **`components/`**（JSX を返さない） |
+| `lib/api/` | `lib/`, `schema/`, `types/`, `utils/` | **ルートセグメント**, **`components/`**, **`hooks/`**, **`stores/`** |
+| `lib/`（純粋関数） `schema/` | `types/`, `utils/const/` | 上位レイヤすべて（`lib/` の純粋関数は通信もしない） |
+| `types/` `utils/const/` | （原則どこにも依存しない） | 上位レイヤすべて |
+
+- **`components/` 内も一方向**にする。`common/` の汎用部品は `{feature}/`（`blogs/` `auth/` `home/`）を import しない。`{feature}/parts/` は同じ機能の親を import しない。汎用度の高いものほど下位。
+- **`app/api/`（BFF）から `components/` や `hooks/` を import しない**。BFF はサーバー側の層であり、UI 層に依存してはならない（`api-bff.md` 参照）。
+- **サーバー専用モジュール（`process.env.BACKEND_API_URL` を読む処理等）を Client Component から import しない**。バックエンド URL の秘匿という BFF の存在理由が壊れる（`api-bff.md`）。
+- **`hooks/` は JSX を返さない**。返したくなったらそれはコンポーネントであり、`components/` に置く。
+
+禁止例:
+
+- `components/blogs/parts/BlogCard.tsx` が `(common)/blog/[id]/page.tsx` の型・定数を import する
+- `hooks/useBlogPost.ts` が `components/` を import する
+- 同一レイヤ間の**相互依存（循環）**（例: `A.tsx` ⇄ `B.tsx` が互いを import）
+
+### 逆流したくなったら「共通化」で解決する
+
+| 逆流したい理由 | 正しい解き方 |
+|---|---|
+| 上位の型・定数を下位でも使いたい | その型・定数を**`types/` `utils/const/` へ移動**し、上下双方がそこを参照する |
+| 上位のロジックを下位でも使いたい | 共通処理を**下位の `hooks/` または `lib/` の純粋関数へ抽出**し、双方から呼ぶ |
+| 下位から上位の状態を変えたい | **呼ばない**。**props でコールバックを受け取る**（イベントは上へ、データは下へ）。階層が深いなら `stores/` `contexts/` を使う |
+| 子が親のレイアウトを知りたい | 知らせない。**props / children で親が渡す**（子は自分の見た目だけに責任を持つ） |
+
+**レビュー観点**: import 文の向きを見る。下位レイヤのファイルに上位レイヤ（ルートセグメント / `components/`）へのパスが現れていたら指摘する。Client Component がサーバー専用モジュールを引き込んでいないか。
+
+> **現状**: `components/home/Home.tsx` `components/blogs/BlogPost.tsx` `NewPost.tsx` `EditPost.tsx` が `lib/api/` を直接 import している（全ページ CSR のため、コンポーネントが自らフェッチする構成になっている）。既存コードは即違反としない。`components/` から API アクセス層を呼ばず `hooks/` 経由にする整理は `docs/11-tasks.md` の改善候補として管理し、**新規追加分から上表に従う**。上表のうち「下位レイヤが上位レイヤを import しない」「`hooks/` は JSX を返さない」「BFF は UI 層に依存しない」は現時点から守る。
+
+## 型の扱い（API の形を画面に持ち込まない）
+
+**API のレスポンス型と、画面が使う型を分ける。**
+
+| 種類 | 役割 | 置き場所 |
+|---|---|---|
+| **API 契約の型** | バックエンド / BFF が返す形。サーバー側の都合で変わる | `types/`（**BFF と共有**して 1 箇所定義にする。`api-bff.md`「型定義」参照） |
+| **ビューモデル** | 画面が必要とする形。UI 要件で変わる | `types/`、単一画面用なら該当コンポーネントにコロケーション |
+
+**本プロジェクトは BFF あり構成**（`app/api/`）のため、**変換は BFF が担当する**。画面単位のレスポンス型を BFF 側で定義し、その形に整形して返す。フロントは共有された型をそのまま使い、**再変換しない**（変換層を二重に置かない）。
+
+- **理由**: バックエンドのフィールド名変更が画面のあちこちに波及するのを防ぐ。API 契約とビューは**変わる理由が違う**。
+- 表示専用の整形（日付フォーマット・タグの並べ替え・件数表記）は**コンポーネント側または `lib/` の純粋関数**で行い、**API 契約の型に表示都合のフィールドを足さない**。
+- ただし**両者が完全に一致し、変換が恒久的に無意味な場合は同じ型を使ってよい**（早すぎる抽象化を避ける）。**表示都合の差が出た時点で分ける**。
 
 ## ディレクトリ構成
 
@@ -89,6 +148,13 @@ apps/front/src/app/
 ├── types/                  # 型定義
 └── utils/const/            # 定数（constants.ts・移行目標: constants/ へドメイン分割）
 ```
+
+## バリデーション
+
+- フォームバリデーションには **react-hook-form + Zod**（`@hookform/resolvers` の `zodResolver`）を使用する。`typescript.md`「スキーマバリデーションは Zod に統一する」に従い、`yup` 等と**混在させない**。
+- **スキーマを単一の真実とする**。フォームの型は `z.infer<typeof schema>` で導出し、同じ形を手書きしない。
+- **クライアント検証は UX のためのものであり、セキュリティ担保ではない**。BFF の Route Handler・バックエンドでも必ず検証する（信頼境界が違うため、この重複は必要）。クライアント側の検証だけで通した入力を BFF がそのまま転送しない。
+- 同じ入力ルールなら、**BFF と同じ Zod スキーマを共有**する（`schema/` に置いて双方から参照）。制約値だけでも定数で共有する。
 
 ## インポート
 

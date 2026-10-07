@@ -20,9 +20,9 @@ Next.js + TypeScript で構築された Markdown ブログアプリのフロン�
 | coding-standards.md | 全体 | 言語・パッケージマネージャ・Linter/Formatter・Prettier 設定・パスエイリアス |
 | error-handling.md | 全体 | エラーハンドリング方針（バリデーション・例外処理） |
 | security.md | 全体 | セキュリティ設計方針（認証・通信・インジェクション対策・シークレット管理） |
-| typescript.md | `apps/front/src/**` | TS 固有規約（type/interface・型/定数の配置・any 禁止・enum 回避・import type） |
+| typescript.md | `apps/front/src/**` | TS 固有規約（ツール・type/interface・Zod 統一・型/定数の配置・any 禁止・enum 回避・import type） |
 | jsdoc.md | `apps/front/src/**` | JSDoc（TSDoc）規約・公開シンボル/型メンバー/状態層（store・context・hooks）に必須 |
-| frontend.md | `apps/front/src/app/`（api 除く） | Next.js App Router 設計・コンポーネント・状態管理・通知 |
+| frontend.md | `apps/front/src/app/`（api 除く） | Next.js App Router 設計・コンポーネント・状態管理・レイヤ依存・バリデーション・通知 |
 | api-bff.md | `apps/front/src/app/api/**` | Next.js BFF（Route Handlers）設計・バックエンド URL 秘匿・fail-closed |
 
 ## ドキュメント参照先
