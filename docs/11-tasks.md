@@ -126,7 +126,7 @@
 ## 今後の改善候補
 
 - [ ] ESLint で warn に留めている React Hooks 警告の解消（挙動確認しつつ対応）:
-  - `react-hooks/set-state-in-effect`（`BlogPost.tsx`・async フェッチ前の loading セット）
+  - `react-hooks/set-state-in-effect`（`hooks/useBlogMarkdown.ts`・async フェッチ前の loading セット。#130 で `BlogPost.tsx` から移設）
   - `react-hooks/exhaustive-deps`（`EditPost.tsx` の `isLoading`・`Home.tsx` の `setGlobalData`）
 - [ ] ユニットテストのカバレッジ拡充（現在はスキーマ・カスタムフックのみ。コンポーネント等へ拡大）
 - [ ] SSR / SSGの活用（現在は全ページCSR）
@@ -135,7 +135,7 @@
 - [ ] **API アクセス層の `repositories/` 切り出し**（`.claude/rules/frontend.md`「関心別にディレクトリを切る」の移行目標）: 現在 API 通信関数は `lib/api/` に置かれている。`lib/` を「通信を持たない純粋ユーティリティ」に限定し、`fetch` を含む関数は `src/app/repositories/` へドメイン単位で移す
 - [ ] **スキーマディレクトリの複数形化**（`.claude/rules/typescript.md`「スキーマの配置」の移行目標）: 単数形 `schema/` + `xxxSchema.ts` 命名を `schemas/blogs.ts` `schemas/users.ts` のようにドメイン単位へ改名する。導出型は `z.infer` を各スキーマファイルから `export` し、`types/` に手書きで再定義しない
 - [ ] **状態・ロジック層のコメント拡充**（`.claude/rules/jsdoc.md`「状態・ロジック層のコメント」）: Zustand ストアの型（`AuthState` / `BlogState` / `CommentState`）と Context value の各メンバーにコメントが未付与。型メンバー単位で「いつ変わるか・空値の意味・副作用の有無」を補う
-- [ ] **`components/` からの API アクセス層直呼びの解消**（#130）（`.claude/rules/frontend.md`「レイヤ依存の一方向ルール」の移行目標）: `components/home/Home.tsx` `components/blogs/BlogPost.tsx` `NewPost.tsx` `EditPost.tsx` が `lib/api/` を直接 import している。データ取得を `hooks/` へ寄せ、コンポーネントは UI 描画に専念させる（SSR / SSG 化とあわせて検討する）
+- [x] **`components/` からの API アクセス層直呼びの解消**（#130）（`.claude/rules/frontend.md`「レイヤ依存の一方向ルール」の移行目標）: `components/home/Home.tsx` `components/blogs/BlogPost.tsx` `NewPost.tsx` `EditPost.tsx` が `lib/api/` を直接 import している。データ取得を `hooks/` へ寄せ、コンポーネントは UI 描画に専念させる（SSR / SSG 化とあわせて検討する） → `hooks/` に `useBlogs` `useBlog` `useBlogMarkdown` `useCreateBlog` `useUpdateBlog` `useDeleteBlog` を追加して解消済み。SSR / SSG 化は CSR のまま別途検討（下記「SSR / SSGの活用」）
 - [x] **`contexts/` からの直接 `fetch` の解消**（#129）（`.claude/rules/frontend.md`「関心別にディレクトリを切る」の移行目標）: `contexts/AuthContext.tsx`（認証チェック・ログイン・ログアウト）と `contexts/GlobalContext.tsx`（カテゴリ・タグ・人気記事）が `fetch` を直接呼んでおり、Cookie 転送・エラー処理が API アクセス層の外に散っている。`lib/api/`（移行後は `repositories/`）へ切り出す → `lib/api/auth/{fetchAuthUser,login,logout}.ts` と `lib/api/{fetchCategories,fetchTags,fetchPopularBlogs}.ts` へ切り出し済み。あわせて auth-check の `200 + null` を明示的に `null` へ正規化し、サイドバー取得に `response.ok` チェックを追加
 - [x] **CI に型チェック・Lint を追加**（#128）（`.claude/rules/typescript.md`「ツール」の移行目標）: CI はテストのみを実行しており `tsc --noEmit` / `pnpm lint` / `format:check` が未実行。Next.js のビルドは型を検査せず通る経路があるため、型崩れが CI をすり抜ける
 - [ ] **`typescript-eslint` の型情報ルール有効化**（同「ツール」）: 現在は `recommended`（型情報なし）のみ。`no-floating-promises` / `no-misused-promises` / `await-thenable` を有効にし、await 漏れを検出できるようにする（`eslint-config-prettier` の適用と CI での Lint 実行は #128 で対応済み）

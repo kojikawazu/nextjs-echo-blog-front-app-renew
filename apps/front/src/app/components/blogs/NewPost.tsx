@@ -5,16 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PulseLoader } from 'react-spinners';
-import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
 // constants
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // contexts
 import { useAuth } from '@/app/contexts/AuthContext';
 // schema
 import { blogCreateSchema, BlogCreateFormValues } from '@/app/schema/blogSchema';
-// api
-import { createBlog } from '@/app/lib/api/createBlog';
+// hooks
+import { useCreateBlog } from '@/app/hooks/useCreateBlog';
 // components
 import { ConfirmModal } from '@/app/components/common/modal/ConfirmModal';
 
@@ -50,17 +48,8 @@ export default function NewPost() {
         resolver: zodResolver(blogCreateSchema),
     });
 
-    // 作成用のミューテーション
-    const createMutation = useMutation({
-        mutationFn: (createdData: BlogCreateFormValues) => createBlog(createdData),
-        onSuccess: () => {
-            toast.success(COMMON_CONSTANTS.BLOG_CREATE.TOAST_CREATE_BLOG_SUCCESS);
-            router.push(COMMON_CONSTANTS.LINK.HOME);
-        },
-        onError: () => {
-            toast.error(COMMON_CONSTANTS.BLOG_CREATE.TOAST_CREATE_BLOG_ERROR);
-        },
-    });
+    // 作成処理（通知・遷移はフック側）
+    const { createBlog, isPending: isCreating } = useCreateBlog();
 
     // 作成確認モーダルの表示
     const handleConfirmCreate = (data: BlogCreateFormValues) => {
@@ -71,7 +60,7 @@ export default function NewPost() {
     // 作成処理
     const onSubmit = () => {
         if (formValues) {
-            createMutation.mutate({
+            createBlog({
                 title: formValues?.title,
                 description: formValues?.description,
                 category: formValues?.category,
@@ -197,9 +186,9 @@ export default function NewPost() {
                         <button
                             type="submit"
                             className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                            disabled={createMutation.isPending}
+                            disabled={isCreating}
                         >
-                            {createMutation.isPending ? '作成中...' : '作成'}
+                            {isCreating ? '作成中...' : '作成'}
                         </button>
                     </form>
                 )}

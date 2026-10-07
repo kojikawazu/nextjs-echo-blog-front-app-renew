@@ -1,17 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { PulseLoader } from 'react-spinners';
 // constants
 import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // types
 import { Blog } from '@/app/types/blogs';
-// lib
-import { fetchBlogs } from '@/app/lib/api/fetchBlogs';
 // contexts
 import { useGlobalData } from '@/app/contexts/GlobalContext';
 // hooks
+import { useBlogs } from '@/app/hooks/useBlogs';
 import { useDebounce } from '@/app/hooks/useDebounce';
 import { useLikeBlog } from '@/app/hooks/useLikeBlog';
 // components
@@ -54,21 +52,14 @@ const Home = ({ tag = '', category = '' }: HomeProps) => {
     const { hasLiked, likeBlog, unlikeBlog } = useLikeBlog();
 
     // ブログデータを取得
-    const { data, isLoading, isError } = useQuery({
-        queryKey: [
-            'blogs',
-            { selectedTag, selectedCategory, sortBy, currentPage, debouncedSearchQuery },
-        ],
-        queryFn: () =>
-            fetchBlogs(
-                currentPage,
-                ITEMS_PER_PAGE,
-                selectedTag as string,
-                selectedCategory as string,
-                sortBy as 'newest' | 'popular',
-                debouncedSearchQuery as string,
-            ),
-        enabled: currentPage > 0,
+    const { data, isLoading, isError } = useBlogs({
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+        tag: selectedTag,
+        category: selectedCategory,
+        // BlogFilter は 'newest' / 'popular' のいずれかしかセットしないため安全
+        sortBy: sortBy as 'newest' | 'popular',
+        searchQuery: debouncedSearchQuery,
     });
 
     useEffect(() => {
