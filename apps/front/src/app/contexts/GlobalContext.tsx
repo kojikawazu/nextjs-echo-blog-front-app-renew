@@ -1,19 +1,20 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+// api
+import { fetchCategories } from '@/app/lib/api/fetchCategories';
+import { fetchPopularBlogs } from '@/app/lib/api/fetchPopularBlogs';
+import { fetchTags } from '@/app/lib/api/fetchTags';
 // constants
-import { COMMON_CONSTANTS } from '../utils/const/constants';
-
+import { COMMON_CONSTANTS } from '@/app/utils/const/constants';
 // types
+import type { PopularBlog } from '@/app/types/blogs';
+
 interface GlobalContextType {
     categories: string[];
     tags: string[];
-    popularPosts: { id: string; title: string; likes: number }[];
-    setGlobalData: (
-        categories: string[],
-        tags: string[],
-        popularPosts: { id: string; title: string; likes: number }[],
-    ) => void;
+    popularPosts: PopularBlog[];
+    setGlobalData: (categories: string[], tags: string[], popularPosts: PopularBlog[]) => void;
 }
 
 // context
@@ -29,30 +30,18 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
     // タグ
     const [tags, setTags] = useState<string[]>([]);
     // 人気記事
-    const [popularPosts, setPopularPosts] = useState<
-        { id: string; title: string; likes: number }[]
-    >([]);
+    const [popularPosts, setPopularPosts] = useState<PopularBlog[]>([]);
 
     useEffect(() => {
         const fetchGlobalData = async () => {
             // URLがroot以外の場合、データfetchする
             if (window.location.pathname !== '/') {
                 try {
-                    const [categoriesResponse, tagsResponse, popularPostsResponse] =
-                        await Promise.all([
-                            fetch(COMMON_CONSTANTS.URL.BLOG_CATEGORIES),
-                            fetch(COMMON_CONSTANTS.URL.BLOG_TAGS),
-                            fetch(
-                                COMMON_CONSTANTS.URL.BLOG_POPULAR.replace(
-                                    ':count',
-                                    COMMON_CONSTANTS.GLOBAL_CONTEXT.BLOG_POPULAR_COUNT.toString(),
-                                ),
-                            ),
-                        ]);
-
-                    const categories = await categoriesResponse.json();
-                    const tags = await tagsResponse.json();
-                    const popularPosts = await popularPostsResponse.json();
+                    const [categories, tags, popularPosts] = await Promise.all([
+                        fetchCategories(),
+                        fetchTags(),
+                        fetchPopularBlogs(COMMON_CONSTANTS.GLOBAL_CONTEXT.BLOG_POPULAR_COUNT),
+                    ]);
 
                     setCategories(categories);
                     setTags(tags);
@@ -72,11 +61,7 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
      * @param tags タグ
      * @param popularPosts 人気記事
      */
-    const setGlobalData = (
-        categories: string[],
-        tags: string[],
-        popularPosts: { id: string; title: string; likes: number }[],
-    ) => {
+    const setGlobalData = (categories: string[], tags: string[], popularPosts: PopularBlog[]) => {
         setCategories(categories);
         setTags(tags);
         setPopularPosts(popularPosts);

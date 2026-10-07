@@ -371,6 +371,12 @@ GitHub上のMarkdownファイルを取得。Route Handler内で直接処理（`p
 | `createBlog()` | `lib/api/createBlog.ts` | POST `/api/blogs` |
 | `updateBlogById()` | `lib/api/updateBlogById.ts` | PUT `/api/blogs/:id` |
 | `deleteBlogById()` | `lib/api/deleteBlogById.ts` | DELETE `/api/blogs/:id` |
+| `fetchCategories()` | `lib/api/fetchCategories.ts` | GET `/api/blogs/categories` |
+| `fetchTags()` | `lib/api/fetchTags.ts` | GET `/api/blogs/tags` |
+| `fetchPopularBlogs()` | `lib/api/fetchPopularBlogs.ts` | GET `/api/blogs/popular/:count` |
+| `fetchAuthUser()` | `lib/api/auth/fetchAuthUser.ts` | GET `/api/auth/check`（未認証・本文 `null` は `null` に正規化） |
+| `login()` | `lib/api/auth/login.ts` | POST `/api/auth/login` |
+| `logout()` | `lib/api/auth/logout.ts` | POST `/api/auth/logout` |
 | `fetchComments()` | `lib/api/blog-comments/fetchComments.ts` | GET `/api/comments/:blogId` |
 | `addComment()` | `lib/api/blog-comments/addComment.ts` | POST `/api/comments` |
 | `fetchLikedBlogs()` | `lib/api/blog-likes/fetchLikedBlogs.ts` | GET `/api/blog-likes` |

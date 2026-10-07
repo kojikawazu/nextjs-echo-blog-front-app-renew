@@ -59,3 +59,16 @@ export interface BlogLike {
     /** 更新日時（ISO 8601 文字列） */
     updated_at: string;
 }
+
+/**
+ * サイドバーの人気記事 1 件分のデータ型。`/api/blogs/popular/:count` のレスポンス要素、
+ * およびホーム画面で一覧データから算出した人気記事の表示単位。
+ */
+export type PopularBlog = {
+    /** ブログの一意な ID（UUID）。詳細ページへのリンクに使う */
+    id: string;
+    /** 記事タイトル */
+    title: string;
+    /** いいね数（累計）。人気順の並びはこの値の降順 */
+    likes: number;
+};
