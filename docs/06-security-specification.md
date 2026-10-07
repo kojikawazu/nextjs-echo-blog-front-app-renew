@@ -18,6 +18,7 @@
 - [5. シークレット管理](#5-シークレット管理)
     - [環境変数の分類](#環境変数の分類)
     - [Secret Manager設計原則](#secret-manager設計原則)
+    - [秘匿ファイルの混入検出（Secret Scan）](#秘匿ファイルの混入検出secret-scan)
 - [6. 入力バリデーション](#6-入力バリデーション)
     - [フロントエンド（Zodスキーマ）](#フロントエンドzodスキーマ)
     - [サーバーサイド（Route Handler）](#サーバーサイドroute-handler)
@@ -137,6 +138,21 @@ if (ALLOWED_OWNER && owner !== ALLOWED_OWNER) {
 2. **Terraform stateにシークレット値を残さない**: Terraformは箱（Secret）とIAMのみ管理、値は `gcloud secrets versions add` で投入
 3. **ランタイム注入**: Cloud Runの `value_from.secret_key_ref` で起動時に注入
 4. **バージョン管理**: `latest` を参照し、ローテーション後は新規インスタンスから自動反映
+
+### 秘匿ファイルの混入検出（Secret Scan）
+
+`.gitignore` は**未追跡ファイルにしか効かない**（一度追跡されたファイル・`git add -f`・書き漏れは止められない）。また Git の履歴は追記型のため、一度 push した秘匿ファイルは追跡を外しても履歴に残り、対処は**鍵・トークンのローテーションしかない**。そこで「混入させない」`.gitignore` に加え、「**追跡された時点で落とす**」検出を CI に持たせる。
+
+| 項目 | 内容 |
+|---|---|
+| 判定ロジック | `scripts/check-secret-files.sh`（唯一の定義元。CI と PR 作成前のローカル検査で共用） |
+| 検査範囲 | 追跡済みファイル（`git ls-files`）+ `.gitignore` されていない未追跡ファイル（`.gitignore` 漏れの検知） |
+| 検出対象 | `.env` 系（`.env` / `.env.local` / `.env.production` 等）、`*.key` / `*.pem` / `*.p12` / `*.pfx` / `*.jks` / `*.keystore`、`id_rsa` / `id_ed25519` / `id_dsa`、`credentials.json` / `serviceAccountKey.json` |
+| 除外 | `*.example` / `*.sample` / `*.template` / `*.dist` / `*.env.d.ts`（テンプレート・型定義は秘匿値を含まない） |
+| fail-closed | git リポジトリ外・不正な引数では終了コード 2 で失敗させる（検査できない状態を「問題なし」に倒さない） |
+| CI | `.github/workflows/secret-scan.yml`。全 PR・main への push で常時実行（`paths` フィルタなし） |
+
+> 検出はファイル名ベースであり、通常のソースに直書きされたトークン（内容）は対象外。内容の検査は PR 作成前のセルフチェック（`/pr-create`）で行う。
 
 ## 6. 入力バリデーション
 

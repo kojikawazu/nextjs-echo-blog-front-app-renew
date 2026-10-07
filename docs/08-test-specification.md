@@ -26,6 +26,7 @@
     - [APIエラーハンドリングテスト](#apiエラーハンドリングテスト)
 - [5. CI/CD統合](#5-cicd統合)
     - [GitHub Actions（`test.yml`）](#github-actionstestyml)
+    - [Secret Scan の分類テスト（`secret-scan.yml`）](#secret-scan-の分類テストsecret-scanyml)
     - [テスト実行の流れ](#テスト実行の流れ)
 
 ## 1. テスト戦略
@@ -366,6 +367,18 @@ pnpm --filter front test:e2e -- $TEST_DIR
 # リトライ
 CI環境では2回リトライ
 ```
+
+### Secret Scan の分類テスト（`secret-scan.yml`）
+
+`scripts/check-secret-files.test.sh` が、秘匿ファイル判定（`scripts/check-secret-files.sh`）を `--stdin` モードで検証する。実ファイルを作らないため作業ツリーを汚さない。CI では本検査の前に実行し、判定ロジックの劣化（除外漏れ・fail-open）を先に検知する。
+
+| 分類 | 観点 | 件数 |
+|---|---|---|
+| 正常系 | 秘匿ファイルを検出（`.env` / `.env.local` / `.env.production` / `*.key` / `*.pem` / `*.p12` / `id_rsa` / `id_ed25519` / `serviceAccountKey.json` / `credentials.json`） | 11 |
+| 準正常系 | テンプレート・型定義・紛らわしい名前を素通り（`.env.example` / `.env.sample` / `.env.template` / `env.d.ts` / `.env.d.ts` / `next-env.d.ts` / `.envrc` / `env.ts` / `load.env.sh` / `apiKey.ts` / `privateKey.ts` / `keyboard.md` / `keystore-icon.svg` / `id_rsa.pub` 等） | 19 |
+| 異常系 | 混在入力で該当パスのみ列挙・不明な引数は exit 2・git リポジトリ外は exit 2（fail-closed） | 3 |
+
+正常系 11 : 異常系（準正常系 + 異常系）22 = 1:2。
 
 ### テスト実行の流れ
 
