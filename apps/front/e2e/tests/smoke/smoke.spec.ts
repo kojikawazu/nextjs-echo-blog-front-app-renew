@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { setupAuthCheckMock } from '../mocks/api/auth-api-mock';
 import { setupFetchBlogsMock, setupFetchSidebarMock } from '../mocks/api/blog-api-mock';
+import {
+    setupFetchLikedBlogsMock,
+    setupGenerateVisitIdMock,
+} from '../mocks/api/blog-likes-api-mock';
 import { mockBlogs, mockCategories, mockPopularPosts, mockTags } from '../mocks/blog/blog-mock';
 
 test.describe('smoke: アプリ起動・主要ルート疎通確認', () => {
@@ -24,10 +28,14 @@ test.describe('smoke: アプリ起動・主要ルート疎通確認', () => {
     });
 
     test('N-3: トップページでコンソールエラーが出ない', async ({ page }) => {
+        // トップページが呼ぶ API をすべてモックし、実バックエンド（BACKEND_API_URL）に依存させない。
+        // いいね系が未モックだと、secrets のない環境（Dependabot PR 等）で BFF が 500 → コンソールエラーになる（#147）
         await Promise.all([
             setupAuthCheckMock(page, { authenticated: false }),
             setupFetchBlogsMock(page, mockBlogs),
             setupFetchSidebarMock(page, mockCategories, mockTags, mockPopularPosts),
+            setupGenerateVisitIdMock(page),
+            setupFetchLikedBlogsMock(page, []),
         ]);
 
         const consoleErrors: string[] = [];

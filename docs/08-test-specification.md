@@ -373,6 +373,8 @@ pnpm --filter front test:e2e -- $TEST_DIR
 CI環境では2回リトライ
 ```
 
+**E2E は外部環境から切り離す（hermetic）**: 画面が呼ぶ `/api/*` はすべて `page.route` でモックし、実バックエンド（`BACKEND_API_URL`）や GCP に依存させない。`.env.test` の値が空（Dependabot 起動時は Actions secrets が渡らない）でも全件パスすることを確認済み（#147）。新規 E2E でも、ページが呼ぶ API（訪問者 ID 発行・いいね一覧を含む）のモック漏れに注意する。
+
 ### Secret Scan の分類テスト（`secret-scan.yml`）
 
 `scripts/check-secret-files.test.sh` が、秘匿ファイル判定（`scripts/check-secret-files.sh`）を `--stdin` モードで検証する。実ファイルを作らないため作業ツリーを汚さない。CI では本検査の前に実行し、判定ロジックの劣化（除外漏れ・fail-open）を先に検知する。

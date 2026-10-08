@@ -37,13 +37,10 @@ jobs:
           e2e/tests/pages/tag/*,
         ]
 
+    # E2E は API を Playwright でモックするため GCP の認証情報を使わない（最小権限）。
+    # 認証ステップがあると、secrets が渡らない Dependabot の PR で E2E が実行前に失敗する（#147）
     steps:
       - uses: actions/checkout@v3
-
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Create .env.test file
         run: |
