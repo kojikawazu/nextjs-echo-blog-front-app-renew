@@ -137,6 +137,7 @@ e2e/tests/mocks/
 | `tests/schema/authSchema.test.ts` | ログイン/登録スキーマ | 10 |
 | `tests/schema/blogCommentSchema.test.ts` | コメントスキーマ | 6 |
 | `tests/hooks/useLikeBlog.test.ts` | いいねフック | 5 |
+| `tests/hooks/useLikeBlog.lastUnlike.test.ts` | いいねフック × API アクセス層（`fetch` のみモック）。最後のいいね解除で `hasLiked` が false に戻る（#17 回帰） | 3 |
 | `tests/hooks/useBlogs.test.ts` | ブログ一覧取得フック（条件の受け渡し・`enabled`） | 4 |
 | `tests/hooks/useBlog.test.ts` | ブログ詳細取得フック | 3 |
 | `tests/hooks/useBlogMarkdown.test.ts` | 本文 Markdown 取得フック（`null`・古い応答の破棄） | 5 |
@@ -152,10 +153,12 @@ e2e/tests/mocks/
 | `tests/lib/api/auth/fetchAuthUser.test.ts` | 認証状態確認（User 変換・未認証の `null` 正規化） | 5 |
 | `tests/lib/api/auth/login.test.ts` | ログイン | 3 |
 | `tests/lib/api/auth/logout.test.ts` | ログアウト | 3 |
+| `tests/lib/api/blog-likes/fetchLikedBlogs.test.ts` | いいね済み一覧取得（`null` → `[]`・Zod による形の検証） | 7 |
 | `tests/api/github/markdown/route.test.ts` | GitHub Markdown プロキシ | 7 |
-| **合計** | | **104** |
+| `tests/api/blog-likes/route.test.ts` | いいね済み一覧 BFF（`null` → `[]` 正規化・Set-Cookie 引き継ぎ・エラー素通し） | 6 |
+| **合計** | | **120** |
 
-ケース分類の比率は **正常系 32 : 異常系（準正常系 + 異常系）72 ≒ 1:2.25**（`.claude/rules/testing.md` の「正常 1 : 異常系 2 以上」を満たす）。スキーマには型不一致・`null`・非オブジェクトの異常系、`fetchBlogs` には JSON パース失敗、`useComments` には mutation 失敗、サイドバー・認証の API 通信関数にはエラーステータス・ネットワーク障害・JSON パース失敗、ブログ系フックには API 失敗時のトースト・非遷移や古い応答の破棄の異常系を含む。
+ケース分類の比率は **正常系 34 : 異常系（準正常系 + 異常系）86 ≒ 1:2.5**（`.claude/rules/testing.md` の「正常 1 : 異常系 2 以上」を満たす）。スキーマには型不一致・`null`・非オブジェクトの異常系、`fetchBlogs` には JSON パース失敗、`useComments` には mutation 失敗、サイドバー・認証の API 通信関数にはエラーステータス・ネットワーク障害・JSON パース失敗、ブログ系フックには API 失敗時のトースト・非遷移や古い応答の破棄の異常系を含む。
 
 ### インテグレーションテスト（Vitest + testcontainers）
 
@@ -179,10 +182,11 @@ Vitest(IT) → BFF Route Handler(@/app/api/**, in-process)
 | `tests-it/api/blogs-meta.it.test.ts` | categories/tags/popular | 正常（seed 値含む・popular 200）・400（count 非数値） |
 | `tests-it/api/blogs-write.it.test.ts` | 作成/更新/削除の認証ガード | 401（Cookie 無しの POST/PUT/DELETE = Cookie 転送の結合検証） |
 | `tests-it/api/comments.it.test.ts` | コメント | 正常（seed コメント取得）・400（空ボディ投稿） |
+| `tests-it/api/blog-likes.it.test.ts` | いいね（発行・一覧・登録・解除） | 正常（いいね → 一覧 → 解除 → `[]`）・0 件で `[]`（backend の `null` を BFF が正規化・#17）・二重いいね 400・Cookie 無し/不正トークン 500 素通し |
 | `tests-it/api/auth.it.test.ts` | 認証（auth-check / login） | auth-check 未認証/不正トークン→200+null（BFF 正規化）・login 空/不正メール→400・誤認証→401 |
 | `tests-it/api/proxy.it.test.ts` | BFF 設定契約 | 500（`BACKEND_API_URL` 未設定 = fail-closed） |
 
-計 19 ケース（正常系 6 : 異常系〈準正常 + 異常〉13 ≒ 1:2）。`auth.it.test.ts` は BFF が backend の 401 を `200 + null` に正規化する挙動を実バックエンド相手に検証する。
+計 24 ケース（正常系 7 : 異常系〈準正常 + 異常〉17 ≒ 1:2.4）。`blog-likes.it.test.ts` は実バックエンドがいいね 0 件で `null` を返すことを前提に、BFF の `[]` 正規化を検証する（BFF の正規化を外すと 2 件が `expected null to deeply equal []` で落ちることを確認済み）。`auth.it.test.ts` は BFF が backend の 401 を `200 + null` に正規化する挙動を実バックエンド相手に検証する。
 
 > **CI（専用ワークフロー・ローカル先行）**: IT は実バックエンドのイメージビルドを伴い重いため、毎 PR ではなく専用ワークフロー `it-test.yml`（`workflow_dispatch` + nightly cron）で実行する。バックエンドは別リポジトリ（public）を checkout し、testcontainers が Dockerfile をビルドする（`BACKEND_REPO_PATH` で参照先を指定）。`BACKEND_IMAGE` を与えれば Artifact Registry の pinned image へ切替可能。ローカルは `pnpm test:it`。
 
@@ -310,6 +314,7 @@ Vitest(IT) → BFF Route Handler(@/app/api/**, in-process)
 | いいね済み状態 | いいね済みのブログで青色ボタンが表示される |
 | いいね追加 | いいねボタンクリックでAPIが呼ばれる |
 | いいね取り消し | いいね済みブログでクリックすると取り消しAPIが呼ばれる |
+| 最後のいいね解除（#17 回帰） | 解除後に一覧 API が `null`（0 件）を返しても、ボタンが未いいね表示（グレー）に戻る |
 
 ### カテゴリーページテスト
 

@@ -14,6 +14,7 @@
     - [ブログ作成フォーム](#ブログ作成フォーム)
     - [ブログ編集フォーム](#ブログ編集フォーム)
     - [コメント投稿フォーム](#コメント投稿フォーム)
+    - [いいね済み一覧レスポンス](#いいね済み一覧レスポンス)
 - [3. データ変換処理](#3-データ変換処理)
     - [ブログ一覧取得時の変換（`fetchBlogs.ts`）](#ブログ一覧取得時の変換fetchblogsts)
     - [ブログ作成/更新時の変換](#ブログ作成更新時の変換)
@@ -183,6 +184,23 @@ const blogCommentSchema = z.object({
 | blog_id | string? | 最小1文字 |
 | guest_user | string? | 最小1文字 |
 | comment | string? | 最小1文字 |
+
+### いいね済み一覧レスポンス
+
+API レスポンスの実行時検証用（フォームではない）。新規追加分のため、複数形の `schemas/` に置く（`.claude/rules/typescript.md`「スキーマの配置」）。
+
+```typescript
+// src/app/schemas/blogLikes.ts
+const likedBlogsResponseSchema = z
+    .array(z.object({ blog_id: z.string() }))
+    .nullable();
+type LikedBlogsResponse = z.infer<typeof likedBlogsResponseSchema>;
+```
+
+| 値 | 意味 |
+|-----|------|
+| 配列 | いいね済みブログの一覧（`blog_id` 以外のフィールドは検証対象外で無視） |
+| `null` | いいね 0 件（バックエンドが nil スライスを返した場合）。`fetchLikedBlogs` は `[]` として扱う |
 
 ## 3. データ変換処理
 

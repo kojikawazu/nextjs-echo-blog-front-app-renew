@@ -49,6 +49,7 @@ TechBlog（`nextjs-echo-blog-front-app-renew`）フロントエンドの仕様�
 | [03-e2e-smoke](./test-design/03-e2e-smoke.md) | E2E スモークテスト |
 | [04-unit-lib-api](./test-design/04-unit-lib-api.md) | API 通信関数（認証・サイドバー: fetchAuthUser / login / logout / fetchCategories / fetchTags / fetchPopularBlogs） |
 | [05-unit-blog-hooks](./test-design/05-unit-blog-hooks.md) | ブログ系フック（useBlogs / useBlog / useBlogMarkdown / useCreateBlog / useUpdateBlog / useDeleteBlog） |
+| [06-blog-likes-unlike](./test-design/06-blog-likes-unlike.md) | いいね解除後の表示不整合（#17）の UT / IT / E2E 配分 |
 
 ## セキュリティレポート — 運用・履歴
 
