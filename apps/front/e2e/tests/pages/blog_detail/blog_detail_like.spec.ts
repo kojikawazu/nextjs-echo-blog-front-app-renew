@@ -96,4 +96,38 @@ test.describe('Blog: いいね機能', () => {
 
         expect(unlikeApiCalled).toBe(true);
     });
+
+    test('S-2: 最後のいいねを解除するとボタンが未いいね表示（グレー）に戻る（#17）', async ({
+        page,
+    }) => {
+        // いいね状態を持つ一覧モック。解除後は 0 件となり、Go バックエンドと同じく null を返す
+        // （BFF は [] に正規化するが、クライアント側でも null を 0 件として扱えることを検証する）
+        let liked = true;
+        await page.route('**/api/blog-likes', async (route, request) => {
+            if (request.method() !== 'GET') return route.fallback();
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: liked ? JSON.stringify([{ blog_id: LIKED_BLOG_ID }]) : 'null',
+            });
+        });
+        await page.route('**/api/blog-likes/*', async (route, request) => {
+            if (request.method() !== 'DELETE') return route.fallback();
+            liked = false;
+            await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+        });
+
+        await page.goto('/');
+        await page.waitForSelector('[data-testid="like-count"]', { timeout: 20000 });
+
+        const likeButton = page
+            .locator('button')
+            .filter({ has: page.getByTestId('like-count') })
+            .first();
+        await expect(likeButton).not.toHaveClass(/text-gray-500/, { timeout: 10000 });
+        await likeButton.click();
+
+        // 修正前は一覧の再取得が TypeError で失敗し、いいね済み（青）のまま残っていた
+        await expect(likeButton).toHaveClass(/text-gray-500/, { timeout: 10000 });
+    });
 });

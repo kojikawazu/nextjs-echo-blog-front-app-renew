@@ -113,6 +113,7 @@
 - [ ] サイドバーの人気記事の算出元がページによって異なる（ホーム`/`は現在ページのブログデータから算出、その他ページは `/api/blogs/popular/:count` から全体TOP5を取得）。一貫性に欠ける
 - [ ] ブログ作成/編集フォームのZodスキーマが全フィールド `optional()` で、必須チェックがHTML `required` 属性依存
 - [ ] 訪問者IDの生成結果がフロント側で永続化されていない（バックエンドCookie依存の可能性）
+- [x] ~~最後のいいねを解除してもいいね済み表示（青）のまま残る~~（#17）→ backend がいいね 0 件で `null` を返し、`fetchLikedBlogs` の `data.map` が TypeError → TanStack Query が直前の一覧を保持していた。BFF（`api/blog-likes/route.ts`）で `null` → `[]` に正規化し、`fetchLikedBlogs` は `schemas/blogLikes.ts` で検証。UT / IT（実バックエンド）/ E2E で回帰を固定。※ バックエンド側で空配列を返す修正は別リポジトリで検討
 - [x] ~~ユニットテスト 8 件が `.claude/rules/testing.md` の配置ルールに未追従~~ → `apps/front/tests/`（ソースツリー鏡写し）へ移設済み。`vitest.config.ts` は既定 include で `tests/` を自動検出するため変更不要、`eslint.config.mjs` の免除 glob と `docs/09` ツリーは更新済み
 
 ## 既知の課題（IT・型）

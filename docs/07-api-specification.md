@@ -226,9 +226,13 @@
 | プロキシ先 | `/blog-likes` |
 | ファイル | `src/app/api/blog-likes/route.ts` |
 
-**バックエンドレスポンス**: `{ blog_id: string }[]`（BlogLikeオブジェクト配列）
+**バックエンドレスポンス**: `{ blog_id: string }[]`（BlogLikeオブジェクト配列）。**いいね 0 件のときは `null`**（Go の nil スライスを JSON 化するため）
 
-**クライアント側変換**: `fetchLikedBlogs.ts` で `data.map(like => like.blog_id)` により `string[]` に変換
+**BFF レスポンス契約**: **常に配列**。バックエンドの `null` は `[]` に正規化して返す（Set-Cookie は引き継ぐ）。エラー応答（訪問者 Cookie なし・不正トークン → 500）はステータス・本文を変えずに返す（`[]` に化けさせない）
+
+**クライアント側変換**: `fetchLikedBlogs.ts` で `unknown` として受け、`likedBlogsResponseSchema`（`schemas/blogLikes.ts`）で検証してから `blog_id` の `string[]` に変換。`null` も 0 件（`[]`）として受け入れ、配列でない・`blog_id` 欠落は `ZodError` で弾く
+
+> **#17（解除後もいいね済み表示が残る不具合）**: 以前は `null` に対して `data.map` が TypeError となり、TanStack Query が直前のいいね済み一覧を保持したため、最後のいいねを解除してもボタンが青のまま残っていた。BFF の正規化とクライアントのスキーマ検証の二層で防ぐ
 
 ---
 
