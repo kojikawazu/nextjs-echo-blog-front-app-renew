@@ -7,7 +7,7 @@ jobs:
   unit-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -40,7 +40,7 @@ jobs:
     # E2E は API を Playwright でモックするため GCP の認証情報を使わない（最小権限）。
     # 認証ステップがあると、secrets が渡らない Dependabot の PR で E2E が実行前に失敗する（#147）
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Create .env.test file
         run: |

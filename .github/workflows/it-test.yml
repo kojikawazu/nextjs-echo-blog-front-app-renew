@@ -13,11 +13,11 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout frontend
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
 
             # バックエンドは別リポジトリ（public）。testcontainers が Dockerfile をビルドする。
             - name: Checkout backend
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   repository: kojikawazu/nextjs-echo-back-blog-app
                   path: backend-repo
