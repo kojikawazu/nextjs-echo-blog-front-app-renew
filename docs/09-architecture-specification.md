@@ -324,6 +324,12 @@ main へ push
          2. Dockerイメージビルド（context=ルート）
          3. Artifact Registry へプッシュ
          4. Cloud Run へデプロイ
+
+毎週（Dependabot）
+  → .github/dependabot.yml（package-ecosystem: github-actions）
+    ├── minor / patch: 1 PR にグループ化（github-actions-minor-patch）
+    └── major: アクションごとに個別 PR（入力仕様の変更がありうるため切り分け可能にする）
+  → 更新 PR をレビューしてマージ（アクションのバージョンは手で一括置換しない）
 ```
 
 ### シークレットの注入経路
