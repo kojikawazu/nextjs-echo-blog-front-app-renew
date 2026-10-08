@@ -186,6 +186,8 @@ pnpm --filter front exec playwright test e2e/tests/pages/blog_home/blog_home_una
   7. レポートアップロード（apps/front/playwright-report/）
 ```
 
+> E2E は API を Playwright（`page.route`）でモックするため、**GCP の認証情報を使わない**（認証ステップなし・最小権限）。`.env.test` の値が空でも全件パスすること（＝実バックエンドに依存しないこと）を前提とする。Dependabot 起動のワークフローには Actions secrets が渡らないため、この前提が崩れると Dependabot の PR で E2E が検証できなくなる（#147）。
+
 ### IT ワークフロー（`it-test.yml`）
 
 ```

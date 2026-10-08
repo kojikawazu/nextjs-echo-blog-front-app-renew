@@ -69,6 +69,10 @@ ALLOWED_REPO_OWNER
 
 ※ `GITHUB_TOKEN` は不要。Cloud Run の Secret Manager 参照で注入されます。
 
+※ `GCP_SERVICE_ACCOUNT_KEY` はデプロイ（`deploy_to_googlecloud.yml`）でのみ使う。E2E（`test.yml`）は API をモックするため GCP 認証を行わない（#147）。
+
+※ Dependabot が起動するワークフローには上記の Actions secrets は渡らない（Dependabot secrets のみ）。E2E は secrets が空でも動く前提のため、Dependabot secrets への登録は不要。
+
 ## シークレット管理
 
 Secret Manager で管理されるシークレット一覧:
