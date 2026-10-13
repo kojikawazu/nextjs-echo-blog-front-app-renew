@@ -23,6 +23,8 @@
     - [フロントエンド（Zodスキーマ）](#フロントエンドzodスキーマ)
     - [サーバーサイド（Route Handler）](#サーバーサイドroute-handler)
 - [7. 通信セキュリティ](#7-通信セキュリティ)
+- [8. 依存パッケージの脆弱性](#8-依存パッケージの脆弱性)
+    - [リスクを受容したアラート](#リスクを受容したアラート)
 
 ## 1. 概要
 
@@ -182,3 +184,19 @@ if (ALLOWED_OWNER && owner !== ALLOWED_OWNER) {
 | Cookie属性 | バックエンドが設定（HttpOnly, Secure, SameSite想定） |
 | credentials | 全APIリクエストで `credentials: 'include'` を指定 |
 | CORS | Cloud Run / Cloudflareレベルで制御 |
+
+## 8. 依存パッケージの脆弱性
+
+Dependabot のアラートは、修正版があれば依存の更新（直接依存の更新、または `package.json` の `pnpm.overrides`）で解消する。修正版がない、または依存経路から外せない場合は、影響を評価したうえでリスクを受容し、理由をここに記録してアラートを dismiss する。
+
+- 本番イメージ（`Dockerfile` の `runner` ステージ）は `node_modules` を丸ごとコピーしているため、**dev 依存もファイルとしては本番イメージに含まれる**。評価では「イメージに含まれるか」ではなく「本番の実行時（`next start`）に読み込まれ、外部から入力が届くか」を見る。
+- 受容したアラートは、親パッケージの更新で経路から外せるようになった時点、または修正版が出た時点で解消する。
+
+### リスクを受容したアラート
+
+| アラート | パッケージ | 依存経路 | 受容の理由 | dismiss 理由 |
+|---|---|---|---|---|
+| [#139](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/security/dependabot/139)（high・2026-10） | `braces@3.0.3`（深くネストしたパターンでのスタック枯渇による DoS。修正版なし） | `tailwindcss@3` → `chokidar` / `micromatch`、`eslint-config-next` → `@next/eslint-plugin-next` → `fast-glob@3.3.1` → `micromatch`（いずれも dev 依存） | ビルド・Lint 時にのみ動くツールの依存で、本番の実行時には読み込まれない。扱うパターンはリポジトリ内の設定・ソースのみで、外部入力が届く経路がない。経路から外すには、tailwind v4 への移行に加えて `@next/eslint-plugin-next` 側の更新が必要（最新の 16.4.0 も `fast-glob@3.3.1` に固定している） | Risk is tolerable |
+| [#141](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/security/dependabot/141)（medium・2026-10） | `sprintf-js@1.0.3`（精度指定子による DoS。修正版なし） | `gray-matter`（本番依存。`/api/github/markdown` で使用）→ `js-yaml@3` → `argparse@1` → `sprintf-js` | `js-yaml@3` で `argparse` を読み込むのは CLI の `bin/js-yaml.js` だけで、`gray-matter` が使うライブラリ本体は読み込まない。脆弱なコードは実行経路にない | Vulnerable code is not actually used |
+
+> `postcss-selector-parser`（[#140](https://github.com/kojikawazu/nextjs-echo-blog-front-app-renew/security/dependabot/140)）は `pnpm.overrides` で 7.1.6 へ上げて解消した（#152）。`tailwindcss@3` は 6 系を要求するが、上げる前後で Tailwind の生成 CSS がバイト単位で一致することを確認している。
