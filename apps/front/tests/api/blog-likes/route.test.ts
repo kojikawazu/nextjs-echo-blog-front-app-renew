@@ -93,16 +93,18 @@ describe('GET /api/blog-likes', () => {
     // --- 異常系 ---
 
     it('バックエンドのエラー応答はステータス・本文を変えずに返す（[] に化けさせない）', async () => {
+        // 訪問者 Cookie なしのときの実バックエンドの応答（統一エラーレスポンス）
+        const backendError = { code: 'VISITOR_TOKEN_MISSING', error: 'Visitor token is missing' };
         global.fetch = vi
             .fn()
             .mockResolvedValue(
-                backendResponse(500, JSON.stringify({ error: 'Failed to get visit id token' })),
+                backendResponse(401, JSON.stringify(backendError)),
             ) as unknown as typeof fetch;
 
         const res = await GET(req());
 
-        expect(res.status).toBe(500);
-        await expect(res.json()).resolves.toEqual({ error: 'Failed to get visit id token' });
+        expect(res.status).toBe(401);
+        await expect(res.json()).resolves.toEqual(backendError);
     });
 
     it('BACKEND_API_URL 未設定なら 500 を返しバックエンドを呼ばない', async () => {

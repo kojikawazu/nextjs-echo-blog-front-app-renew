@@ -73,13 +73,18 @@ describe('IT /api/blog-likes（実スタック）', () => {
         expect(await res.json()).toEqual([]);
     });
 
-    it('同じブログへの二重いいねは 400 を返し、一覧は 1 件のまま', async () => {
+    it('同じブログへの二重いいねは 409 を返し、一覧は 1 件のまま', async () => {
         const cookie = await issueVisitorCookie();
         const blog = routeParams({ blogId: SEED.blogId2 });
 
         expect((await like(reqWithCookie('POST', cookie), blog)).status).toBe(200);
-        // backend: "blog is already liked" → 400
-        expect((await like(reqWithCookie('POST', cookie), blog)).status).toBe(400);
+        // backend: ALREADY_LIKED → 409（nextjs-echo-back-blog-app#123 で 400 から変更）
+        const second = await like(reqWithCookie('POST', cookie), blog);
+        expect(second.status).toBe(409);
+        expect(await second.json()).toEqual({
+            code: 'ALREADY_LIKED',
+            error: 'Blog is already liked',
+        });
 
         const res = await fetchLikes(getReqWithCookie(cookie));
         expect(((await res.json()) as unknown[]).length).toBe(1);
@@ -90,19 +95,26 @@ describe('IT /api/blog-likes（実スタック）', () => {
 
     // --- 異常系 ---
 
-    it('訪問者 Cookie なしの一覧取得はエラー（500）をそのまま返し、[] に化けさせない', async () => {
-        // backend: visit-id-token Cookie 無し → 500 "Failed to get visit id token"
+    it('訪問者 Cookie なしの一覧取得はエラー（401）をそのまま返し、[] に化けさせない', async () => {
+        // backend: visit-id-token Cookie 無し → 401 VISITOR_TOKEN_MISSING
+        // （nextjs-echo-back-blog-app#148 で 500 から変更）
         const res = await fetchLikes(getReq());
 
-        expect(res.status).toBe(500);
-        expect(await res.json()).toEqual({ error: 'Failed to get visit id token' });
+        expect(res.status).toBe(401);
+        expect(await res.json()).toEqual({
+            code: 'VISITOR_TOKEN_MISSING',
+            error: 'Visitor token is missing',
+        });
     });
 
-    it('不正な訪問者トークンの一覧取得もエラー（500）を返す', async () => {
-        // backend: JWT 解析失敗 → 500 "Failed to get visit id"
+    it('不正な訪問者トークンの一覧取得もエラー（401）を返す', async () => {
+        // backend: JWT 解析失敗 → 401 VISITOR_TOKEN_INVALID（同上）
         const res = await fetchLikes(getReqWithCookie('visit-id-token=garbage'));
 
-        expect(res.status).toBe(500);
-        expect(await res.json()).toEqual({ error: 'Failed to get visit id' });
+        expect(res.status).toBe(401);
+        expect(await res.json()).toEqual({
+            code: 'VISITOR_TOKEN_INVALID',
+            error: 'Visitor token is invalid',
+        });
     });
 });

@@ -181,11 +181,11 @@ Vitest(IT) → BFF Route Handler(@/app/api/**, in-process)
 
 | テストファイル | 対象 | 主なケース |
 |---|---|---|
-| `tests-it/api/blogs.it.test.ts` | 一覧・詳細 | 正常（seed 一覧/詳細）・404（不在 UUID）・404（不正 UUID 形式） |
+| `tests-it/api/blogs.it.test.ts` | 一覧・詳細 | 正常（seed 一覧/詳細）・404（不在 UUID）・400（不正 UUID 形式 = `VALIDATION_ERROR`） |
 | `tests-it/api/blogs-meta.it.test.ts` | categories/tags/popular | 正常（seed 値含む・popular 200）・400（count 非数値） |
 | `tests-it/api/blogs-write.it.test.ts` | 作成/更新/削除の認証ガード | 401（Cookie 無しの POST/PUT/DELETE = Cookie 転送の結合検証） |
 | `tests-it/api/comments.it.test.ts` | コメント | 正常（seed コメント取得）・400（空ボディ投稿） |
-| `tests-it/api/blog-likes.it.test.ts` | いいね（発行・一覧・登録・解除） | 正常（いいね → 一覧 → 解除 → `[]`）・0 件で `[]`（backend の `null` を BFF が正規化・#17）・二重いいね 400・Cookie 無し/不正トークン 500 素通し |
+| `tests-it/api/blog-likes.it.test.ts` | いいね（発行・一覧・登録・解除） | 正常（いいね → 一覧 → 解除 → `[]`）・0 件で `[]`（backend の `null` を BFF が正規化・#17）・二重いいね 409（`ALREADY_LIKED`）・Cookie 無し/不正トークン 401（`VISITOR_TOKEN_MISSING` / `VISITOR_TOKEN_INVALID`）素通し |
 | `tests-it/api/auth.it.test.ts` | 認証（auth-check / login） | auth-check 未認証/不正トークン→200+null（BFF 正規化）・login 空/不正メール→400・誤認証→401 |
 | `tests-it/api/proxy.it.test.ts` | BFF 設定契約 | 500（`BACKEND_API_URL` 未設定 = fail-closed） |
 
