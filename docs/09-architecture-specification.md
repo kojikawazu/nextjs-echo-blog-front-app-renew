@@ -350,18 +350,19 @@ apps/front/.env (ビルド時)
 
 ### バックエンドの呼び出し（サービス間認証）
 
-バックエンド（別プロジェクトの Cloud Run）は未認証の呼び出しを拒否し、Invoker は BFF の実行サービスアカウント（`cloud-run-sa@blog-projects-450313`）のみ（バックエンド #146）。
+バックエンド（別プロジェクトの Cloud Run）は未認証の呼び出しを拒否し、Invoker は BFF の実行サービスアカウント（`cloud-run-sa@<フロントのプロジェクト>`）のみ（バックエンド #146）。全体像・信頼の連鎖・切り替えの記録は、バックエンドの技術レポート [`docs/tech-reports/05-bff-service-auth.md`](https://github.com/kojikawazu/nextjs-echo-back-blog-app/blob/main/docs/tech-reports/05-bff-service-auth.md) を参照。
 
 ```
 ブラウザ → BFF（/api/*、本サービス）
   └── proxyToBackend
         ├── メタデータサーバー → ID トークン（audience = BACKEND_API_URL の origin、期限 5 分前までキャッシュ）
         └── バックエンド（Authorization: Bearer <ID トークン>、X-Client-IP: <クライアント IP>）
-              └── Cloud Run が ID トークンを検証（不正・なしは 401。コンテナに届かない）
+              └── Cloud Run が ID トークンを検証（なしは 403、不正は 401。コンテナに届かない）
 ```
 
 - ID トークンは Cloud Run 上（`K_SERVICE` あり）でのみ付ける。ローカル・IT のバックエンドは公開のため不要。
-- 切り替え順: フロントのデプロイ → バックエンドの `roles/run.invoker` に BFF のサービスアカウントを付与 → バックエンドの非公開化（逆順だと BFF からの呼び出しが 401 になる）。
+- 切り替え順: フロントのデプロイ → バックエンドの `roles/run.invoker` に BFF のサービスアカウントを付与 → バックエンドの非公開化（逆順だと BFF からの呼び出しが 403 になる）。
+- バックエンドの invoker IAM チェックは有効のまま保つ（無効だと IAM に関係なく誰でも呼べる。バックエンド #165）。
 
 ## 7. Next.js設定
 

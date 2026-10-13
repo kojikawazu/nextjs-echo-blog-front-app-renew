@@ -56,7 +56,7 @@ export async function proxyToBackend(
             const idToken = await getBackendIdToken(new URL(backendApiUrl).origin);
             headers['Authorization'] = `Bearer ${idToken}`;
         } catch (error) {
-            // トークンなしで送ると Cloud Run が HTML の 401 を返し、フロントが未ログインと区別できないため、ここで止める
+            // トークンなしで送ると Cloud Run が HTML の 403 を返し、バックエンドの応答と区別できないため、ここで止める
             console.error('Failed to obtain ID token for backend', error);
             return NextResponse.json({ error: 'Backend authentication failed' }, { status: 500 });
         }
