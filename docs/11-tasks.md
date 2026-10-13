@@ -50,6 +50,11 @@
   - minimatch 3.1.2 → 3.1.5 / 9.0.5 → 9.0.9 アップグレード
   - 詳細: `docs/security-alert-fix-2026-03-21.md`
 
+- [x] Dependabotアラート3件の対応（2026-10-14・#152）
+  - `postcss-selector-parser` 6.1.4 → 7.1.6（`pnpm.overrides`。Tailwind の生成 CSS が変わらないことを確認）
+  - `braces`・`sprintf-js` は修正版がなく、本番の実行時に読み込まれないためリスクを受容して dismiss
+  - 詳細: `docs/06-security-specification.md`「8. 依存パッケージの脆弱性」
+
 - [x] バックエンドAPI露出対策（2026-03-19）
   - BFFプロキシ（Next.js Route Handlers）の導入
   - `NEXT_PUBLIC_BACKEND_API_URL` → `BACKEND_API_URL`（サーバーサイド専用に変更）
