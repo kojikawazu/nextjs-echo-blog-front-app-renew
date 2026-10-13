@@ -108,6 +108,8 @@ src/app/
 │   └── tag/[tag]/page.tsx      # タグ別（/tag/:tag）
 ├── api/                        # Route Handlers（BFFプロキシ）
 │   ├── _lib/proxy.ts           # プロキシヘルパー
+│   ├── _lib/idToken.ts         # バックエンド呼び出し用 ID トークンの取得・キャッシュ（Cloud Run のメタデータサーバー）
+│   ├── _lib/clientIp.ts        # クライアント IP の抽出（X-Forwarded-For の右端）
 │   ├── auth/                   # 認証エンドポイント
 │   │   ├── check/route.ts
 │   │   ├── login/route.ts
@@ -345,6 +347,21 @@ GCP Secret Manager
 apps/front/.env (ビルド時)
   └── NEXT_PUBLIC_VISIT_ID_KEY → JSバンドルにインライン化
 ```
+
+### バックエンドの呼び出し（サービス間認証）
+
+バックエンド（別プロジェクトの Cloud Run）は未認証の呼び出しを拒否し、Invoker は BFF の実行サービスアカウント（`cloud-run-sa@blog-projects-450313`）のみ（バックエンド #146）。
+
+```
+ブラウザ → BFF（/api/*、本サービス）
+  └── proxyToBackend
+        ├── メタデータサーバー → ID トークン（audience = BACKEND_API_URL の origin、期限 5 分前までキャッシュ）
+        └── バックエンド（Authorization: Bearer <ID トークン>、X-Client-IP: <クライアント IP>）
+              └── Cloud Run が ID トークンを検証（不正・なしは 401。コンテナに届かない）
+```
+
+- ID トークンは Cloud Run 上（`K_SERVICE` あり）でのみ付ける。ローカル・IT のバックエンドは公開のため不要。
+- 切り替え順: フロントのデプロイ → バックエンドの `roles/run.invoker` に BFF のサービスアカウントを付与 → バックエンドの非公開化（逆順だと BFF からの呼び出しが 401 になる）。
 
 ## 7. Next.js設定
 

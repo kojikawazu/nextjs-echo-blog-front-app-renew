@@ -32,6 +32,7 @@ IT（`pnpm test:it`）は testcontainers で実 Go バックエンド + 実 Post
 | `BACKEND_API_URL` | Secret Manager | `backend-api-url` |
 | `ALLOWED_REPO_OWNER` | Secret Manager | `allowed-repo-owner` |
 | `GITHUB_TOKEN` | Secret Manager | `github-token` |
+| `K_SERVICE` | Cloud Run が自動設定 | 設定不要。存在するときのみ、バックエンド呼び出しに ID トークンを付ける（#149）。ローカル・IT では未設定のまま |
 
 ## Terraformの設定
 

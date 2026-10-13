@@ -59,6 +59,11 @@
   - CI/CD・Terraform・ドキュメント更新
   - 詳細: `docs/security-api-proxy-report.md`
 
+- [x] BFF からバックエンドへ ID トークンとクライアント IP を付けて呼ぶ（#149 / バックエンド #146）
+  - バックエンドを BFF のサービスアカウントからのみ呼べる非公開の Cloud Run にするため、`proxyToBackend` が Cloud Run 上でメタデータサーバーの ID トークンを `Authorization` に付ける（期限 5 分前までキャッシュ・取得失敗時は 500）
+  - `X-Forwarded-For` の右端を `X-Client-IP` で転送し、バックエンドのレートリミットを利用者単位にする
+  - 切り替え順: 本対応のデプロイ → バックエンドの `roles/run.invoker` 付与 → バックエンドの非公開化
+
 ### 基本機能
 
 - [x] ブログ一覧表示（検索、フィルタ、ソート、ページネーション）
