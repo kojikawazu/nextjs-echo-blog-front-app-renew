@@ -156,9 +156,12 @@ e2e/tests/mocks/
 | `tests/lib/api/blog-likes/fetchLikedBlogs.test.ts` | いいね済み一覧取得（`null` → `[]`・Zod による形の検証） | 7 |
 | `tests/api/github/markdown/route.test.ts` | GitHub Markdown プロキシ | 7 |
 | `tests/api/blog-likes/route.test.ts` | いいね済み一覧 BFF（`null` → `[]` 正規化・Set-Cookie 引き継ぎ・エラー素通し） | 6 |
-| **合計** | | **120** |
+| `tests/api/_lib/proxy.test.ts` | BFF プロキシのヘッダ付与（Cloud Run 上で ID トークン・`X-Client-IP`、ローカルでは ID トークンなし、XFF 左端の偽装を使わない、ID トークン取得失敗・URL 不正時はバックエンドを呼ばず 500） | 7 |
+| `tests/api/_lib/idToken.test.ts` | ID トークン取得（audience 指定・期限 5 分前までキャッシュ・取り直し・同時取得の集約・audience 別・非 2xx / 接続失敗 / JWT 不正 / `exp` なしで例外かつ非キャッシュ）・`K_SERVICE` 判定 | 11 |
+| `tests/api/_lib/clientIp.test.ts` | クライアント IP 抽出（XFF 右端・IPv6・空白除去・ヘッダなし / 空 / 不正値 / 末尾カンマで null） | 8 |
+| **合計** | | **146** |
 
-ケース分類の比率は **正常系 34 : 異常系（準正常系 + 異常系）86 ≒ 1:2.5**（`.claude/rules/testing.md` の「正常 1 : 異常系 2 以上」を満たす）。スキーマには型不一致・`null`・非オブジェクトの異常系、`fetchBlogs` には JSON パース失敗、`useComments` には mutation 失敗、サイドバー・認証の API 通信関数にはエラーステータス・ネットワーク障害・JSON パース失敗、ブログ系フックには API 失敗時のトースト・非遷移や古い応答の破棄の異常系を含む。
+ケース分類の比率は **正常系 40 : 異常系（準正常系 + 異常系）106 ≒ 1:2.7**（`.claude/rules/testing.md` の「正常 1 : 異常系 2 以上」を満たす）。スキーマには型不一致・`null`・非オブジェクトの異常系、`fetchBlogs` には JSON パース失敗、`useComments` には mutation 失敗、サイドバー・認証の API 通信関数にはエラーステータス・ネットワーク障害・JSON パース失敗、ブログ系フックには API 失敗時のトースト・非遷移や古い応答の破棄の異常系を含む。
 
 ### インテグレーションテスト（Vitest + testcontainers）
 

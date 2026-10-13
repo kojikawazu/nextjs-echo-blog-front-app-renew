@@ -43,6 +43,7 @@
 - **認証**: Cookie認証（`credentials: 'include'`）
 - **Content-Type**: `application/json`
 - **Cookie転送**: リクエスト/レスポンスのCookieを双方向転送
+- **バックエンドへ付与するヘッダ**（#149）: `X-Client-IP`（クライアント IP。バックエンドのレートリミットに使う）、Cloud Run 上では `Authorization: Bearer <ID トークン>`（バックエンドは BFF からのみ呼べる非公開の Cloud Run）。ID トークンの取得に失敗した場合は 500 `{"error":"Backend authentication failed"}` を返す。詳細は [06-security-specification.md](06-security-specification.md)
 
 ## 2. 認証API
 

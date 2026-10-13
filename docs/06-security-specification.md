@@ -60,6 +60,8 @@ Next.js Route Handlersをプロキシとして導入:
 | ボディ転送 | GET/HEAD以外のリクエストボディを透過的に転送 |
 | 204対応 | レスポンスステータス204の場合はボディなし |
 | 設定チェック | `BACKEND_API_URL` 未設定時は500エラー |
+| バックエンドの認証（ID トークン） | バックエンドは BFF のサービスアカウントからのみ呼べる非公開の Cloud Run（バックエンド #146）。Cloud Run 上（`K_SERVICE` あり）では、メタデータサーバーから ID トークン（audience は `BACKEND_API_URL` の origin）を取得して `Authorization: Bearer` に付ける。有効期限の 5 分前までキャッシュし、同時の取得は 1 回にまとめる（`_lib/idToken.ts`）。取得に失敗した場合はバックエンドを呼ばず 500 `{"error":"Backend authentication failed"}`（トークンなしで送ると Cloud Run が HTML の 401 を返し、未ログインと区別できないため） |
+| クライアント IP の転送 | 受信した `X-Forwarded-For` の右端（Cloud Run のフロントエンドが付与した接続元）を `X-Client-IP` で転送する（`_lib/clientIp.ts`）。左側は送信者が偽装できるため使わない。IP として解釈できない場合は付けない。バックエンドはこの値でレートリミットを利用者単位に数える（#149） |
 
 ## 3. 認証・認可
 

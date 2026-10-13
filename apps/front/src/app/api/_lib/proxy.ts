@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getClientIp } from '@/app/api/_lib/clientIp';
+import { getBackendIdToken, isRunningOnCloudRun } from '@/app/api/_lib/idToken';
+
+/** クライアント IP をバックエンドへ転送するヘッダ（バックエンドのレートリミットが利用者単位で数えるために使う） */
+const CLIENT_IP_HEADER = 'X-Client-IP';
 
 /**
  * バックエンドAPIへのプロキシリクエスト。
@@ -7,10 +12,13 @@ import { NextRequest, NextResponse } from 'next/server';
  * Note: Next.js 16では req.text() + new NextResponse() パターンで
  * POSTルートが404になるバグがあるため、req.json() + NextResponse.json() を使用。
  *
- * @param req - クライアントからの受信リクエスト（Cookie・ボディを転送元とする）
+ * バックエンドは BFF からのみ呼べる非公開の Cloud Run のため、Cloud Run 上では ID トークンを
+ * `Authorization` に付ける。あわせてクライアント IP を `X-Client-IP` で転送する。
+ *
+ * @param req - クライアントからの受信リクエスト（Cookie・ボディ・クライアント IP を転送元とする）
  * @param backendPath - バックエンド上の転送先パス（例: `/blogs/detail/:id`）
  * @param options - 任意設定。`method` で HTTP メソッドを上書きできる（未指定時は `req.method`）
- * @returns バックエンドの応答を整形した JSON レスポンス。`BACKEND_API_URL` 未設定時は 500
+ * @returns バックエンドの応答を整形した JSON レスポンス。`BACKEND_API_URL` 未設定時・ID トークンの取得失敗時は 500
  */
 export async function proxyToBackend(
     req: NextRequest,
@@ -35,6 +43,23 @@ export async function proxyToBackend(
     const contentType = req.headers.get('content-type');
     if (contentType) {
         headers['Content-Type'] = contentType;
+    }
+
+    const clientIp = getClientIp(req);
+    if (clientIp) {
+        headers[CLIENT_IP_HEADER] = clientIp;
+    }
+
+    // ローカル・テストではバックエンドが認証を求めないため付けない
+    if (isRunningOnCloudRun()) {
+        try {
+            const idToken = await getBackendIdToken(new URL(backendApiUrl).origin);
+            headers['Authorization'] = `Bearer ${idToken}`;
+        } catch (error) {
+            // トークンなしで送ると Cloud Run が HTML の 401 を返し、フロントが未ログインと区別できないため、ここで止める
+            console.error('Failed to obtain ID token for backend', error);
+            return NextResponse.json({ error: 'Backend authentication failed' }, { status: 500 });
+        }
     }
 
     const fetchOptions: RequestInit = { method, headers };
