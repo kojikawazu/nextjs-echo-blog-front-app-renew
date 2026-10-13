@@ -41,9 +41,11 @@ describe('IT /api/blogs 読み取り（実スタック）', () => {
 
     // --- 異常系（想定外の入力形式） ---
 
-    it('UUID 形式でない ID は 404 を返す', async () => {
-        // backend: uuid 列への不正値でクエリが失敗し "blog not found" に集約 → 404
+    it('UUID 形式でない ID は 400 を返す', async () => {
+        // backend: パスパラメータの形式検証で弾く → 400 VALIDATION_ERROR
+        // （nextjs-echo-back-blog-app#123 で 404 から変更）
         const res = await getBlogById(getReq(), routeParams({ id: SEED.malformedId }));
-        expect(res.status).toBe(404);
+        expect(res.status).toBe(400);
+        expect(await res.json()).toEqual({ code: 'VALIDATION_ERROR', error: 'Invalid id' });
     });
 });
