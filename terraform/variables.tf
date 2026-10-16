@@ -41,10 +41,6 @@ variable "app_name" {
   type = string
 }
 
-variable "visit_id_key" {
-  type = string
-}
-
 variable "domain_name" {
   type = string
 }

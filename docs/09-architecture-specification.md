@@ -306,7 +306,7 @@ Stage 1: builder (node:20)
 
 Stage 2: runner (node:20-alpine)  WORKDIR /app/apps/front
   → ルート node_modules（.pnpm ストア）+ apps/front/node_modules（相対シンボリックリンク）
-  → apps/front/{package.json, .next/, public/, .env}
+  → apps/front/{package.json, .next/, public/}（.env は含めない。実行時の環境変数は Cloud Run が注入する）
   → PORT=8080 → node_modules/.bin/next start
 ```
 
@@ -324,10 +324,9 @@ main へ push
   → GitHub Actions
     ├── test.yml: E2Eテスト実行
     └── deploy_to_googlecloud.yml:
-         1. apps/front/.env に NEXT_PUBLIC_VISIT_ID_KEY のみ書出
-         2. Dockerイメージビルド（context=ルート）
-         3. Artifact Registry へプッシュ
-         4. Cloud Run へデプロイ
+         1. Dockerイメージビルド（context=ルート）
+         2. Artifact Registry へプッシュ
+         3. Cloud Run へデプロイ
 
 毎週（Dependabot）
   → .github/dependabot.yml（package-ecosystem: github-actions）
@@ -344,8 +343,7 @@ GCP Secret Manager
   ├── allowed-repo-owner  → Cloud Run env: ALLOWED_REPO_OWNER
   └── github-token        → Cloud Run env: GITHUB_TOKEN
 
-apps/front/.env (ビルド時)
-  └── NEXT_PUBLIC_VISIT_ID_KEY → JSバンドルにインライン化
+ビルド時に JS バンドルへインライン化する環境変数（NEXT_PUBLIC_*）はない
 ```
 
 ### バックエンドの呼び出し（サービス間認証）

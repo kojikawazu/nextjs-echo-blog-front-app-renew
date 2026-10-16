@@ -124,7 +124,6 @@ main ブランチへプッシュ
 
 | 変数 | 供給元 | クライアント露出 |
 |------|--------|:---:|
-| `NEXT_PUBLIC_VISIT_ID_KEY` | `.env`（ビルド時） | ○ |
 | `BACKEND_API_URL` | Secret Manager | × |
 | `ALLOWED_REPO_OWNER` | Secret Manager | × |
 | `GITHUB_TOKEN` | Secret Manager | × |

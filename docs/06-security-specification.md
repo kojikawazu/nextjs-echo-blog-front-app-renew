@@ -131,7 +131,6 @@ if (ALLOWED_OWNER && owner !== ALLOWED_OWNER) {
 
 | 変数名 | 秘匿レベル | 供給元 | クライアント露出 |
 |--------|-----------|--------|:---:|
-| `NEXT_PUBLIC_VISIT_ID_KEY` | 低 | `.env`（ビルド時インライン化） | ○ |
 | `BACKEND_API_URL` | 高 | Secret Manager | × |
 | `ALLOWED_REPO_OWNER` | 中 | Secret Manager | × |
 | `GITHUB_TOKEN` | 高 | Secret Manager | × |
