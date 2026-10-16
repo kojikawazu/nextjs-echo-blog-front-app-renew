@@ -69,6 +69,18 @@
 |---|---|---|---|---|
 | S-1 | likedBlogs 取得失敗 → hasLiked は false を返す | fetchLikedBlogs モック（throw） | `hasLiked` は常に `false` | Medium |
 
+### 訪問者 ID の発行待ち（#159 回帰・`tests/hooks/useLikeBlog.visitId.test.ts`）
+
+呼び出し順の不具合のため、`lib/api/` はモックせず `fetch` だけを偽バックエンドに差し替える。偽バックエンドは発行 API が 200 を返すまで Cookie なしとみなし、いいね一覧に 401 を返す（実バックエンドと同じ）。リトライは無効にし、401 をリトライで隠さない。
+
+| # | 分類 | テストケース | 期待結果 | 優先度 |
+|---|---|---|---|---|
+| N-1 | 正常系 | 発行の応答を保留してから解放する | 保留中はいいね一覧を取得しない。解放後に 1 回だけ取得し 200・`hasLiked` が true | High |
+| S-1 | 準正常系 | 初回訪問（Cookie なし）でマウント | いいね一覧の取得は 401 を経ず 1 回で 200・`likedBlogs` は success | High |
+| S-2 | 準正常系 | 発行 API が 500 | `visitId` は error・いいね一覧を取得しない・`hasLiked` は false | High |
+
+修正前コードでの検証: 3 件とも失敗する（N-1 は保留中に一覧を取得して 401、S-1 は 401 で `likedBlogs` が error、S-2 は一覧を取得してしまう）。
+
 ---
 
 ## テスト構成

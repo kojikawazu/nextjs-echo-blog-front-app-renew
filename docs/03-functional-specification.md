@@ -229,8 +229,9 @@ Home コンポーネント
 
 ### 訪問者ID管理
 
-1. 初回アクセス時: `GET /api/blog-likes/generate-visit-id` で訪問者ID生成
-2. **既知の制限**: 生成された訪問者IDは永続化されていない。`useLikeBlog` フック内で `generateVisitId()` を呼び出すが、返却値を保存せず `NEXT_PUBLIC_VISIT_ID_KEY`（env変数のキー名）をstateに入れるのみで未使用。訪問者IDの管理はバックエンドのCookieに依存している可能性がある。
+1. `useLikeBlog` のマウント時に `GET /api/blog-likes/generate-visit-id` で訪問者IDを発行する（TanStack Query の `['visitId']`）。訪問者IDはバックエンドが Cookie（`visit-id-token`・有効期限 1 時間）に保存し、フロントは値を保持しない。Cookie が有効なうちはバックエンドが再発行しない
+2. いいね済み一覧（`GET /api/blog-likes`）は、訪問者IDの発行が成功してから取得する。Cookie の無い取得はバックエンドが 401 を返すため（#159）。2 回目以降のマウントでは発行済みのキャッシュがあるため、再発行（Cookie が有効なら何もしない）と一覧の再取得は並行して走る
+3. 訪問者IDの発行に失敗した場合は、いいね済み一覧を取得せず、すべての記事を未いいねとして表示する
 
 ### いいね操作
 

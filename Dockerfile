@@ -30,7 +30,6 @@ COPY --from=builder /app/apps/front/node_modules ./node_modules
 COPY --from=builder /app/apps/front/package.json ./package.json
 COPY --from=builder /app/apps/front/.next ./.next
 COPY --from=builder /app/apps/front/public ./public
-COPY --from=builder /app/apps/front/.env ./.env
 
 ENV PORT=8080
 EXPOSE 8080

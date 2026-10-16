@@ -6,7 +6,6 @@
 
 ```bash
 # apps/front/.env
-NEXT_PUBLIC_VISIT_ID_KEY=
 BACKEND_API_URL=
 ALLOWED_REPO_OWNER=
 GITHUB_TOKEN=
@@ -28,7 +27,6 @@ IT（`pnpm test:it`）は testcontainers で実 Go バックエンド + 実 Post
 
 | 変数名 | 供給元 | 備考 |
 |--------|--------|------|
-| `NEXT_PUBLIC_VISIT_ID_KEY` | 平文 env var | ビルド時にJSバンドルへインライン化される公開値 |
 | `BACKEND_API_URL` | Secret Manager | `backend-api-url` |
 | `ALLOWED_REPO_OWNER` | Secret Manager | `allowed-repo-owner` |
 | `GITHUB_TOKEN` | Secret Manager | `github-token` |
@@ -48,7 +46,6 @@ invoker_role = ""
 service_name = ""
 app_name = ""
 http_port =
-visit_id_key = ""
 domain_name = ""
 ```
 
@@ -63,7 +60,6 @@ GCP_REGION
 REPO_NAME
 APP_NAME
 GCP_CLOUD_RUN_SERVICE_NAME
-NEXT_PUBLIC_VISIT_ID_KEY
 BACKEND_API_URL
 ALLOWED_REPO_OWNER
 ```

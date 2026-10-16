@@ -34,11 +34,6 @@ jobs:
               run: |
                   gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev
 
-            - name: Create file
-              run: |
-                  echo NEXT_PUBLIC_VISIT_ID_KEY=${{ secrets.NEXT_PUBLIC_VISIT_ID_KEY }} > apps/front/.env
-
-
             - name: Setup Google Cloud SDK
               uses: google-github-actions/setup-gcloud@v3
               with:

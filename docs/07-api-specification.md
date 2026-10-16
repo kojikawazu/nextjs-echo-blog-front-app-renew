@@ -239,7 +239,7 @@
 
 ### GET `/api/blog-likes/generate-visit-id`
 
-訪問者IDの生成。
+訪問者IDの生成。訪問者IDは本文では返さず、Cookie（`visit-id-token`・有効期限 1 時間）に保存する。有効な Cookie がすでにある場合は再発行しない。
 
 | 項目 | 値 |
 |------|-----|
@@ -249,9 +249,11 @@
 **レスポンス**
 ```json
 {
-    "visitId": "生成された訪問者ID"
+    "message": "Visitor id generated successfully"
 }
 ```
+
+有効な Cookie がすでにある場合、`message` は `"Visitor id already exists"`（Set-Cookie なし）。フロントは本文を使わず、発行が成功したこと（2xx）だけを見ていいね済み一覧を取得する。
 
 ---
 

@@ -138,6 +138,7 @@ e2e/tests/mocks/
 | `tests/schema/blogCommentSchema.test.ts` | コメントスキーマ | 6 |
 | `tests/hooks/useLikeBlog.test.ts` | いいねフック | 5 |
 | `tests/hooks/useLikeBlog.lastUnlike.test.ts` | いいねフック × API アクセス層（`fetch` のみモック）。最後のいいね解除で `hasLiked` が false に戻る（#17 回帰） | 3 |
+| `tests/hooks/useLikeBlog.visitId.test.ts` | いいねフック × API アクセス層（`fetch` のみモック）。訪問者 ID の発行が終わってからいいね一覧を取得する・初回訪問で 401 を経ない・発行失敗時は一覧を取得しない（#159 回帰） | 3 |
 | `tests/hooks/useBlogs.test.ts` | ブログ一覧取得フック（条件の受け渡し・`enabled`） | 4 |
 | `tests/hooks/useBlog.test.ts` | ブログ詳細取得フック | 3 |
 | `tests/hooks/useBlogMarkdown.test.ts` | 本文 Markdown 取得フック（`null`・古い応答の破棄） | 5 |
@@ -159,9 +160,9 @@ e2e/tests/mocks/
 | `tests/api/_lib/proxy.test.ts` | BFF プロキシのヘッダ付与（Cloud Run 上で ID トークン・`X-Client-IP`、ローカルでは ID トークンなし、XFF 左端の偽装を使わない、ID トークン取得失敗・URL 不正時はバックエンドを呼ばず 500） | 7 |
 | `tests/api/_lib/idToken.test.ts` | ID トークン取得（audience 指定・期限 5 分前までキャッシュ・取り直し・同時取得の集約・audience 別・非 2xx / 接続失敗 / JWT 不正 / `exp` なしで例外かつ非キャッシュ）・`K_SERVICE` 判定 | 11 |
 | `tests/api/_lib/clientIp.test.ts` | クライアント IP 抽出（XFF 右端・IPv6・空白除去・ヘッダなし / 空 / 不正値 / 末尾カンマで null） | 8 |
-| **合計** | | **146** |
+| **合計** | | **149** |
 
-ケース分類の比率は **正常系 40 : 異常系（準正常系 + 異常系）106 ≒ 1:2.7**（`.claude/rules/testing.md` の「正常 1 : 異常系 2 以上」を満たす）。スキーマには型不一致・`null`・非オブジェクトの異常系、`fetchBlogs` には JSON パース失敗、`useComments` には mutation 失敗、サイドバー・認証の API 通信関数にはエラーステータス・ネットワーク障害・JSON パース失敗、ブログ系フックには API 失敗時のトースト・非遷移や古い応答の破棄の異常系を含む。
+ケース分類の比率は **正常系 41 : 異常系（準正常系 + 異常系）108 ≒ 1:2.6**（`.claude/rules/testing.md` の「正常 1 : 異常系 2 以上」を満たす）。スキーマには型不一致・`null`・非オブジェクトの異常系、`fetchBlogs` には JSON パース失敗、`useComments` には mutation 失敗、サイドバー・認証の API 通信関数にはエラーステータス・ネットワーク障害・JSON パース失敗、ブログ系フックには API 失敗時のトースト・非遷移や古い応答の破棄の異常系を含む。
 
 ### インテグレーションテスト（Vitest + testcontainers）
 

@@ -95,7 +95,6 @@
 ### ローカル開発（`apps/front/.env`）
 
 ```bash
-NEXT_PUBLIC_VISIT_ID_KEY=visit_id   # 訪問者ID用キー（ビルド時インライン化）
 BACKEND_API_URL=http://localhost:8080  # バックエンドAPI URL
 ALLOWED_REPO_OWNER=kojikawazu        # GitHubプロキシ許可オーナー
 GITHUB_TOKEN=ghp_xxxxx              # GitHub APIトークン
@@ -105,7 +104,6 @@ GITHUB_TOKEN=ghp_xxxxx              # GitHub APIトークン
 
 ```bash
 # GitHub Actionsのテストworkflowで生成
-NEXT_PUBLIC_VISIT_ID_KEY=test_visit_id
 BACKEND_API_URL=http://localhost:8080
 ```
 
@@ -113,7 +111,6 @@ BACKEND_API_URL=http://localhost:8080
 
 | 変数名 | 供給元 | Secret Manager名 |
 |--------|--------|-----------------|
-| `NEXT_PUBLIC_VISIT_ID_KEY` | 平文 env var（`.env` ビルド時） | - |
 | `BACKEND_API_URL` | Secret Manager | `backend-api-url` |
 | `ALLOWED_REPO_OWNER` | Secret Manager | `allowed-repo-owner` |
 | `GITHUB_TOKEN` | Secret Manager | `github-token` |
@@ -207,10 +204,9 @@ pnpm --filter front exec playwright test e2e/tests/pages/blog_home/blog_home_una
 トリガー: push to main
   1. チェックアウト
   2. GCP認証
-  3. apps/front/.env に NEXT_PUBLIC_VISIT_ID_KEY のみ書出
-  4. Dockerイメージビルド（context=リポジトリルート）
-  5. Artifact Registry へプッシュ
-  6. Cloud Run へデプロイ（--set-secrets は使用しない）
+  3. Dockerイメージビルド（context=リポジトリルート）
+  4. Artifact Registry へプッシュ
+  5. Cloud Run へデプロイ（--set-secrets は使用しない）
 ```
 
 ## 5. Terraform管理リソース

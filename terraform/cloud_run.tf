@@ -31,12 +31,6 @@ resource "google_cloud_run_service" "nextjs_echo_blog_app_service" {
           }
         }
 
-        # NEXT_PUBLIC_VISIT_ID_KEY はビルド時にJSバンドルへインライン化される公開値
-        env {
-          name  = "NEXT_PUBLIC_VISIT_ID_KEY"
-          value = var.visit_id_key
-        }
-
         # 以下は全て Secret Manager から注入
         # key = "latest": ローテーション時に gcloud だけで反映可能にするため
         env {
