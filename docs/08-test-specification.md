@@ -192,7 +192,7 @@ Vitest(IT) → BFF Route Handler(@/app/api/**, in-process)
 
 計 24 ケース（正常系 7 : 異常系〈準正常 + 異常〉17 ≒ 1:2.4）。`blog-likes.it.test.ts` は実バックエンドがいいね 0 件で `null` を返すことを前提に、BFF の `[]` 正規化を検証する（BFF の正規化を外すと 2 件が `expected null to deeply equal []` で落ちることを確認済み）。`auth.it.test.ts` は BFF が backend の 401 を `200 + null` に正規化する挙動を実バックエンド相手に検証する。
 
-> **CI（専用ワークフロー・ローカル先行）**: IT は実バックエンドのイメージビルドを伴い重いため、毎 PR ではなく専用ワークフロー `it-test.yml`（`workflow_dispatch` + nightly cron）で実行する。バックエンドは別リポジトリ（public）を checkout し、testcontainers が Dockerfile をビルドする（`BACKEND_REPO_PATH` で参照先を指定）。`BACKEND_IMAGE` を与えれば Artifact Registry の pinned image へ切替可能。ローカルは `pnpm test:it`。
+> **CI（専用ワークフロー・ローカル先行）**: IT は実バックエンドのイメージビルドを伴い重いため、毎 PR ではなく専用ワークフロー `it-test.yml`（`workflow_dispatch` + nightly cron）で実行する。Node は 22（testcontainers が依存する undici@8 が Node 22.19 以上を要求するため。ほかのワークフローは 20 のまま・#161）。バックエンドは別リポジトリ（public）を checkout し、testcontainers が Dockerfile をビルドする（`BACKEND_REPO_PATH` で参照先を指定）。`BACKEND_IMAGE` を与えれば Artifact Registry の pinned image へ切替可能。ローカルは `pnpm test:it`。
 
 ### レイアウトテスト
 

@@ -15,7 +15,7 @@ GITHUB_TOKEN=
 
 ### インテグレーションテスト（IT）用
 
-IT（`pnpm test:it`）は testcontainers で実 Go バックエンド + 実 PostgreSQL を起動するため、**Docker が必要**です。`BACKEND_API_URL` は `globalSetup` が起動したコンテナの URL を自動注入するため設定不要です。
+IT（`pnpm test:it`）は testcontainers で実 Go バックエンド + 実 PostgreSQL を起動するため、**Docker が必要**です。また **Node.js 22.19 以上**が必要です（testcontainers が依存する undici@8 の要件。Node 20 では読み込み時に `markAsUncloneable is not a function` で落ちる）。`BACKEND_API_URL` は `globalSetup` が起動したコンテナの URL を自動注入するため設定不要です。
 
 | 変数 | 既定 | 用途 |
 |------|------|------|

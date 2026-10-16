@@ -27,10 +27,13 @@ jobs:
               with:
                   version: 10.33.0
 
+            # testcontainers@12 が依存する undici@8 は Node >=22.19 が必要（Node 20 では
+            # markAsUncloneable が無く、読み込み時に TypeError で落ちる・#162）。
+            # プロジェクト全体の Node 更新（#161）までは IT だけ 22 にする
             - name: Setup Node
               uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: 22
                   cache: pnpm
 
             - name: Install dependencies
