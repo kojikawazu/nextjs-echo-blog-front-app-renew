@@ -69,7 +69,7 @@ jobs:
         run: echo "ARTIFACT_NAME=$(echo "$TEST_DIR" | sed 's|/\*$||' | sed 's|/|-|g')" >> $GITHUB_ENV
 
       - name: Save Playwright HTML Report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-report-${{ env.ARTIFACT_NAME }}
