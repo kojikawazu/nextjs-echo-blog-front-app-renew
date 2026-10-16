@@ -192,7 +192,8 @@ pnpm --filter front exec playwright test e2e/tests/pages/blog_home/blog_home_una
   ※ 実バックエンドのイメージビルドを伴い重いため、毎 PR では回さない
   1. フロントを checkout
   2. バックエンド（別 repo・public）を backend-repo/ へ checkout
-  3. pnpm / Node セットアップ・install
+  3. pnpm / Node 22 セットアップ・install
+     （testcontainers@12 → undici@8 が Node >=22.19 を要求するため、IT のみ 22。#162）
   4. pnpm --filter front test:it
      （BACKEND_REPO_PATH=backend-repo/backend。testcontainers が Dockerfile と
        testdata/{schema,seed}.sql を用いて実スタックを起動）

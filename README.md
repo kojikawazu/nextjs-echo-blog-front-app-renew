@@ -78,7 +78,7 @@ GitHub 上で管理している Markdown 記事を読み込んで公開する技
 
 ## 必要要件
 
-- **Node.js 20 以上**（Next.js 16 の要件。`.nvmrc` あり → `nvm use` で切替可能）
+- **Node.js 20 以上**（Next.js 16 の要件。`.nvmrc` あり → `nvm use` で切替可能）。ただしインテグレーションテスト（`pnpm test:it`）は **Node.js 22.19 以上**が必要（testcontainers が依存する undici@8 の要件）
 - **pnpm**（`npm install -g pnpm`）
 - **バックエンド API**（Echo + Go）がローカルまたはリモートで起動していること。別リポジトリ [nextjs-echo-back-blog-app](https://github.com/kojikawazu/nextjs-echo-back-blog-app) を参照
 
