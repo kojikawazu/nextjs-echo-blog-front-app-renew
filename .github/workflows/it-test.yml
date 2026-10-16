@@ -31,7 +31,7 @@ jobs:
             # markAsUncloneable が無く、読み込み時に TypeError で落ちる・#162）。
             # プロジェクト全体の Node 更新（#161）までは IT だけ 22 にする
             - name: Setup Node
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v7
               with:
                   node-version: 22
                   cache: pnpm
