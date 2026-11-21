@@ -210,6 +210,8 @@ pnpm --filter front exec playwright test e2e/tests/pages/blog_home/blog_home_una
   5. Cloud Run へデプロイ（--set-secrets は使用しない）
 ```
 
+> 古いイメージの削除はワークフローでは行わず、Artifact Registry のクリーンアップポリシーに任せる（下記「5. Terraform管理リソース」）。以前はワークフローで「新しい順に 6 件目以降を削除」していたが、ubuntu-26.04 のランナーから `docker push` が OCI の親マニフェスト（image index）＋子マニフェストを上げるようになり、親が残っている子の削除が拒否されて失敗するようになったため廃止した（#169）。
+
 ## 5. Terraform管理リソース
 
 | リソース | 用途 |
@@ -217,6 +219,7 @@ pnpm --filter front exec playwright test e2e/tests/pages/blog_home/blog_home_una
 | `google_secret_manager_secret` | Secret Manager の箱（3つ） |
 | `google_secret_manager_secret_iam_member` | Cloud Run SAへのアクセス権限 |
 | `google_cloud_run_service` | Cloud Runサービス（`value_from.secret_key_ref` でシークレット参照） |
+| `google_artifact_registry_repository` | Docker イメージのリポジトリ。クリーンアップポリシーで古いイメージを自動削除する（タグなしを削除の対象・新しい 5 件を残す。親マニフェストから参照される子は親が消えるまで残る。実行は 1 日 1 回程度） |
 
 ### シークレット値の投入（Terraform外）
 
