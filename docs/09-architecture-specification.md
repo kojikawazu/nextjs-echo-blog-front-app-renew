@@ -327,6 +327,7 @@ main へ push
          1. Dockerイメージビルド（context=ルート）
          2. Artifact Registry へプッシュ
          3. Cloud Run へデプロイ
+       （古いイメージは Artifact Registry のクリーンアップポリシーが削除する。terraform/gcr.tf・#169）
 
 毎週（Dependabot）
   → .github/dependabot.yml（package-ecosystem: github-actions）

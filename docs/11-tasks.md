@@ -94,6 +94,9 @@
 - [x] Google Cloud Run デプロイ
 - [x] Cloudflare導入
 - [x] Terraform構成管理
+- [x] 古いイメージの削除をワークフローから Artifact Registry のクリーンアップポリシーへ移行（2026-11-21・#169）
+  - ubuntu-26.04 のランナーで `docker push` が OCI の親マニフェスト＋子マニフェストを上げるようになり、ワークフローの「6 件目以降を削除」が子の削除で失敗していた
+  - `terraform/gcr.tf` に DELETE（タグなし）＋ KEEP（新しい 5 件）を定義し、ワークフローの「Cleanup old images」ステップを削除
 
 ### テスト
 
