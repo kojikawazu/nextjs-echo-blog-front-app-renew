@@ -256,7 +256,7 @@ gcloud secrets versions add github-token --data-file=- <<< "ghp_xxxxx"
 | `tailwindcss`, `postcss` | CSS |
 | `eslint`, `eslint-config-next`, `eslint-config-prettier`, `@next/eslint-plugin-next`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `typescript-eslint`, `eslint-plugin-jsdoc` | リンター |
 | `prettier` | フォーマッター |
-| `vitest`, `@vitejs/plugin-react`, `jsdom` | ユニットテスト（実行環境） |
+| `vitest`, `vite`, `@vitejs/plugin-react`, `jsdom` | ユニットテスト（実行環境）。`vite` は vitest 4.1.12 以降 peerDependency になったため直接 devDependency として明示している（自動インストールされたピアは `pnpm.overrides` を上げても再解決されないため） |
 | `@testing-library/react`, `@testing-library/dom`, `@testing-library/jest-dom`, `@testing-library/user-event` | ユニットテスト（DOM/フック検証） |
 | `@playwright/test`, `playwright` | E2Eテスト |
 

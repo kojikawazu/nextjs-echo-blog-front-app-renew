@@ -55,6 +55,12 @@
   - `braces`・`sprintf-js` は修正版がなく、本番の実行時に読み込まれないためリスクを受容して dismiss
   - 詳細: `docs/06-security-specification.md`「8. 依存パッケージの脆弱性」
 
+- [x] Dependabotアラート29件の対応（2026-11-21・#167）
+  - Next.js 16.4.0 → 16.4.6（`use cache` / Image Optimization の RCE 2 件ほか）
+  - zod 3.25.76 → 4.6.7 メジャーアップグレード（3.x に修正版なし）。zod v4 対応のため `@hookform/resolvers` 3 → 5。`eslint-plugin-react-hooks` 経由の zod@3 も `pnpm.overrides`（`zod@3`）で 4 系へ寄せた
+  - vitest 4.1.11 → 4.1.12（`@vitest/mocker`）、vite 8.1.5 → 8.3.8（直接 devDependency として明示）
+  - undici 7.30.0 → 7.30.2 / 8.11.2 → 8.13.1（`pnpm.overrides`）
+
 - [x] バックエンドAPI露出対策（2026-03-19）
   - BFFプロキシ（Next.js Route Handlers）の導入
   - `NEXT_PUBLIC_BACKEND_API_URL` → `BACKEND_API_URL`（サーバーサイド専用に変更）
